@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PARADA — Smart Parking System</title>
+<meta name="description" content="PARADA is a mobile and web-based smart parking management system for zone-based occupancy detection using OCR-assisted cameras. A capstone project for LPU Batangas BSIT.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ── Design system ───────────────────────────── */
+:root{
+  --ink:#0B0E14; --ink-deep:#07090D; --glacier:#F2F4F1; --white:#FAFBFA;
+  --orange:#FF4D00; --on-dark:#E9EDF2; --on-light:#12161D;
+  --display:'Archivo',sans-serif; --mono:'Space Mono',monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --line-dark:rgba(233,237,242,.14);
+  --line-light:rgba(18,22,29,.14);
+}
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{ margin:0; background:var(--glacier); color:var(--on-light); font-family:var(--display); overflow-x:clip; -webkit-font-smoothing:antialiased; }
+section,footer{ position:relative; }
+a{ color:var(--orange); text-decoration:none; }
+a:hover{ text-decoration:underline; }
+p{ line-height:1.65; }
+h2,h3,h4,h5{ margin:0; }
+
+.on-dark{ background:var(--ink); color:var(--on-dark); }
+.on-light{ background:var(--glacier); color:var(--on-light); }
+.disp{ font-family:var(--display); font-weight:900; font-stretch:63%; letter-spacing:-0.018em; text-transform:uppercase; }
+.sub{ font-family:var(--display); font-weight:800; font-stretch:74%; letter-spacing:-0.015em; text-transform:uppercase; }
+.mono{ font-family:var(--mono); letter-spacing:.16em; text-transform:uppercase; font-size:11px; }
+.orange{ color:var(--orange); }
+
+.wrap{ max-width:1240px; margin:0 auto; padding:0 clamp(1.25rem,4vw,4rem); position:relative; z-index:1; }
+button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing:.14em; text-transform:uppercase; font-size:11px; padding:13px 22px; background:none; }
+.btn-primary{ background:var(--orange); color:var(--ink); border:1px solid var(--orange); }
+.btn-primary:hover{ background:transparent; color:var(--orange); }
+.btn-ghost{ background:transparent; border:1px solid currentColor; }
+.btn-ghost:hover{ color:var(--ink); background:currentColor; }
+.on-dark .btn-ghost:hover{ color:var(--ink); }
+
+/* grain overlay */
+.grain{ position:fixed; inset:0; z-index:999; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+/* nav */
+.nav{ position:fixed; top:0; left:0; right:0; z-index:60; display:flex; align-items:center; justify-content:space-between;
+  padding:16px clamp(1.25rem,4vw,4rem); background:color-mix(in srgb, var(--ink) 88%, transparent); backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(233,237,242,.12); }
+.nav .brand{ font-family:var(--display); font-weight:900; font-stretch:63%; text-transform:uppercase; color:var(--on-dark); font-size:16px; }
+.nav .brand .orange{ color:var(--orange); }
+.nav .links{ display:flex; gap:22px; }
+.nav .links a{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--on-dark); text-decoration:none; opacity:.75; }
+.nav .links a:hover{ opacity:1; color:var(--orange); text-decoration:none; }
+@media (max-width:760px){ .nav .links{ display:none; } }
+
+/* corner tags */
+.corners{ position:absolute; top:24px; left:clamp(1.25rem,4vw,4rem); right:clamp(1.25rem,4vw,4rem); display:flex; justify-content:space-between; opacity:.4; z-index:2; }
+.corners span{ font-family:var(--mono); font-size:10px; letter-spacing:.16em; }
+
+/* reveal-on-scroll */
+[data-rev]{ opacity:0; transform:translateY(18px); transition:opacity .7s var(--ease), transform .7s var(--ease); transition-delay:var(--d,0ms); }
+[data-rev].in{ opacity:1; transform:none; }
+@media (prefers-reduced-motion:reduce){ [data-rev]{ opacity:1 !important; transform:none !important; transition:none !important; } }
+
+/* hero */
+.hero{ min-height:100svh; background:var(--ink); display:flex; align-items:center; justify-content:center; text-align:center; color:var(--on-dark); overflow:hidden; }
+.hero-inner{ position:relative; z-index:3; padding:120px clamp(1.25rem,4vw,4rem) 96px; }
+.hero h1{ font-size:clamp(3.4rem,15vw,13rem); margin:0; line-height:.9; white-space:nowrap; letter-spacing:-0.02em; }
+.hero .statement{ max-width:24ch; margin:22px auto 0; font-size:clamp(1.4rem,3.4vw,2.4rem); font-weight:800; font-stretch:74%; letter-spacing:-0.015em; text-transform:uppercase; }
+.hero .statement .orange{ color:var(--orange); }
+.hero-cta{ margin-top:36px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.hero-meta{ position:absolute; bottom:30px; left:clamp(1.25rem,4vw,4rem); right:clamp(1.25rem,4vw,4rem); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; z-index:3; }
+.hero-meta span{ font-family:var(--mono); font-size:10px; letter-spacing:.16em; opacity:.8; }
+.hero-stripes{ position:absolute; inset:0; z-index:1; background:repeating-linear-gradient(0deg, transparent 0 5px, rgba(233,237,242,.035) 5px 6px); pointer-events:none; }
+
+/* bands */
+.band{ padding:110px 0; }
+.band h2{ font-family:var(--display); font-weight:900; font-stretch:63%; text-transform:uppercase; letter-spacing:-0.018em;
+  font-size:clamp(1.7rem,3vw,2.8rem); margin:0 0 36px; line-height:1.05; }
+.band h2 .hl{ color:var(--orange); }
+.eyebrow{ font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; opacity:.6; display:block; margin-bottom:14px; }
+.lede{ font-size:15px; line-height:1.7; opacity:.8; max-width:64ch; margin:0 0 12px; }
+.two-col{ display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:start; }
+@media (max-width:860px){ .two-col{ grid-template-columns:1fr; gap:20px; } }
+
+/* zone occupancy cards */
+.zones-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(18,22,29,.14); margin-top:28px; }
+.on-dark .zones-row{ background:rgba(233,237,242,.14); }
+.zone-card{ background:var(--glacier); padding:26px; }
+.on-dark .zone-card{ background:var(--ink); }
+.zone-card .zn{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:14px; letter-spacing:.02em; }
+.zone-card .bar{ height:6px; background:rgba(18,22,29,.12); margin:14px 0 10px; }
+.on-dark .zone-card .bar{ background:rgba(233,237,242,.14); }
+.zone-card .bar span{ display:block; height:100%; background:var(--orange); }
+.zone-card .figs{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:11px; }
+.zone-card .figs .avail{ opacity:.6; }
+@media (max-width:760px){ .zones-row{ grid-template-columns:1fr; } }
+
+/* cells */
+.cells{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(233,237,242,.14); margin-top:8px; }
+.on-light .cells{ background:rgba(18,22,29,.14); }
+.cell{ background:var(--ink); padding:30px 24px; }
+.on-light .cell{ background:var(--glacier); }
+.cell .sub{ font-size:clamp(1rem,1.5vw,1.25rem); margin-bottom:8px; }
+.cell p{ font-size:13px; opacity:.72; margin:0; max-width:32ch; }
+@media (max-width:760px){ .cells{ grid-template-columns:1fr; } }
+
+/* module cards */
+.mod-subtitle{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; opacity:.5; max-width:52ch; line-height:1.7; margin:0; display:flex; gap:12px; align-items:flex-start; }
+.mod-subtitle::before{ content:''; display:block; width:32px; min-width:32px; height:1px; background:currentColor; margin-top:.6em; opacity:.5; }
+.mod-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:48px; align-items:start; }
+@media (max-width:860px){ .mod-cards{ grid-template-columns:1fr; } }
+.mod-card{ background:#111520; border:1px solid rgba(233,237,242,.07); border-radius:10px; overflow:hidden; }
+.mod-card.core{ background:#141622; border-color:rgba(255,77,0,.18); }
+.mod-card-inner{ padding:22px 22px 20px; }
+.mod-title-row{ display:flex; align-items:center; gap:8px; margin-bottom:16px; }
+.mod-title{ font-weight:800; font-stretch:74%; text-transform:uppercase; letter-spacing:.01em; font-size:13px; }
+.mod-badge{ font-family:var(--mono); font-size:9px; letter-spacing:.1em; background:var(--orange); color:#fff; padding:2px 6px; border-radius:3px; }
+.mod-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+.mod-list li{ font-size:12px; opacity:.72; padding-left:16px; position:relative; line-height:1.4; }
+.mod-list.dots li::before{ content:'·'; position:absolute; left:2px; opacity:.6; font-size:14px; line-height:1; top:1px; }
+.mod-list.dashes li::before{ content:''; position:absolute; left:0; top:7px; width:8px; height:1.5px; background:var(--orange); }
+.mod-card-foot{ border-top:1px solid rgba(233,237,242,.07); padding:12px 22px; display:flex; align-items:center; justify-content:space-between; }
+.mod-foot-label{ font-family:var(--mono); font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; opacity:.4; }
+.mod-active{ display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; background:rgba(233,237,242,.07); padding:4px 9px; border-radius:3px; }
+.mod-active-dot{ width:6px; height:6px; border-radius:50%; background:#22c55e; box-shadow:0 0 6px #22c55e; }
+
+/* numbered flow */
+.flow{ display:flex; flex-direction:column; margin-top:8px; }
+.flow-step{ display:grid; grid-template-columns:64px 1fr; gap:20px; padding:20px 0; border-top:1px solid var(--line-dark); }
+.on-light .flow-step{ border-top-color:var(--line-light); }
+.flow-step:last-child{ border-bottom:1px solid var(--line-dark); }
+.on-light .flow-step:last-child{ border-bottom-color:var(--line-light); }
+.flow-step .n{ font-family:var(--mono); font-size:12px; color:var(--orange); }
+.flow-step .t{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:15px; letter-spacing:.01em; }
+.flow-step .d{ font-size:13px; opacity:.7; margin-top:5px; max-width:60ch; }
+
+/* config cards */
+.config-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+@media (max-width:860px){ .config-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:520px){ .config-grid{ grid-template-columns:1fr; } }
+.config-card{ background:#111520; border:1px solid rgba(233,237,242,.07); border-radius:10px; padding:22px; }
+.config-card h4{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:14px; margin-bottom:14px; }
+.config-card ul{ list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+.config-card li{ font-size:12px; opacity:.72; }
+
+/* stack cards */
+.stack-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:16px; }
+@media (max-width:900px){ .stack-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:520px){ .stack-grid{ grid-template-columns:1fr; } }
+.stack-card{ background:#111520; border:1px solid rgba(233,237,242,.07); border-radius:10px; padding:22px; }
+.stack-card h4{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:14px; margin-bottom:14px; }
+.stack-card ul{ list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+.stack-card li{ font-size:12px; opacity:.72; }
+
+/* security rules */
+.rule-rows{ display:flex; flex-direction:column; }
+.rule-row{ display:grid; grid-template-columns:minmax(0,180px) 1fr; gap:24px; padding:18px 0; border-top:1px solid var(--line-light); }
+.rule-row:last-child{ border-bottom:1px solid var(--line-light); }
+.rule-row .lbl{ font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; opacity:.6; }
+.rule-row .d{ font-size:13.5px; }
+@media (max-width:640px){ .rule-row{ grid-template-columns:1fr; gap:4px; } }
+
+/* mobile steps */
+.mob-exp{ display:grid; grid-template-columns:1.05fr 1fr; gap:clamp(32px,5vw,72px); align-items:start; }
+@media (max-width:980px){ .mob-exp{ grid-template-columns:1fr; } }
+.steps{ display:flex; flex-direction:column; }
+.step{ display:grid; grid-template-columns:48px 1fr 8px; gap:18px; padding:20px 0; border-top:1px solid var(--line-dark); align-items:center; }
+.step .n{ font-family:var(--mono); font-size:12px; color:var(--orange); }
+.step .t{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:15px; }
+.step .d{ font-size:13px; opacity:.72; margin-top:4px; max-width:46ch; }
+.step .pip i{ display:block; width:8px; height:8px; border-radius:50%; background:var(--orange); }
+/* phone mockup */
+.phone-pair{ display:flex; justify-content:center; gap:18px; padding:14px 0 40px; }
+.iphone{ position:relative; background:#191C25; border:8px solid #2A2E38; border-radius:54px; padding:10px; flex:0 0 auto;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), 0 30px 80px -12px rgba(0,0,0,.9); }
+.iphone.left{ transform:rotate(-4deg); }
+.iphone.right{ transform:rotate(4deg); margin-top:20px; }
+.screen{ position:relative; width:clamp(180px,20vw,250px); aspect-ratio:334/696; background:#0a0a0a; border-radius:46px; overflow:hidden; }
+.screen .island{ position:absolute; top:12px; left:50%; transform:translateX(-50%); width:88px; height:26px; background:#000; border-radius:999px; z-index:6; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06); }
+.screen .home{ position:absolute; bottom:12px; left:50%; transform:translateX(-50%); width:112px; height:5px; background:#fff; opacity:.6; border-radius:999px; z-index:6; }
+
+/* image placeholder (no real screenshots exist — drop them in later) */
+.ph{ position:absolute; inset:0; z-index:2; display:flex; align-items:center; justify-content:center; text-align:center;
+  padding:24px; color:rgba(233,237,242,.4); font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; line-height:1.8; }
+.ph::before{ content:''; position:absolute; inset:14px; border:1px dashed rgba(233,237,242,.18); }
+
+/* device renders */
+.macbook-scene{ display:flex; justify-content:center; margin-top:20px; }
+.device-stage{ position:relative; width:100%; max-width:860px; }
+.device-stage .hw-img{ position:relative; z-index:3; display:block; width:100%; height:auto; pointer-events:none; filter:drop-shadow(0 22px 34px rgba(0,0,0,.22)); }
+.device-stage .hw-screen{ position:absolute; z-index:1; overflow:hidden; background:#0d1117; left:12.6%; top:5.96%; width:74.9%; height:77.5%; border-radius:4px; }
+.device-stage .hw-screen .ph{ color:rgba(233,237,242,.4); }
+.device-stage .hw-screen .ph::before{ border-color:rgba(233,237,242,.16); }
+
+/* admin exp items */
+.exp{ display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:36px; }
+@media (max-width:820px){ .exp{ grid-template-columns:1fr; } }
+.exp-list{ display:flex; flex-direction:column; gap:20px; }
+.exp-item .t{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:14.5px; }
+.exp-item .d{ font-size:13px; opacity:.72; margin-top:4px; max-width:52ch; }
+
+/* demo cards */
+.demo-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+@media (max-width:860px){ .demo-cards{ grid-template-columns:1fr; } }
+.demo-card{ background:#111520; border:1px solid rgba(233,237,242,.07); border-radius:10px; padding:26px; display:flex; flex-direction:column; gap:14px; }
+.demo-card h3{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:16px; }
+.demo-card p{ font-size:13px; opacity:.72; margin:0; }
+
+/* status columns */
+.status-cols{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media (max-width:820px){ .status-cols{ grid-template-columns:1fr; } }
+.status-col{ background:var(--ink); padding:28px; border:1px solid rgba(233,237,242,.08); border-radius:10px; }
+.status-col h3{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:15px; margin-bottom:14px; }
+.status-list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+.status-list li{ font-size:13px; opacity:.85; display:flex; gap:10px; align-items:baseline; }
+.status-list .dot{ font-family:var(--mono); }
+.status-list.done .dot{ color:#22c55e; }
+.status-list.pending .dot{ color:var(--orange); }
+
+/* capbox */
+.capbox{ background:#111520; border:1px solid rgba(233,237,242,.07); border-radius:10px; padding:30px; }
+.capbox .school{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:18px; color:var(--orange); }
+.tags{ display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+.tags span{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; border:1px solid rgba(233,237,242,.2); border-radius:999px; padding:6px 14px; opacity:.8; }
+
+/* contact */
+.contact-row{ display:flex; gap:12px; flex-wrap:wrap; }
+
+/* footer */
+footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border-top:1px solid rgba(233,237,242,.1); }
+.foot{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:40px; }
+@media (max-width:760px){ .foot{ grid-template-columns:1fr; gap:28px; } }
+.fcol .brand{ font-weight:900; font-stretch:63%; text-transform:uppercase; font-size:16px; }
+.fcol h5{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; opacity:.5; margin:0 0 14px; }
+.fcol a{ display:block; font-size:13px; color:var(--on-dark); opacity:.75; padding:4px 0; }
+.fcol a:hover{ opacity:1; color:var(--orange); text-decoration:none; }
+.fcol .muted{ opacity:.6; font-size:12px; margin-top:6px; }
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="brand">Parada<span class="orange">.</span></div>
+  <div class="links">
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#demo">Demo</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="top">
+  <div class="hero-stripes" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <h1 data-rev>PARADA</h1>
+    <p class="statement" data-rev style="--d:120ms">Smart parking, designed for <span class="orange">smarter campuses</span>.</p>
+    <div class="hero-cta" data-rev style="--d:240ms">
+      <a href="#demo"><button type="button" class="btn-primary">Explore the system</button></a>
+      <a href="#how"><button type="button" class="btn-ghost" style="color:var(--on-dark);">See how it works</button></a>
+    </div>
+  </div>
+  <div class="hero-meta">
+    <span>Capstone project · LPU Batangas</span>
+    <span>BS Information Technology</span>
+    <span>Scroll to explore ↓</span>
+  </div>
+</section>
+
+<!-- 01 About -->
+<section class="band on-light">
+  <div class="corners"><span>01</span><span>About</span></div>
+  <div class="wrap">
+    <span class="eyebrow">About the project</span>
+    <h2 data-rev>What is <span class="hl">PARADA?</span></h2>
+    <div class="two-col">
+      <p class="lede" data-rev>PARADA is a mobile and web-based smart parking management system designed to help drivers and parking administrators understand, manage, and monitor parking availability through a unified platform.</p>
+      <p class="lede" data-rev style="--d:60ms">Instead of attempting to individually monitor every parking space, PARADA uses zone-based occupancy as its primary operational metric — the zone, not the individual slot, is the authoritative unit of availability.</p>
+    </div>
+    <div class="zones-row" data-rev style="--d:0ms">
+      <div class="zone-card"><div class="zn">Zone A</div><div class="bar"><span style="width:60%"></span></div><div class="figs"><span>18 / 30 occupied</span><span class="avail">12 available</span></div></div>
+      <div class="zone-card"><div class="zn">Zone B</div><div class="bar"><span style="width:84%"></span></div><div class="figs"><span>42 / 50 occupied</span><span class="avail">8 available</span></div></div>
+      <div class="zone-card"><div class="zn">Zone C</div><div class="bar"><span style="width:38%"></span></div><div class="figs"><span>15 / 40 occupied</span><span class="avail">25 available</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 Problem -->
+<section class="band on-dark">
+  <div class="corners"><span>02</span><span>Problem</span></div>
+  <div class="wrap">
+    <span class="eyebrow">The problem</span>
+    <h2 data-rev>Parking should be easier <span class="hl">to understand.</span></h2>
+    <div class="cells">
+      <div class="cell" data-rev style="--d:0ms"><div class="sub">For drivers</div><p>Uncertainty about where capacity is available.</p></div>
+      <div class="cell" data-rev style="--d:60ms"><div class="sub">For administrators</div><p>Difficulty monitoring occupancy and parking activity manually.</p></div>
+      <div class="cell" data-rev style="--d:120ms"><div class="sub">For establishments</div><p>Disconnected parking operations and limited visibility into utilization.</p></div>
+    </div>
+    <p class="lede" style="margin-top:28px;" data-rev>PARADA brings these activities together through one connected system.</p>
+  </div>
+</section>
+
+<!-- 03 Objective -->
+<section class="band on-light">
+  <div class="corners"><span>03</span><span>Objective</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Project objective</span>
+    <h2 data-rev>Our <span class="hl">goal</span></h2>
+    <p class="lede" style="font-size:17px;max-width:70ch;" data-rev>To develop a smart parking management system that combines computer vision, license-plate recognition, zone-based occupancy monitoring, parking operations, mobile navigation, and web-based administration into a unified platform.</p>
+  </div>
+</section>
+
+<!-- 04 How it works (pipeline overview) -->
+<section class="band on-dark" id="how">
+  <div class="corners"><span>04</span><span>How it works</span></div>
+  <div class="wrap">
+    <span class="eyebrow">How PARADA works</span>
+    <h2 data-rev>From arrival to receipt, <span class="hl">one pipeline.</span></h2>
+    <div class="flow">
+      <div class="flow-step" data-rev style="--d:0ms"><span class="n">01</span><div><div class="t">Vehicle arrives</div><p class="d">The vehicle reaches a zone gate or entry point.</p></div></div>
+      <div class="flow-step" data-rev style="--d:20ms"><span class="n">02</span><div><div class="t">Zone-gate camera</div><p class="d">The gate camera observes the vehicle and captures the license plate.</p></div></div>
+      <div class="flow-step" data-rev style="--d:40ms"><span class="n">03</span><div><div class="t">Computer vision + OCR</div><p class="d">Image processing reads the plate text.</p></div></div>
+      <div class="flow-step" data-rev style="--d:60ms"><span class="n">04</span><div><div class="t">PARADA API</div><p class="d">The API determines the vehicle, user, zone, reservation, and admission policy.</p></div></div>
+      <div class="flow-step" data-rev style="--d:80ms"><span class="n">05</span><div><div class="t">Vehicle / user / guest resolution</div><p class="d">The plate resolves to a registered vehicle and user, or a guest candidate under policy.</p></div></div>
+      <div class="flow-step" data-rev style="--d:100ms"><span class="n">06</span><div><div class="t">Occupancy + session</div><p class="d">Zone occupancy and the parking session update in the same transaction.</p></div></div>
+      <div class="flow-step" data-rev style="--d:120ms"><span class="n">07</span><div><div class="t">Mobile + admin</div><p class="d">Both clients read the same backend-authoritative state — drivers on mobile, administrators on the web dashboard.</p></div></div>
+      <div class="flow-step" data-rev style="--d:140ms"><span class="n">08</span><div><div class="t">Vehicle exits</div><p class="d">The exit camera/OCR event enters the API.</p></div></div>
+      <div class="flow-step" data-rev style="--d:160ms"><span class="n">09</span><div><div class="t">Session closes</div><p class="d">Duration is computed, the fee is finalized, and the zone's occupancy is reconciled.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 Zone occupancy -->
+<section class="band on-light">
+  <div class="corners"><span>05</span><span>Intelligence</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Zone intelligence</span>
+    <h2 data-rev>PARADA doesn't need to know every space <span class="hl">individually.</span></h2>
+    <div class="cells" style="grid-template-columns:repeat(2,1fr);">
+      <div class="cell" data-rev style="--d:0ms"><div class="sub">Capacity − occupied</div><p>Availability is computed at the zone level, the authoritative unit of occupancy.</p></div>
+      <div class="cell" data-rev style="--d:60ms"><div class="sub">Camera events</div><p>Entry and exit events from zone-gate cameras keep occupancy current.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 Features -->
+<section class="band on-dark" id="features">
+  <div class="corners"><span>06</span><span>Features</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Capabilities</span>
+    <h2 data-rev>Grouped by system <span class="hl">module.</span></h2>
+    <p class="mod-subtitle" data-rev>A modular breakdown of platform capabilities — from driver experience to intelligent infrastructure and operational control.</p>
+    <div class="mod-cards">
+      <div class="mod-card" data-rev style="--d:0ms">
+        <div class="mod-card-inner">
+          <div class="mod-title-row"><div class="mod-title">Driver features</div></div>
+          <ul class="mod-list dots">
+            <li>Account registration and authentication</li><li>Multiple vehicle registration</li><li>Zone availability</li><li>Zone recommendation</li><li>Zone assignment</li><li>Reservations</li><li>Current parking status</li><li>Parking history</li><li>GPS navigation</li><li>Guest-related parking behavior</li>
+          </ul>
+        </div>
+        <div class="mod-card-foot"><span class="mod-foot-label">10 endpoints</span></div>
+      </div>
+      <div class="mod-card core" data-rev style="--d:60ms">
+        <div class="mod-card-inner">
+          <div class="mod-title-row"><div class="mod-title">Parking intelligence</div><span class="mod-badge">Core</span></div>
+          <ul class="mod-list dashes">
+            <li>Camera-based vehicle observation</li><li>License plate recognition</li><li>OCR</li><li>Vehicle identification</li><li>Zone occupancy</li><li>Entry/exit processing</li><li>Guest admission</li><li>Session lifecycle</li>
+          </ul>
+        </div>
+        <div class="mod-card-foot"><span class="mod-foot-label">Live vision stack</span><span class="mod-active"><span class="mod-active-dot"></span>Active</span></div>
+      </div>
+      <div class="mod-card" data-rev style="--d:120ms">
+        <div class="mod-card-inner">
+          <div class="mod-title-row"><div class="mod-title">Administration</div></div>
+          <ul class="mod-list dots">
+            <li>Zone management</li><li>Capacity configuration</li><li>Camera configuration</li><li>Session monitoring</li><li>Reservation management</li><li>User and vehicle management</li><li>Violations</li><li>Appeals</li><li>Notifications</li><li>Analytics</li><li>Establishment configuration</li>
+          </ul>
+        </div>
+        <div class="mod-card-foot"><span class="mod-foot-label">11 controls</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 Guest logic -->
+<section class="band on-light">
+  <div class="corners"><span>07</span><span>Guest logic</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Registered vehicle vs. guest</span>
+    <h2 data-rev>Guest admission is a policy decision, <span class="hl">not a default.</span></h2>
+    <div class="cells">
+      <div class="cell" data-rev style="--d:0ms"><div class="sub">Registered vehicle</div><p>Camera + OCR → plate resolves to a registered user → a parking session opens immediately.</p></div>
+      <div class="cell" data-rev style="--d:60ms"><div class="sub">Guest vehicle</div><p>Plate is unknown → treated as a guest candidate → admission depends on establishment-defined policy.</p></div>
+      <div class="cell" data-rev style="--d:120ms"><div class="sub">Policy result</div><p>Each candidate is either admitted or denied based on configured guest rules rather than automatic authorization.</p></div>
+    </div>
+    <p class="lede" style="margin-top:24px;" data-rev>Guest admission is controlled by establishment-defined policies rather than treating every unidentified vehicle as automatically authorized.</p>
+  </div>
+</section>
+
+<!-- 08 Mobile -->
+<section class="band on-dark">
+  <div class="corners"><span>08</span><span>Mobile</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Mobile experience</span>
+    <h2 data-rev>Parking from the driver's <span class="hl">perspective.</span></h2>
+    <div class="mob-exp">
+      <div class="phone-pair" data-rev style="--d:0ms">
+        <div class="iphone left">
+          <div class="screen">
+            <div class="ph">Drop screen 01 here</div>
+            <span class="island"></span><span class="home"></span>
+          </div>
+        </div>
+        <div class="iphone right">
+          <div class="screen">
+            <div class="ph">Drop screen 02 here</div>
+            <span class="island"></span><span class="home"></span>
+          </div>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step" data-rev style="--d:0ms"><span class="n">01</span><div><div class="t">Find parking</div><p class="d">Live availability across every zone. See open spots before you even leave.</p></div><span class="pip"><i></i></span></div>
+        <div class="step" data-rev style="--d:50ms"><span class="n">02</span><div><div class="t">Choose your zone</div><p class="d">Compare rates, limits, and restrictions. Filter by EV, accessible, or covered.</p></div><span class="pip"><i></i></span></div>
+        <div class="step" data-rev style="--d:100ms"><span class="n">03</span><div><div class="t">Reserve</div><p class="d">Lock your bay in 2 taps. Guaranteed spot, instant confirmation.</p></div><span class="pip"><i></i></span></div>
+        <div class="step" data-rev style="--d:150ms"><span class="n">04</span><div><div class="t">Navigate</div><p class="d">Turn-by-turn to your exact space. No more circling the block.</p></div><span class="pip"><i></i></span></div>
+        <div class="step" data-rev style="--d:200ms"><span class="n">05</span><div><div class="t">Track</div><p class="d">Live timer, one-tap extension, and automatic checkout. All from your pocket.</p></div><span class="pip"><i></i></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 Admin -->
+<section class="band on-light">
+  <div class="corners"><span>09</span><span>Admin</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Admin experience</span>
+    <h2 data-rev>A control center for parking <span class="hl">operations.</span></h2>
+    <p class="lede" style="margin-bottom:28px;" data-rev>Administrators work in the web application; drivers use the mobile app. The dashboard is the operational surface for zones, cameras, sessions and anomalies.</p>
+    <div class="macbook-scene" data-rev style="--d:0ms">
+      <div class="device-stage">
+        <div class="hw-screen"><div class="ph">Drop your admin dashboard screenshot here</div></div>
+        <img class="hw-img" src="assets/laptop-hw.png" alt="Laptop showing the PARADA admin dashboard">
+      </div>
+    </div>
+    <div class="exp">
+      <div class="exp-list">
+        <div class="exp-item" data-rev style="--d:0ms"><div class="t">Monitor</div><div class="d">Zones, occupancy, sessions, cameras.</div></div>
+        <div class="exp-item" data-rev style="--d:40ms"><div class="t">Manage</div><div class="d">Zones, capacities, cameras, reservations, users, vehicles.</div></div>
+      </div>
+      <div class="exp-list">
+        <div class="exp-item" data-rev style="--d:80ms"><div class="t">Respond</div><div class="d">Violations, appeals, guest admission issues, anomalies.</div></div>
+        <div class="exp-item" data-rev style="--d:120ms"><div class="t">Analyze</div><div class="d">Parking activity and utilization.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 Config -->
+<section class="band on-dark">
+  <div class="corners"><span>10</span><span>Config</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Establishment configuration</span>
+    <h2 data-rev>PARADA is <span class="hl">configurable.</span></h2>
+    <div class="config-grid">
+      <div class="config-card" data-rev style="--d:0ms"><h4>Zones</h4><ul><li>Name</li><li>Code</li><li>Capacity</li><li>Status</li></ul></div>
+      <div class="config-card" data-rev style="--d:40ms"><h4>Cameras</h4><ul><li>Identifier</li><li>Zone</li><li>Direction</li><li>Operational status</li></ul></div>
+      <div class="config-card" data-rev style="--d:80ms"><h4>Policies</h4><ul><li>Guest policy</li><li>Reservation settings</li><li>Parking fees</li><li>Violation rules</li></ul></div>
+      <div class="config-card" data-rev style="--d:120ms"><h4>Location</h4><ul><li>Address</li><li>Latitude</li><li>Longitude</li></ul></div>
+    </div>
+    <p class="lede" style="margin-top:28px;" data-rev>This allows PARADA to adapt to different establishment layouts without changing the application's source code for every parking facility.</p>
+  </div>
+</section>
+
+<!-- 11 Architecture -->
+<section class="band on-light" id="architecture">
+  <div class="corners"><span>11</span><span>Architecture</span></div>
+  <div class="wrap">
+    <span class="eyebrow">System architecture</span>
+    <h2 data-rev>The same journey, seen <span class="hl">technically.</span></h2>
+    <p class="lede" style="margin-bottom:28px;" data-rev>Section 04 showed what happens to a vehicle. This is how the system makes it happen: a camera event travels through vision/OCR into the API, which resolves identity, occupancy and sessions, persists them, and propagates the new state to both clients.</p>
+    <div class="cells">
+      <div class="cell" data-rev style="--d:0ms"><div class="sub">Zone Gate Camera</div><p>Entry / exit vehicle events.</p></div>
+      <div class="cell" data-rev style="--d:40ms"><div class="sub">Computer Vision / OCR</div><p>Python · FastAPI · OpenCV · EasyOCR.</p></div>
+      <div class="cell" data-rev style="--d:80ms"><div class="sub">PARADA API</div><p>Node.js · Express · TypeScript.</p></div>
+    </div>
+    <div class="cells" style="grid-template-columns:repeat(3,1fr);margin-top:1px;">
+      <div class="cell" data-rev style="--d:0ms"><div class="sub">Resolution</div><p>Registered or guest candidate.</p></div>
+      <div class="cell" data-rev style="--d:60ms"><div class="sub">Occupancy &amp; sessions</div><p>Capacity − occupied · lifecycle, duration, fee.</p></div>
+      <div class="cell" data-rev style="--d:120ms"><div class="sub">Persist + serve</div><p>PostgreSQL via Prisma → mobile and admin clients.</p></div>
+    </div>
+    <div class="arch-note mono" style="margin-top:24px;opacity:.6;" data-rev>Vision reads → API decides → DB persists → clients read</div>
+  </div>
+</section>
+
+<!-- 12 Stack -->
+<section class="band on-dark">
+  <div class="corners"><span>12</span><span>Stack</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Technology stack</span>
+    <h2 data-rev>What it's <span class="hl">built with.</span></h2>
+    <div class="stack-grid">
+      <div class="stack-card" data-rev style="--d:0ms"><h4>Mobile</h4><ul><li>React Native</li><li>Expo</li><li>TypeScript</li></ul></div>
+      <div class="stack-card" data-rev style="--d:30ms"><h4>Web</h4><ul><li>Next.js</li><li>React</li><li>TypeScript</li><li>Tailwind CSS</li></ul></div>
+      <div class="stack-card" data-rev style="--d:60ms"><h4>Backend</h4><ul><li>Node.js</li><li>Express</li><li>TypeScript</li></ul></div>
+      <div class="stack-card" data-rev style="--d:90ms"><h4>Database</h4><ul><li>PostgreSQL</li><li>Prisma</li></ul></div>
+      <div class="stack-card" data-rev style="--d:120ms"><h4>Computer vision</h4><ul><li>Python</li><li>FastAPI</li><li>EasyOCR</li><li>OpenCV</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 Security -->
+<section class="band on-light">
+  <div class="corners"><span>13</span><span>Security</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Security</span>
+    <h2 data-rev>Designed with security <span class="hl">in mind.</span></h2>
+    <div class="rule-rows">
+      <div class="rule-row" data-rev style="--d:0ms"><span class="lbl">Authentication</span><span class="d">JWT-based authentication.</span></div>
+      <div class="rule-row" data-rev style="--d:30ms"><span class="lbl">Authorization</span><span class="d">Two roles: USER and ADMIN.</span></div>
+      <div class="rule-row" data-rev style="--d:60ms"><span class="lbl">Ownership</span><span class="d">Users can only access their own parking-related records.</span></div>
+      <div class="rule-row" data-rev style="--d:90ms"><span class="lbl">Camera trust</span><span class="d">Camera events use a separate authentication boundary.</span></div>
+      <div class="rule-row" data-rev style="--d:120ms"><span class="lbl">Data integrity</span><span class="d">Critical parking operations are handled by the backend/domain layer and database constraints.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 Capstone -->
+<section class="band on-dark">
+  <div class="corners"><span>14</span><span>Capstone</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Research / capstone context</span>
+    <h2 data-rev>An academic <span class="hl">project.</span></h2>
+    <div class="capbox" data-rev style="--d:0ms">
+      <div class="school">Lyceum of the Philippines University — Batangas</div>
+      <p class="lede" style="margin-top:10px;">PARADA is developed as a capstone project for the Bachelor of Science in Information Technology program.</p>
+      <div class="tags">
+        <span>Capstone project</span><span>Smart parking</span><span>Computer vision</span><span>OCR</span><span>Mobile applications</span><span>Web applications</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 Journey -->
+<section class="band on-light">
+  <div class="corners"><span>15</span><span>Journey</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Project development journey</span>
+    <h2 data-rev>Systematically <span class="hl">engineered.</span></h2>
+    <div class="flow">
+      <div class="flow-step" data-rev style="--d:0ms"><span class="n">01</span><div><div class="t">Requirements</div></div></div>
+      <div class="flow-step" data-rev style="--d:20ms"><span class="n">02</span><div><div class="t">Architecture</div></div></div>
+      <div class="flow-step" data-rev style="--d:40ms"><span class="n">03</span><div><div class="t">Infrastructure</div></div></div>
+      <div class="flow-step" data-rev style="--d:60ms"><span class="n">04</span><div><div class="t">Database</div></div></div>
+      <div class="flow-step" data-rev style="--d:80ms"><span class="n">05</span><div><div class="t">Backend</div></div></div>
+      <div class="flow-step" data-rev style="--d:100ms"><span class="n">06</span><div><div class="t">Authentication</div></div></div>
+      <div class="flow-step" data-rev style="--d:120ms"><span class="n">07</span><div><div class="t">Parking operations</div></div></div>
+      <div class="flow-step" data-rev style="--d:140ms"><span class="n">08</span><div><div class="t">Admin web</div></div></div>
+      <div class="flow-step" data-rev style="--d:160ms"><span class="n">09</span><div><div class="t">Mobile</div></div></div>
+      <div class="flow-step" data-rev style="--d:180ms"><span class="n">10</span><div><div class="t">GPS</div></div></div>
+      <div class="flow-step" data-rev style="--d:200ms"><span class="n">11</span><div><div class="t">Computer vision</div></div></div>
+      <div class="flow-step" data-rev style="--d:220ms"><span class="n">12</span><div><div class="t">System integration</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 Highlights -->
+<section class="band on-dark">
+  <div class="corners"><span>16</span><span>Highlights</span></div>
+  <div class="wrap">
+    <span class="eyebrow">What makes PARADA interesting?</span>
+    <h2 data-rev>Built as one <span class="hl">connected system.</span></h2>
+    <div class="cells">
+      <div class="cell" data-rev style="--d:0ms"><div class="sub">Computer vision</div><p>Identifies vehicles from camera observations.</p></div>
+      <div class="cell" data-rev style="--d:40ms"><div class="sub">Zone intelligence</div><p>Makes availability understandable at the zone level.</p></div>
+      <div class="cell" data-rev style="--d:80ms"><div class="sub">Mobile + web</div><p>Drivers and administrators use connected interfaces.</p></div>
+    </div>
+    <div class="cells" style="grid-template-columns:repeat(2,1fr);margin-top:1px;">
+      <div class="cell" data-rev style="--d:120ms"><div class="sub">Configurable</div><p>Parking facilities can configure zones, capacities, cameras, and policies.</p></div>
+      <div class="cell" data-rev style="--d:160ms"><div class="sub">Backend-authoritative</div><p>Critical parking state is managed centrally instead of being independently calculated by each client.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 Status -->
+<section class="band on-light">
+  <div class="corners"><span>17</span><span>Status</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Current project status</span>
+    <h2 data-rev>Where the build <span class="hl">stands.</span></h2>
+    <div class="status-cols">
+      <div class="status-col" data-rev style="--d:0ms"><h3>Implemented</h3><ul class="status-list done">
+        <li><span class="dot">✓</span>Mobile application</li><li><span class="dot">✓</span>Admin web application</li><li><span class="dot">✓</span>Backend API</li><li><span class="dot">✓</span>PostgreSQL database</li>
+        <li><span class="dot">✓</span>Zone-based occupancy</li><li><span class="dot">✓</span>Reservations</li><li><span class="dot">✓</span>Zone assignment</li><li><span class="dot">✓</span>Guest admission</li>
+        <li><span class="dot">✓</span>GPS navigation</li><li><span class="dot">✓</span>Camera configuration</li></ul></div>
+      <div class="status-col" data-rev style="--d:40ms"><h3>Continuing / evaluation</h3><ul class="status-list pending">
+        <li><span class="dot">○</span>OCR / computer vision (real model)</li><li><span class="dot">○</span>Real-time integration</li><li><span class="dot">○</span>Full system integration</li>
+        <li><span class="dot">○</span>Testing + accuracy evaluation</li><li><span class="dot">○</span>Deployment</li><li><span class="dot">○</span>Documentation + final review</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 Demo -->
+<section class="band on-dark" id="demo">
+  <div class="corners"><span>18</span><span>Demo</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Interactive demo</span>
+    <h2 data-rev>See the system <span class="hl">in action.</span></h2>
+    <div class="demo-cards">
+      <div class="demo-card" data-rev style="--d:0ms"><h3>Driver experience</h3><p>Walk through finding, reserving, and navigating to a zone.</p><a href="#top"><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;">Explore mobile</button></a></div>
+      <div class="demo-card" data-rev style="--d:40ms"><h3>Administrator experience</h3><p>See how operators monitor zones, sessions, and cameras.</p><a href="#top"><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;">Open admin</button></a></div>
+      <div class="demo-card" data-rev style="--d:80ms"><h3>System flow</h3><p>Watch a vehicle move through capture, OCR, resolution, and exit.</p><a href="#how"><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;">Watch how PARADA works</button></a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 19 Transparency -->
+<section class="band on-light">
+  <div class="corners"><span>19</span><span>Transparency</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Research / technical transparency</span>
+    <h2 data-rev>What PARADA currently <span class="hl">demonstrates</span></h2>
+    <p class="lede" style="font-size:15px;" data-rev>PARADA demonstrates the integration of mobile development, web administration, backend services, database management, computer vision, OCR, GPS navigation, and configurable parking operations within a single system architecture.</p>
+    <p class="lede" style="font-size:15px;" data-rev style="--d:60ms">The system is developed as a capstone prototype and evaluated based on functionality, integration, correctness, and system behavior. Formal accuracy evaluation and production deployment are treated separately from the functional implementation.</p>
+  </div>
+</section>
+
+<!-- 20 Contact -->
+<section class="band on-dark" id="contact">
+  <div class="corners"><span>20</span><span>Contact</span></div>
+  <div class="wrap">
+    <span class="eyebrow">Contact</span>
+    <h2 data-rev>Interested in <span class="hl">PARADA?</span></h2>
+    <p class="lede" data-rev>Learn more about the project, explore the architecture, or get in touch with the team behind the system.</p>
+    <div class="contact-row" data-rev style="--d:0ms">
+      <a href="https://github.com/E1yWrites/parada" target="_blank" rel="noopener"><button type="button" class="btn-primary">GitHub</button></a>
+      <button type="button" class="btn-ghost" style="color:var(--on-dark);">Email</button>
+      <button type="button" class="btn-ghost" style="color:var(--on-dark);">LinkedIn</button>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="foot wrap">
+    <div class="fcol">
+      <div class="brand">Parada<span class="orange">.</span></div>
+      <div class="muted">Smart Parking System</div>
+      <div class="muted">A Capstone Project</div>
+      <div class="muted">Lyceum of the Philippines University — Batangas</div>
+    </div>
+    <div class="fcol"><h5>Explore</h5>
+      <a href="#how">How it works</a><a href="#features">Features</a><a href="#demo">Demo</a><a href="#architecture">Architecture</a><a href="#contact">Contact</a>
+    </div>
+    <div class="fcol"><h5>Project</h5>
+      <a href="https://github.com/E1yWrites/parada" target="_blank" rel="noopener">GitHub</a><a href="#">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // reveal on scroll
+  var els = document.querySelectorAll('[data-rev]');
+  if (reduced || !('IntersectionObserver' in window)) {
+    els.forEach(function(el){ el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    els.forEach(function(el){ io.observe(el); });
+  }
+})();
+</script>
+</body>
+</html>
