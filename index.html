@@ -1,48 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PARADA — Smart Parking System</title>
-<meta name="description" content="PARADA is a mobile and web-based smart parking management system for zone-based occupancy detection using OCR-assisted cameras. A capstone project for LPU Batangas BSIT.">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@100..900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="image-slot.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
 <style>
-/* ── Design system ───────────────────────────── */
 :root{
   --ink:#0B0E14; --ink-deep:#07090D; --glacier:#F2F4F1; --white:#FAFBFA;
   --orange:#FF4D00; --on-dark:#E9EDF2; --on-light:#12161D;
-  --display:'Archivo',sans-serif; --mono:'Space Mono',monospace;
+  --display:'Archivo', sans-serif; --mono:'Space Mono', monospace;
   --ease:cubic-bezier(.16,1,.3,1);
-  --line-dark:rgba(233,237,242,.14);
-  --line-light:rgba(18,22,29,.14);
 }
 *{ box-sizing:border-box; }
-html{ scroll-behavior:smooth; }
-body{ margin:0; background:var(--glacier); color:var(--on-light); font-family:var(--display); overflow-x:clip; -webkit-font-smoothing:antialiased; }
-section,footer{ position:relative; }
-a{ color:var(--orange); text-decoration:none; }
-a:hover{ text-decoration:underline; }
-p{ line-height:1.65; }
-h2,h3,h4,h5{ margin:0; }
-
+body{ margin:0; background:var(--glacier); color:var(--on-light); font-family:var(--display); overflow-x:clip; }
 .on-dark{ background:var(--ink); color:var(--on-dark); }
 .on-light{ background:var(--glacier); color:var(--on-light); }
-.disp{ font-family:var(--display); font-weight:900; font-stretch:63%; letter-spacing:-0.018em; text-transform:uppercase; }
-.sub{ font-family:var(--display); font-weight:800; font-stretch:74%; letter-spacing:-0.015em; text-transform:uppercase; }
+.disp{ font-family:var(--display); font-weight:900; font-stretch:63%; letter-spacing:-0.018em; text-transform:uppercase; margin:0; }
+.sub{ font-family:var(--display); font-weight:800; font-stretch:74%; letter-spacing:-0.015em; text-transform:uppercase; margin:0; }
 .mono{ font-family:var(--mono); letter-spacing:.16em; text-transform:uppercase; font-size:11px; }
 .orange{ color:var(--orange); }
-
-.wrap{ max-width:1240px; margin:0 auto; padding:0 clamp(1.25rem,4vw,4rem); position:relative; z-index:1; }
-button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing:.14em; text-transform:uppercase; font-size:11px; padding:13px 22px; background:none; }
+p{ line-height:1.6; }
+.wrap{ max-width:1240px; margin:0 auto; padding:0 clamp(1.25rem,4vw,4rem); position:relative; }
+a{ color:var(--orange); }
+button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing:.14em; text-transform:uppercase; font-size:11px; padding:13px 22px; }
 .btn-primary{ background:var(--orange); color:var(--ink); border:1px solid var(--orange); }
 .btn-primary:hover{ background:transparent; color:var(--orange); }
-.btn-ghost{ background:transparent; border:1px solid currentColor; }
-.btn-ghost:hover{ color:var(--ink); background:currentColor; }
-.on-dark .btn-ghost:hover{ color:var(--ink); }
+.btn-ghost{ background:transparent; border:1px solid currentColor; color:inherit; }
+.btn-ghost:hover{ background:currentColor; color:var(--ink); }
+.on-light .btn-ghost:hover{ color:var(--glacier); }
 
-/* grain overlay */
+/* grain */
 .grain{ position:fixed; inset:0; z-index:999; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 
@@ -50,42 +46,45 @@ button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing
 .nav{ position:fixed; top:0; left:0; right:0; z-index:60; display:flex; align-items:center; justify-content:space-between;
   padding:16px clamp(1.25rem,4vw,4rem); background:color-mix(in srgb, var(--ink) 88%, transparent); backdrop-filter:blur(10px);
   border-bottom:1px solid rgba(233,237,242,.12); }
-.nav .brand{ font-family:var(--display); font-weight:900; font-stretch:63%; text-transform:uppercase; color:var(--on-dark); font-size:16px; }
-.nav .brand .orange{ color:var(--orange); }
+.nav .brand{ font-family:var(--display); font-weight:900; font-stretch:63%; text-transform:uppercase; color:var(--on-dark); font-size:17px; letter-spacing:-0.01em; }
 .nav .links{ display:flex; gap:22px; }
 .nav .links a{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--on-dark); text-decoration:none; opacity:.75; }
-.nav .links a:hover{ opacity:1; color:var(--orange); text-decoration:none; }
+.nav .links a:hover{ opacity:1; color:var(--orange); }
 @media (max-width:760px){ .nav .links{ display:none; } }
 
 /* corner tags */
 .corners{ position:absolute; top:24px; left:clamp(1.25rem,4vw,4rem); right:clamp(1.25rem,4vw,4rem); display:flex; justify-content:space-between; opacity:.4; z-index:2; }
 .corners span{ font-family:var(--mono); font-size:10px; letter-spacing:.16em; }
 
-/* reveal-on-scroll */
-[data-rev]{ opacity:0; transform:translateY(18px); transition:opacity .7s var(--ease), transform .7s var(--ease); transition-delay:var(--d,0ms); }
+/* per-word / atom reveal */
+.word{ display:inline-block; opacity:0; transform:translateY(.4em); transition:opacity .7s var(--ease), transform .7s var(--ease); transition-delay:var(--d,0ms); }
+.word.in{ opacity:1; transform:none; }
+[data-rev]{ opacity:0; transform:translateY(16px); transition:opacity .7s var(--ease), transform .7s var(--ease); transition-delay:var(--d,0ms); }
 [data-rev].in{ opacity:1; transform:none; }
-@media (prefers-reduced-motion:reduce){ [data-rev]{ opacity:1 !important; transform:none !important; transition:none !important; } }
+@media (prefers-reduced-motion:reduce){ .word,[data-rev]{ opacity:1!important; transform:none!important; transition:none!important; } }
 
-/* hero */
-.hero{ min-height:100svh; background:var(--ink); display:flex; align-items:center; justify-content:center; text-align:center; color:var(--on-dark); overflow:hidden; }
-.hero-inner{ position:relative; z-index:3; padding:120px clamp(1.25rem,4vw,4rem) 96px; }
-.hero h1{ font-size:clamp(3.4rem,15vw,13rem); margin:0; line-height:.9; white-space:nowrap; letter-spacing:-0.02em; }
-.hero .statement{ max-width:24ch; margin:22px auto 0; font-size:clamp(1.4rem,3.4vw,2.4rem); font-weight:800; font-stretch:74%; letter-spacing:-0.015em; text-transform:uppercase; }
-.hero .statement .orange{ color:var(--orange); }
-.hero-cta{ margin-top:36px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-.hero-meta{ position:absolute; bottom:30px; left:clamp(1.25rem,4vw,4rem); right:clamp(1.25rem,4vw,4rem); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; z-index:3; }
-.hero-meta span{ font-family:var(--mono); font-size:10px; letter-spacing:.16em; opacity:.8; }
-.hero-stripes{ position:absolute; inset:0; z-index:1; background:repeating-linear-gradient(0deg, transparent 0 5px, rgba(233,237,242,.035) 5px 6px); pointer-events:none; }
+/* pinned hero */
+.pin-hero{ position:relative; height:260svh; background:var(--ink); }
+.pin-hero .inner{ position:sticky; top:0; height:100svh; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+.pin-hero canvas{ position:absolute; inset:0; width:100%; height:100%; }
+.poster{ position:relative; z-index:3; color:var(--on-dark); white-space:nowrap;
+  font-size:clamp(3.4rem,15vw,16rem);
+  transform:scale(calc(1 - var(--hp,0)*.34)); opacity:calc(1 - var(--hp,0)*1.4); }
+.statement{ position:absolute; z-index:3; color:var(--on-dark); text-align:center; max-width:22ch; font-size:clamp(1.5rem,3.4vw,2.6rem);
+  opacity:calc(max(0, (var(--hp,0) - .48) / .52)); transform:translateY(calc((1 - max(0,(var(--hp,0)-.48)/.52)) * 14px)); }
+.hero-meta{ position:absolute; bottom:32px; left:clamp(1.25rem,4vw,4rem); right:clamp(1.25rem,4vw,4rem); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  color:var(--on-dark); z-index:3; opacity:calc(1 - var(--hp,0)*2.2); }
+.hero-meta span{ font-family:var(--mono); font-size:10px; letter-spacing:.16em; }
+.hero-cta{ position:absolute; z-index:4; top:70%; display:flex; gap:12px; opacity:calc(1 - var(--hp,0)*2.2); }
 
 /* bands */
-.band{ padding:110px 0; }
+.band{ padding:110px 0; position:relative; }
 .band h2{ font-family:var(--display); font-weight:900; font-stretch:63%; text-transform:uppercase; letter-spacing:-0.018em;
-  font-size:clamp(1.7rem,3vw,2.8rem); margin:0 0 36px; line-height:1.05; }
-.band h2 .hl{ color:var(--orange); }
+  font-size:clamp(1.7rem,3vw,2.8rem); margin:0 0 36px; }
 .eyebrow{ font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; opacity:.6; display:block; margin-bottom:14px; }
-.lede{ font-size:15px; line-height:1.7; opacity:.8; max-width:64ch; margin:0 0 12px; }
-.two-col{ display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:start; }
-@media (max-width:860px){ .two-col{ grid-template-columns:1fr; gap:20px; } }
+.lede{ font-size:15px; line-height:1.7; opacity:.78; max-width:64ch; margin:0 0 12px; }
+.two-col{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:56px; align-items:start; }
+@media (max-width:860px){ .two-col{ grid-template-columns:1fr; } }
 
 /* zone occupancy cards */
 .zones-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(18,22,29,.14); margin-top:28px; }
@@ -100,7 +99,27 @@ button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing
 .zone-card .figs .avail{ opacity:.6; }
 @media (max-width:760px){ .zones-row{ grid-template-columns:1fr; } }
 
-/* cells */
+/* sketched lot blueprint: background texture, not a component */
+.about-band{ position:relative; overflow:hidden; }
+.about-band .wrap{ position:relative; z-index:1; }
+.blueprint{ position:absolute; right:-6%; top:-4%; width:min(62%,900px); height:108%; pointer-events:none; z-index:0; }
+.blueprint svg{ width:100%; height:100%; display:block; }
+.bp-ink{ fill:none; stroke:#A0A0A0; stroke-width:2.2; stroke-linejoin:round; stroke-linecap:round; opacity:.11; }
+.bp-slots circle{ stroke-width:1.4; stroke-dasharray:2 3; }
+.bp-rows rect{ stroke-width:1.6; }
+.bp-rows line{ stroke-width:1; opacity:.7; }
+.bp-ink text{ font-family:var(--mono); font-size:17px; letter-spacing:.14em; text-transform:uppercase; fill:#A0A0A0; stroke:none; }
+.bp-ink text.bp-cap{ font-size:12px; opacity:.75; }
+.bp-drift{ animation:bpDrift 8s ease-in-out infinite; transform-origin:center; }
+@keyframes bpDrift{
+  0%{ transform:rotate(-12deg) translate(0,0); }
+  50%{ transform:rotate(-14deg) translate(-15px,10px); }
+  100%{ transform:rotate(-12deg) translate(0,0); }
+}
+@media (prefers-reduced-motion:reduce){ .bp-drift{ animation:none; transform:rotate(-12deg); } }
+@media (max-width:900px){ .blueprint{ width:90%; right:-18%; opacity:.7; } }
+
+/* three-cell grid */
 .cells{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(233,237,242,.14); margin-top:8px; }
 .on-light .cells{ background:rgba(18,22,29,.14); }
 .cell{ background:var(--ink); padding:30px 24px; }
@@ -109,16 +128,30 @@ button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing
 .cell p{ font-size:13px; opacity:.72; margin:0; max-width:32ch; }
 @media (max-width:760px){ .cells{ grid-template-columns:1fr; } }
 
+/* vertical numbered flow */
+.flow{ display:flex; flex-direction:column; margin-top:8px; }
+.flow-step{ display:grid; grid-template-columns:64px 1fr; gap:20px; padding:20px 0; border-top:1px solid rgba(233,237,242,.14); position:relative; }
+.on-light .flow-step{ border-top-color:rgba(18,22,29,.14); }
+.flow-step:last-child{ border-bottom:1px solid rgba(233,237,242,.14); }
+.on-light .flow-step:last-child{ border-bottom-color:rgba(18,22,29,.14); }
+.flow-step .n{ font-family:var(--mono); font-size:12px; color:var(--orange); }
+.flow-step .t{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:15px; letter-spacing:.01em; }
+.flow-step .d{ font-size:13px; opacity:.7; margin-top:5px; max-width:60ch; }
+
 /* module cards */
-.mod-subtitle{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; opacity:.5; max-width:52ch; line-height:1.7; margin:0; display:flex; gap:12px; align-items:flex-start; }
-.mod-subtitle::before{ content:''; display:block; width:32px; min-width:32px; height:1px; background:currentColor; margin-top:.6em; opacity:.5; }
 .mod-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:48px; align-items:start; }
 @media (max-width:860px){ .mod-cards{ grid-template-columns:1fr; } }
-.mod-card{ background:#111520; border:1px solid rgba(233,237,242,.07); border-radius:10px; overflow:hidden; }
+.mod-subtitle{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; opacity:.5; max-width:52ch; line-height:1.7; margin:0 0 0 0; display:flex; gap:12px; align-items:flex-start; }
+.mod-subtitle::before{ content:''; display:block; width:32px; min-width:32px; height:1px; background:currentColor; margin-top:.6em; opacity:.5; }
+.mod-card{ background:#111520; border:1px solid rgba(233,237,242,.07); border-radius:10px; display:flex; flex-direction:column; overflow:hidden; }
 .mod-card.core{ background:#141622; border-color:rgba(255,77,0,.18); }
-.mod-card-inner{ padding:22px 22px 20px; }
+.mod-card-inner{ padding:22px 22px 20px; flex:1; }
+.mod-card-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; }
+.mod-icon{ width:36px; height:36px; background:rgba(233,237,242,.09); border-radius:6px; display:flex; align-items:center; justify-content:center; }
+.mod-icon svg{ width:18px; height:18px; stroke:var(--on-dark); stroke-width:1.5; fill:none; }
+.mod-num{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; opacity:.3; }
 .mod-title-row{ display:flex; align-items:center; gap:8px; margin-bottom:16px; }
-.mod-title{ font-weight:800; font-stretch:74%; text-transform:uppercase; letter-spacing:.01em; font-size:13px; }
+.mod-title{ font-family:var(--display); font-weight:800; font-stretch:74%; text-transform:uppercase; letter-spacing:.01em; font-size:13px; margin:0; }
 .mod-badge{ font-family:var(--mono); font-size:9px; letter-spacing:.1em; background:var(--orange); color:#fff; padding:2px 6px; border-radius:3px; }
 .mod-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
 .mod-list li{ font-size:12px; opacity:.72; padding-left:16px; position:relative; line-height:1.4; }
@@ -129,125 +162,352 @@ button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing
 .mod-active{ display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; background:rgba(233,237,242,.07); padding:4px 9px; border-radius:3px; }
 .mod-active-dot{ width:6px; height:6px; border-radius:50%; background:#22c55e; box-shadow:0 0 6px #22c55e; }
 
-/* numbered flow */
-.flow{ display:flex; flex-direction:column; margin-top:8px; }
-.flow-step{ display:grid; grid-template-columns:64px 1fr; gap:20px; padding:20px 0; border-top:1px solid var(--line-dark); }
-.on-light .flow-step{ border-top-color:var(--line-light); }
-.flow-step:last-child{ border-bottom:1px solid var(--line-dark); }
-.on-light .flow-step:last-child{ border-bottom-color:var(--line-light); }
-.flow-step .n{ font-family:var(--mono); font-size:12px; color:var(--orange); }
-.flow-step .t{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:15px; letter-spacing:.01em; }
-.flow-step .d{ font-size:13px; opacity:.7; margin-top:5px; max-width:60ch; }
+/* compare flow (registered vs guest) */
+.compare{ display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:8px; }
+.compare-col h3{ font-size:15px; margin-bottom:16px; }
+.mini-flow{ display:flex; flex-direction:column; }
+.mini-flow div{ font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:10px 14px; border:1px solid rgba(233,237,242,.18); text-align:center; }
+.on-light .mini-flow div{ border-color:rgba(18,22,29,.16); }
+.mini-flow div.hi{ border-color:var(--orange); color:var(--orange); }
+.mini-flow .arrow{ text-align:center; opacity:.4; font-size:12px; padding:2px 0; border:none; }
+@media (max-width:700px){ .compare{ grid-template-columns:1fr; } }
 
-/* config cards */
-.config-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
-@media (max-width:860px){ .config-grid{ grid-template-columns:repeat(2,1fr); } }
-@media (max-width:520px){ .config-grid{ grid-template-columns:1fr; } }
-.config-card{ background:#111520; border:1px solid rgba(233,237,242,.07); border-radius:10px; padding:22px; }
-.config-card h4{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:14px; margin-bottom:14px; }
-.config-card ul{ list-style:none; margin:0; padding:0; display:grid; gap:8px; }
-.config-card li{ font-size:12px; opacity:.72; }
+/* mobile / admin experience */
+.exp{ display:grid; grid-template-columns:minmax(0,360px) minmax(0,1fr); gap:64px; align-items:center; }
+@media (max-width:860px){ .exp{ grid-template-columns:1fr; } }
 
-/* stack cards */
-.stack-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:16px; }
-@media (max-width:900px){ .stack-grid{ grid-template-columns:repeat(2,1fr); } }
-@media (max-width:520px){ .stack-grid{ grid-template-columns:1fr; } }
-.stack-card{ background:#111520; border:1px solid rgba(233,237,242,.07); border-radius:10px; padding:22px; }
-.stack-card h4{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:14px; margin-bottom:14px; }
-.stack-card ul{ list-style:none; margin:0; padding:0; display:grid; gap:8px; }
-.stack-card li{ font-size:12px; opacity:.72; }
+/* real hardware renders (transparent PNG) sit ABOVE an independent
+   screen layer, so the UI screenshots stay separately replaceable */
+.device-stage{ position:relative; }
+.device-stage .hw-img{ position:relative; z-index:3; display:block; width:100%; height:auto; pointer-events:none;
+  filter:drop-shadow(0 34px 46px rgba(0,0,0,.42)); }
+.device-stage .hw-screen{ position:absolute; z-index:1; overflow:hidden; background:#0a0a0a; }
+.device-stage .hw-screen image-slot{ width:100%; height:100%; display:block; }
 
-/* security rules */
-.rule-rows{ display:flex; flex-direction:column; }
-.rule-row{ display:grid; grid-template-columns:minmax(0,180px) 1fr; gap:24px; padding:18px 0; border-top:1px solid var(--line-light); }
-.rule-row:last-child{ border-bottom:1px solid var(--line-light); }
-.rule-row .lbl{ font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; opacity:.6; }
-.rule-row .d{ font-size:13.5px; }
-@media (max-width:640px){ .rule-row{ grid-template-columns:1fr; gap:4px; } }
+/* mobile: two-phone render, front phone carries the screenshot */
+.phone-scene{ display:flex; justify-content:center; align-items:center; padding:0 0 16px; }
+.phone-stage{ width:100%; max-width:660px; margin-inline:auto; }
+.phone-mock-enter{ opacity:0; transform:translateY(34px); transition:opacity 1.1s cubic-bezier(.16,1,.3,1), transform 1.1s cubic-bezier(.16,1,.3,1); }
+.phone-mock-enter.in{ opacity:1; transform:none; }
+@media (prefers-reduced-motion:reduce){ .phone-mock-enter{ opacity:1!important; transform:none!important; transition:none!important; } }
+/* screen openings measured from the render's transparent cut-outs:
+   the RIGHT phone is the front, unoccluded one and carries the screenshot */
+.phone-stage .hw-screen.front{ left:63.07%; top:47.37%; width:23.4%; height:64.7%;
+  transform:translate(-50%,-50%) rotate(22.3deg); border-radius:4.2% / 2.2%; }
+.phone-stage .hw-screen.rear{ left:37.65%; top:48%; width:22.05%; height:66%;
+  transform:translate(-50%,-50%) rotate(-23.65deg); border-radius:4.2% / 2.2%; background:#0d1117; }
 
-/* mobile steps */
-.mob-exp{ display:grid; grid-template-columns:1.05fr 1fr; gap:clamp(32px,5vw,72px); align-items:start; }
-@media (max-width:980px){ .mob-exp{ grid-template-columns:1fr; } }
-.steps{ display:flex; flex-direction:column; }
-.step{ display:grid; grid-template-columns:48px 1fr 8px; gap:18px; padding:20px 0; border-top:1px solid var(--line-dark); align-items:center; }
-.step .n{ font-family:var(--mono); font-size:12px; color:var(--orange); }
-.step .t{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:15px; }
-.step .d{ font-size:13px; opacity:.72; margin-top:4px; max-width:46ch; }
-.step .pip i{ display:block; width:8px; height:8px; border-radius:50%; background:var(--orange); }
-/* phone mockup */
-.phone-pair{ display:flex; justify-content:center; gap:18px; padding:14px 0 40px; }
-.iphone{ position:relative; background:#191C25; border:8px solid #2A2E38; border-radius:54px; padding:10px; flex:0 0 auto;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), 0 30px 80px -12px rgba(0,0,0,.9); }
-.iphone.left{ transform:rotate(-4deg); }
-.iphone.right{ transform:rotate(4deg); margin-top:20px; }
-.screen{ position:relative; width:clamp(180px,20vw,250px); aspect-ratio:334/696; background:#0a0a0a; border-radius:46px; overflow:hidden; }
-.screen .island{ position:absolute; top:12px; left:50%; transform:translateX(-50%); width:88px; height:26px; background:#000; border-radius:999px; z-index:6; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06); }
-.screen .home{ position:absolute; bottom:12px; left:50%; transform:translateX(-50%); width:112px; height:5px; background:#fff; opacity:.6; border-radius:999px; z-index:6; }
-
-/* image placeholder (no real screenshots exist — drop them in later) */
-.ph{ position:absolute; inset:0; z-index:2; display:flex; align-items:center; justify-content:center; text-align:center;
-  padding:24px; color:rgba(233,237,242,.4); font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; line-height:1.8; }
-.ph::before{ content:''; position:absolute; inset:14px; border:1px dashed rgba(233,237,242,.18); }
-
-/* device renders */
-.macbook-scene{ display:flex; justify-content:center; margin-top:20px; }
-.device-stage{ position:relative; width:100%; max-width:860px; }
-.device-stage .hw-img{ position:relative; z-index:3; display:block; width:100%; height:auto; pointer-events:none; filter:drop-shadow(0 22px 34px rgba(0,0,0,.22)); }
-.device-stage .hw-screen{ position:absolute; z-index:1; overflow:hidden; background:#0d1117; left:12.6%; top:5.96%; width:74.9%; height:77.5%; border-radius:4px; }
-.device-stage .hw-screen .ph{ color:rgba(233,237,242,.4); }
-.device-stage .hw-screen .ph::before{ border-color:rgba(233,237,242,.16); }
-
-/* admin exp items */
-.exp{ display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:36px; }
-@media (max-width:820px){ .exp{ grid-template-columns:1fr; } }
+/* admin: laptop render, screen opening measured from the render */
+.macbook-scene{ display:flex; justify-content:center; align-items:center; width:100%; }
+.macbook-stage{ width:100%; max-width:860px; }
+.macbook-stage .hw-img{ filter:drop-shadow(0 22px 34px rgba(0,0,0,.22)); }
+.macbook-stage .hw-screen{ left:12.6%; top:5.96%; width:74.9%; height:77.5%; background:#0d1117; }
 .exp-list{ display:flex; flex-direction:column; gap:20px; }
 .exp-item .t{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:14.5px; }
 .exp-item .d{ font-size:13px; opacity:.72; margin-top:4px; max-width:52ch; }
+@media (max-width:820px){ .exp{ grid-template-columns:1fr; } }
 
-/* demo cards */
-.demo-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
-@media (max-width:860px){ .demo-cards{ grid-template-columns:1fr; } }
-.demo-card{ background:#111520; border:1px solid rgba(233,237,242,.07); border-radius:10px; padding:26px; display:flex; flex-direction:column; gap:14px; }
-.demo-card h3{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:16px; }
-.demo-card p{ font-size:13px; opacity:.72; margin:0; }
+/* mobile experience: twin tilted phone frames + numbered step ledger */
+.mob-exp{ display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:clamp(32px,5vw,72px); align-items:start; }
+@media (max-width:980px){ .mob-exp{ grid-template-columns:1fr; } }
+.phone-pair{ display:flex; justify-content:center; align-items:flex-start; padding:14px 0 64px; }
+.iphone{ position:relative; flex:0 0 auto; background:#191C25; border:8px solid #2A2E38; border-radius:56px; padding:10px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), 0 30px 80px -12px rgba(0,0,0,.9), 0 0 0 1px #2A2E38; }
+.iphone .screen{ position:relative; width:clamp(190px,23vw,296px); aspect-ratio:334/696; background:#000; border-radius:46px; overflow:hidden; }
+.iphone .screen image-slot{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+.iphone .island{ position:absolute; top:10px; left:50%; transform:translateX(-50%); width:88px; height:26px; background:#000;
+  border-radius:999px; z-index:6; pointer-events:none; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06); }
+.iphone .home{ position:absolute; bottom:10px; left:50%; transform:translateX(-50%); width:112px; height:5px; background:#fff;
+  opacity:.85; border-radius:999px; z-index:6; pointer-events:none; }
+.iphone .glare{ position:absolute; inset:0; z-index:5; pointer-events:none; border-radius:46px;
+  background:linear-gradient(to top right, transparent 40%, rgba(255,255,255,.03), rgba(255,255,255,.08)); }
+.iphone .side{ position:absolute; width:3px; background:#2A2E38; }
+.iphone .side.s1{ left:-11px; top:96px; height:28px; border-radius:2px 0 0 2px; }
+.iphone .side.s2{ left:-11px; top:138px; height:56px; border-radius:2px 0 0 2px; }
+.iphone .side.s3{ left:-11px; top:206px; height:56px; border-radius:2px 0 0 2px; }
+.iphone .side.s4{ right:-11px; top:146px; height:80px; border-radius:0 2px 2px 0; }
+.iphone.left{ transform:rotate(-8deg); z-index:2; }
+.iphone.right{ transform:rotate(8deg) translate(-38px,52px); z-index:1; }
+@media (max-width:560px){
+  .phone-pair{ padding-bottom:36px; }
+  .iphone.right{ display:none; }
+  .iphone.left{ transform:none; }
+}
+.steps{ border-top:1px solid rgba(233,237,242,.12); }
+.step{ display:flex; gap:22px; padding:24px 0; border-bottom:1px solid rgba(233,237,242,.12); transition:border-color .3s var(--ease); }
+.step:hover{ border-bottom-color:rgba(233,237,242,.28); }
+.step .n{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; opacity:.32; margin-top:5px; }
+.step .t{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:17px; letter-spacing:-.01em; }
+.step .d{ font-size:13.5px; line-height:1.5; opacity:.5; margin:7px 0 0; max-width:44ch; transition:opacity .3s var(--ease); }
+.step:hover .d{ opacity:.74; }
+.step .pip{ width:22px; height:22px; border:1px solid rgba(233,237,242,.14); border-radius:50%; margin:3px 0 0 auto;
+  flex:0 0 auto; display:grid; place-items:center; transition:border-color .3s var(--ease); }
+.step .pip i{ width:5px; height:5px; border-radius:50%; background:rgba(233,237,242,.3); transition:background .3s var(--ease); }
+.step:hover .pip{ border-color:rgba(255,77,0,.5); }
+.step:hover .pip i{ background:var(--orange); }
+@media (max-width:600px){ .step .pip{ display:none; } }
+
+/* config tree */
+.config-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(233,237,242,.14); margin-top:8px; }
+.on-light .config-grid{ background:rgba(18,22,29,.14); }
+.config-card{ background:var(--ink); padding:22px; }
+.on-light .config-card{ background:var(--glacier); }
+.config-card h4{ font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--orange); margin:0 0 12px; }
+.config-card ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+.config-card li{ font-size:12.5px; opacity:.78; }
+@media (max-width:820px){ .config-grid{ grid-template-columns:repeat(2,1fr); } }
+
+/* architecture */
+.arch{ position:relative; }
+.arch-svg{ width:100%; height:auto; display:block; }
+.arch-node rect{ fill:rgba(233,237,242,.03); stroke:rgba(233,237,242,.28); stroke-width:1; transition:stroke .4s ease, fill .4s ease; }
+.arch-node.active rect{ stroke:var(--orange); fill:rgba(255,77,0,.08); }
+.arch-node .icon{ stroke:var(--on-dark); fill:none; stroke-width:1.6; }
+.arch-node.active .icon{ stroke:var(--orange); }
+.arch-node text.label{ fill:var(--on-dark); font-family:var(--display); font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:12px; }
+.arch-node text.desc{ fill:var(--on-dark); opacity:.55; font-family:var(--mono); font-size:8.5px; letter-spacing:.04em; }
+.arch-edge{ stroke:rgba(233,237,242,.22); stroke-width:1; fill:none; }
+.arch-pulse{ fill:var(--orange); }
+.arch-light .arch-node rect{ stroke:rgba(18,22,29,.28); }
+.arch-light .arch-node.active rect{ stroke:var(--orange); }
+.arch-light .arch-node .icon{ stroke:var(--on-light); }
+.arch-light .arch-node.active .icon{ stroke:var(--orange); }
+.arch-light .arch-node text.label{ fill:var(--on-light); }
+.arch-light .arch-node text.desc{ fill:var(--on-light); }
+.arch-light .arch-edge{ stroke:rgba(18,22,29,.2); }
+
+/* tech stack */
+.stack-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:rgba(18,22,29,.14); margin-top:8px; }
+.on-dark .stack-grid{ background:rgba(233,237,242,.14); }
+.stack-card{ background:var(--glacier); padding:22px 18px; }
+.on-dark .stack-card{ background:var(--ink); }
+.stack-card h4{ font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--orange); margin:0 0 12px; }
+.stack-card ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+.stack-card li{ font-size:12.5px; opacity:.78; }
+@media (max-width:900px){ .stack-grid{ grid-template-columns:repeat(3,1fr); } }
+@media (max-width:600px){ .stack-grid{ grid-template-columns:repeat(2,1fr); } }
+
+/* rule rows (security etc) */
+.rule-rows{ display:flex; flex-direction:column; margin-top:8px; }
+.rule-row{ display:grid; grid-template-columns:180px 1fr; gap:20px; padding:18px 0; border-top:1px solid rgba(233,237,242,.14); }
+.on-light .rule-row{ border-top-color:rgba(18,22,29,.14); }
+.rule-row:last-child{ border-bottom:1px solid rgba(233,237,242,.14); }
+.on-light .rule-row:last-child{ border-bottom-color:rgba(18,22,29,.14); }
+.rule-row .lbl{ font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--orange); }
+.rule-row .d{ font-size:13px; opacity:.75; }
+@media (max-width:700px){ .rule-row{ grid-template-columns:1fr; gap:6px; } }
+
+/* capstone box */
+.capbox{ border:1px solid rgba(233,237,242,.2); padding:36px clamp(20px,4vw,48px); margin-top:8px; }
+.on-light .capbox{ border-color:rgba(18,22,29,.18); }
+.capbox .school{ font-size:clamp(1.3rem,2.2vw,1.8rem); font-weight:800; font-stretch:74%; text-transform:uppercase; margin-bottom:6px; }
+.capbox .tags{ display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+.capbox .tags span{ font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; border:1px solid var(--orange); color:var(--orange); padding:4px 10px; }
 
 /* status columns */
-.status-cols{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-@media (max-width:820px){ .status-cols{ grid-template-columns:1fr; } }
-.status-col{ background:var(--ink); padding:28px; border:1px solid rgba(233,237,242,.08); border-radius:10px; }
-.status-col h3{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:15px; margin-bottom:14px; }
-.status-list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
-.status-list li{ font-size:13px; opacity:.85; display:flex; gap:10px; align-items:baseline; }
-.status-list .dot{ font-family:var(--mono); }
-.status-list.done .dot{ color:#22c55e; }
-.status-list.pending .dot{ color:var(--orange); }
+.status-cols{ display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:8px; }
+.status-col h3{ font-size:14px; margin-bottom:16px; }
+.status-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+.status-list li{ font-size:13px; display:flex; gap:10px; align-items:baseline; }
+.status-list .dot{ font-family:var(--mono); font-size:11px; flex:none; }
+.status-list.done .dot{ color:var(--orange); }
+.status-list.pending .dot{ opacity:.5; }
+@media (max-width:700px){ .status-cols{ grid-template-columns:1fr; gap:28px; } }
 
-/* capbox */
-.capbox{ background:#111520; border:1px solid rgba(233,237,242,.07); border-radius:10px; padding:30px; }
-.capbox .school{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:18px; color:var(--orange); }
-.tags{ display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
-.tags span{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; border:1px solid rgba(233,237,242,.2); border-radius:999px; padding:6px 14px; opacity:.8; }
+/* demo cards */
+.demo-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(233,237,242,.14); margin-top:8px; }
+.demo-card{ background:var(--ink); padding:30px 24px; display:flex; flex-direction:column; gap:14px; }
+.demo-card h3{ font-size:16px; }
+.demo-card p{ font-size:12.5px; opacity:.7; margin:0; flex:1; }
+@media (max-width:820px){ .demo-cards{ grid-template-columns:1fr; } }
 
 /* contact */
-.contact-row{ display:flex; gap:12px; flex-wrap:wrap; }
+.contact-row{ display:flex; gap:14px; flex-wrap:wrap; margin-top:24px; }
 
 /* footer */
-footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border-top:1px solid rgba(233,237,242,.1); }
-.foot{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:40px; }
-@media (max-width:760px){ .foot{ grid-template-columns:1fr; gap:28px; } }
-.fcol .brand{ font-weight:900; font-stretch:63%; text-transform:uppercase; font-size:16px; }
-.fcol h5{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; opacity:.5; margin:0 0 14px; }
-.fcol a{ display:block; font-size:13px; color:var(--on-dark); opacity:.75; padding:4px 0; }
-.fcol a:hover{ opacity:1; color:var(--orange); text-decoration:none; }
-.fcol .muted{ opacity:.6; font-size:12px; margin-top:6px; }
-</style>
-</head>
-<body>
-<div class="grain" aria-hidden="true"></div>
+.foot{ padding:56px 0 36px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; border-top:1px solid rgba(233,237,242,.16); }
+.foot .fcol h5{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; opacity:.5; margin:0 0 12px; }
+.foot .fcol div{ font-size:13px; opacity:.85; margin-bottom:6px; }
+.foot .fcol a{ display:block; color:inherit; text-decoration:none; opacity:.7; font-size:12.5px; margin-bottom:8px; }
+.foot .fcol a:hover{ opacity:1; color:var(--orange); }
 
-<!-- Nav -->
+/* ── horizontal cinematic slideshow ── */
+.pipeline{ position:relative; height:900svh; background:var(--ink); color:var(--on-dark); }
+.pipeline .stage{ position:sticky; top:0; height:100svh; overflow:hidden; }
+.pipeline .stage-head{ position:absolute; top:76px; left:clamp(1.25rem,4vw,4rem); z-index:5; }
+.pipeline .stage-head .eyebrow{ opacity:.55; margin-bottom:8px; }
+.pipeline .stage-head h2{ font-size:clamp(1.3rem,2.3vw,2rem); margin:0; }
+.track{ display:flex; height:100%; width:900vw; transform:translateX(calc(var(--tp,0) * -800vw)); }
+.scene{ width:100vw; height:100%; flex:none; display:grid; grid-template-columns:minmax(0,38%) minmax(0,62%);
+  align-items:center; gap:clamp(24px,4vw,64px); padding:150px clamp(1.25rem,4vw,4rem) 90px; }
+.scene-copy .n{ font-family:var(--mono); font-size:12px; letter-spacing:.2em; color:var(--orange); }
+.scene-copy .t{ font-family:var(--display); font-weight:900; font-stretch:63%; text-transform:uppercase; letter-spacing:-0.018em;
+  font-size:clamp(1.6rem,3.4vw,3rem); line-height:1.05; margin:12px 0 14px; }
+.scene-copy .d{ font-size:14px; opacity:.72; max-width:36ch; line-height:1.65; }
+.scene-vis{ position:relative; height:min(56vh,440px); border:1px solid rgba(233,237,242,.14); overflow:hidden; }
+.scene[data-active] .scene-vis{ border-color:rgba(255,77,0,.4); }
+.pipeline .rail{ position:absolute; bottom:34px; left:clamp(1.25rem,4vw,4rem); right:clamp(1.25rem,4vw,4rem); z-index:5; }
+.pipeline .rail .bar{ height:2px; background:rgba(233,237,242,.16); position:relative; }
+.pipeline .rail .bar span{ position:absolute; inset:0 auto 0 0; background:var(--orange); width:calc(var(--tp,0)*100%); }
+.pipeline .rail .dots{ display:flex; justify-content:space-between; margin-top:12px; }
+.pipeline .rail .dots i{ font-family:var(--mono); font-size:9.5px; letter-spacing:.14em; font-style:normal; opacity:.35; }
+.pipeline .rail .dots i.on{ opacity:1; color:var(--orange); }
+@media (max-width:860px){ .scene{ grid-template-columns:1fr; align-content:center; padding-top:130px; } .scene-vis{ height:min(38vh,300px); } }
+
+/* svg motion-graphics primitives */
+.svg-scene{ width:100%; height:100%; display:block; overflow:visible; }
+.s-line{ fill:none; stroke:rgba(233,237,242,.7); stroke-width:1.2; }
+.s-node{ fill:none; stroke:rgba(233,237,242,.5); stroke-width:1.2; }
+.s-ink{ fill:none; stroke:rgba(233,237,242,.85); stroke-width:1.2; }
+.s-accent{ fill:none; stroke:var(--orange); stroke-width:1.2; }
+.s-dot{ fill:var(--orange); }
+.s-lbl{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; fill:var(--on-dark); }
+.s-cap{ font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; fill:var(--on-dark); opacity:.55; }
+.s-plate{ font-family:var(--mono); font-size:17px; letter-spacing:.2em; fill:var(--on-dark); }
+.s-num{ font-family:var(--display); font-weight:900; font-stretch:63%; font-size:26px; fill:var(--on-dark); }
+.s-accent-lbl{ fill:var(--orange); }
+.cmp-svg{ width:100%; height:auto; display:block; overflow:visible; }
+.cmp-svg .c-line{ fill:none; stroke:rgba(18,22,29,.75); stroke-width:1.2; }
+.cmp-svg .c-node{ fill:var(--glacier); stroke:rgba(18,22,29,.6); stroke-width:1.2; }
+.cmp-svg .c-accent{ fill:none; stroke:var(--orange); stroke-width:1.2; }
+.cmp-svg .c-lbl{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; fill:var(--on-light); }
+.cmp-svg .c-plate{ font-family:var(--mono); font-size:15px; letter-spacing:.18em; fill:var(--on-light); }
+.cmp-svg .c-accent-lbl{ fill:var(--orange); }
+.cmp-svg .c-success{ stroke:#1f7a4d; }
+.cmp-svg .c-success-lbl{ fill:#1f7a4d; }
+.cmp-svg .c-head{ font-family:var(--display); font-weight:800; font-stretch:74%; font-size:13px; letter-spacing:.02em; fill:var(--on-light); text-transform:uppercase; }
+
+/* legacy scene primitives (kept only for the section frame) */
+.road{ position:absolute; left:0; right:0; top:50%; height:2px; background:rgba(233,237,242,.16); }
+.car{ position:absolute; top:calc(50% - 16px); left:6%; width:52px; height:30px; background:var(--on-dark); }
+.car::after{ content:""; position:absolute; left:9px; top:-8px; width:30px; height:10px; background:var(--on-dark); opacity:.6; }
+.scene[data-active] .car-in{ animation:carIn 3.4s var(--ease) infinite; }
+.scene[data-active] .car-out{ animation:carOut 3.4s var(--ease) infinite; }
+@keyframes carIn{ 0%{ transform:translateX(-40px); opacity:0 } 25%{ opacity:1 } 70%,100%{ transform:translateX(340px); opacity:1 } }
+@keyframes carOut{ 0%{ transform:translateX(0); opacity:1 } 100%{ transform:translateX(420px); opacity:0 } }
+.gate{ position:absolute; top:22%; height:56%; width:3px; background:var(--orange); right:22%; }
+.gate::before{ content:""; position:absolute; top:0; left:0; width:70px; height:3px; background:var(--orange); transform-origin:left center; }
+.scene[data-active] .gate::before{ animation:gateLift 3.4s var(--ease) infinite; }
+@keyframes gateLift{ 0%,45%{ transform:rotate(0) } 60%,90%{ transform:rotate(-58deg) } 100%{ transform:rotate(0) } }
+.cam{ position:absolute; top:14%; right:16%; width:54px; height:26px; border:1px solid var(--on-dark); }
+.cam::after{ content:""; position:absolute; right:-12px; top:7px; width:12px; height:10px; border:1px solid var(--on-dark); }
+.cone{ position:absolute; top:20%; right:10%; width:0; height:0; border-left:130px solid transparent;
+  border-top:120px solid rgba(255,77,0,.10); }
+.plate-frame{ position:absolute; left:16%; top:52%; padding:10px 16px; border:1px solid var(--orange); font-family:var(--mono);
+  font-size:15px; letter-spacing:.14em; color:var(--on-dark); }
+.scan{ position:absolute; left:0; right:0; height:1px; background:var(--orange); top:0; box-shadow:0 0 12px var(--orange); }
+.scene[data-active] .scan{ animation:scanY 2.4s linear infinite; }
+@keyframes scanY{ 0%{ top:4% } 100%{ top:96% } }
+.pipe-list{ position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; gap:8px; padding:24px 28px; }
+.pipe-list div{ font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; border:1px solid rgba(233,237,242,.18);
+  padding:8px 12px; text-align:center; opacity:.25; transition:opacity .4s var(--ease), border-color .4s var(--ease), color .4s var(--ease); }
+.scene[data-active] .pipe-list div{ animation:pipeStep 4.5s linear infinite; }
+.scene[data-active] .pipe-list div:nth-child(1){ animation-delay:0s } .scene[data-active] .pipe-list div:nth-child(2){ animation-delay:.5s }
+.scene[data-active] .pipe-list div:nth-child(3){ animation-delay:1s } .scene[data-active] .pipe-list div:nth-child(4){ animation-delay:1.5s }
+.scene[data-active] .pipe-list div:nth-child(5){ animation-delay:2s } .scene[data-active] .pipe-list div:nth-child(6){ animation-delay:2.5s }
+.scene[data-active] .pipe-list div:nth-child(7){ animation-delay:3s }
+@keyframes pipeStep{ 0%,8%{ opacity:.25; border-color:rgba(233,237,242,.18); color:var(--on-dark) }
+  14%,32%{ opacity:1; border-color:var(--orange); color:var(--orange) } 46%,100%{ opacity:.5; border-color:rgba(233,237,242,.28); color:var(--on-dark) } }
+.hub{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); border:1px solid var(--orange); color:var(--orange);
+  font-family:var(--mono); font-size:11px; letter-spacing:.12em; padding:14px 22px; text-transform:uppercase; }
+.scene[data-active] .hub{ animation:hubPulse 2.2s var(--ease) infinite; }
+@keyframes hubPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(255,77,0,.35) } 60%{ box-shadow:0 0 0 16px rgba(255,77,0,0) } }
+.spokes{ position:absolute; inset:0; }
+.spokes span{ position:absolute; font-family:var(--mono); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; opacity:.6; }
+.branch-svg{ position:absolute; inset:0; width:100%; height:100%; }
+.branch-svg .edge{ stroke:rgba(233,237,242,.22); fill:none; stroke-width:1; }
+.branch-svg .edge.hot{ stroke:var(--orange); }
+.branch-svg text{ font-family:var(--mono); font-size:9px; letter-spacing:.1em; fill:var(--on-dark); text-transform:uppercase; }
+.branch-svg .dot{ fill:var(--orange); }
+.occ-vis{ position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; gap:18px; padding:28px 34px; }
+.occ-vis .zn{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; }
+.occ-vis .bar{ height:10px; background:rgba(233,237,242,.14); }
+.occ-vis .bar span{ display:block; height:100%; background:var(--orange); width:60%; transition:width 1.2s var(--ease); }
+.scene[data-active] .occ-vis .bar span{ animation:occGrow 4s var(--ease) infinite; }
+@keyframes occGrow{ 0%,20%{ width:60% } 45%,80%{ width:63.3% } 100%{ width:60% } }
+.session-chip{ border:1px solid var(--orange); padding:10px 14px; font-family:var(--mono); font-size:10.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--orange); align-self:flex-start; opacity:0; }
+.scene[data-active] .session-chip{ animation:chipIn 4s var(--ease) infinite; }
+@keyframes chipIn{ 0%,25%{ opacity:0; transform:translateY(8px) } 45%,85%{ opacity:1; transform:none } 100%{ opacity:0 } }
+
+/* mini device mockups (scene 07 + admin section) */
+.phone-mini{ width:118px; border:1px solid rgba(233,237,242,.3); padding:8px 6px; display:flex; flex-direction:column; gap:5px; }
+.phone-mini i{ display:block; height:7px; background:rgba(233,237,242,.18); font-style:normal; }
+.phone-mini i.hi{ background:var(--orange); opacity:.8; }
+.dash-mini{ flex:1; max-width:300px; border:1px solid rgba(233,237,242,.3); display:grid; grid-template-columns:54px 1fr; }
+.dash-mini .sb{ border-right:1px solid rgba(233,237,242,.2); padding:8px 6px; display:flex; flex-direction:column; gap:6px; }
+.dash-mini .sb i{ height:6px; background:rgba(233,237,242,.18); }
+.dash-mini .bd{ padding:8px; display:grid; grid-template-columns:repeat(3,1fr); gap:6px; align-content:start; }
+.dash-mini .bd i{ height:22px; background:rgba(233,237,242,.14); }
+.dash-mini .bd i.hi{ background:rgba(255,77,0,.35); }
+.dash-mini .bd i.wide{ grid-column:1/-1; height:34px; }
+.sync-svg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+
+/* receipt */
+.receipt{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(280px,70%); border:1px solid rgba(233,237,242,.3);
+  padding:18px; display:flex; flex-direction:column; gap:9px; background:var(--ink); }
+.receipt .rr{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; opacity:0; }
+.scene[data-active] .receipt .rr{ animation:rrIn .5s var(--ease) forwards; }
+.scene[data-active] .receipt .rr:nth-child(1){ animation-delay:.2s } .scene[data-active] .receipt .rr:nth-child(2){ animation-delay:.6s }
+.scene[data-active] .receipt .rr:nth-child(3){ animation-delay:1s } .scene[data-active] .receipt .rr:nth-child(4){ animation-delay:1.4s }
+.scene[data-active] .receipt .rr:nth-child(5){ animation-delay:1.8s }
+@keyframes rrIn{ from{ opacity:0; transform:translateY(6px) } to{ opacity:1; transform:none } }
+.receipt .rr.total{ border-top:1px solid rgba(233,237,242,.24); padding-top:10px; color:var(--orange); }
+
+/* admin dashboard mockup (full) */
+.dashboard{ border:1px solid rgba(18,22,29,.18); background:var(--white); display:grid; grid-template-columns:150px 1fr; overflow:hidden; }
+.on-dark .dashboard{ border-color:rgba(233,237,242,.2); background:var(--ink-deep); }
+.dashboard .side{ border-right:1px solid rgba(18,22,29,.14); padding:16px 14px; display:flex; flex-direction:column; gap:12px; }
+.dashboard .side .brand{ font-family:var(--display); font-weight:900; font-stretch:63%; text-transform:uppercase; font-size:13px; margin-bottom:6px; }
+.dashboard .side a{ font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; text-decoration:none; color:inherit; opacity:.6; }
+.dashboard .side a.on{ opacity:1; color:var(--orange); }
+.dashboard .main{ padding:16px 18px; display:flex; flex-direction:column; gap:14px; }
+.dashboard .topbar{ display:flex; justify-content:space-between; align-items:center; }
+.dashboard .topbar .ttl{ font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:13px; }
+.dashboard .topbar .who{ font-family:var(--mono); font-size:9px; letter-spacing:.1em; opacity:.6; }
+.dashboard .stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.dashboard .stat{ border:1px solid rgba(18,22,29,.12); padding:10px 12px; }
+.on-dark .dashboard .stat{ border-color:rgba(233,237,242,.16); }
+.dashboard .stat .k{ font-family:var(--mono); font-size:8.5px; letter-spacing:.1em; text-transform:uppercase; opacity:.55; }
+.dashboard .stat .v{ font-family:var(--display); font-weight:900; font-stretch:63%; font-size:22px; margin-top:4px; }
+.dashboard .stat .v .u{ color:var(--orange); font-size:14px; }
+.dashboard .cols{ display:grid; grid-template-columns:1.4fr 1fr; gap:14px; }
+.dashboard .panel{ border:1px solid rgba(18,22,29,.12); padding:12px; }
+.on-dark .dashboard .panel{ border-color:rgba(233,237,242,.16); }
+.dashboard .panel h6{ font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; margin:0 0 10px; opacity:.55; }
+.dashboard .zrow{ display:grid; grid-template-columns:52px 1fr 62px; gap:8px; align-items:center; font-family:var(--mono); font-size:9.5px; margin-bottom:8px; }
+.dashboard .zrow .zb{ height:6px; background:rgba(18,22,29,.12); }
+.on-dark .dashboard .zrow .zb{ background:rgba(233,237,242,.14); }
+.dashboard .zrow .zb span{ display:block; height:100%; background:var(--orange); }
+.dashboard table{ width:100%; border-collapse:collapse; font-family:var(--mono); font-size:9px; }
+.dashboard th{ text-align:left; letter-spacing:.1em; text-transform:uppercase; opacity:.5; padding:0 0 6px; font-weight:400; }
+.dashboard td{ padding:5px 0; border-top:1px solid rgba(18,22,29,.1); }
+.on-dark .dashboard td{ border-top-color:rgba(233,237,242,.12); }
+.dashboard td .live{ color:var(--orange); }
+.dashboard .notes div{ font-family:var(--mono); font-size:9px; letter-spacing:.06em; padding:6px 0; border-top:1px solid rgba(18,22,29,.1); opacity:.75; }
+.on-dark .dashboard .notes div{ border-top-color:rgba(233,237,242,.12); }
+@media (max-width:760px){ .dashboard{ grid-template-columns:1fr; } .dashboard .side{ display:none; } .dashboard .stats{ grid-template-columns:repeat(2,1fr); } .dashboard .cols{ grid-template-columns:1fr; } }
+
+/* architecture pipeline */
+.arch-pipe{ width:100%; height:auto; display:block; margin-top:8px; }
+.arch-pipe .box{ fill:none; stroke:rgba(18,22,29,.28); stroke-width:1; transition:stroke .35s ease, fill .35s ease; }
+.arch-pipe .box.live{ stroke:var(--orange); fill:rgba(255,77,0,.07); }
+.arch-pipe .lbl{ font-family:var(--display); font-weight:800; font-stretch:74%; text-transform:uppercase; font-size:12px; fill:var(--on-light); }
+.arch-pipe .cap{ font-family:var(--mono); font-size:8.5px; letter-spacing:.06em; fill:var(--on-light); opacity:.55; text-transform:uppercase; }
+.arch-pipe .link{ stroke:rgba(18,22,29,.22); stroke-width:1; fill:none; }
+.arch-pipe .pk{ fill:var(--orange); }
+.arch-legend{ display:flex; gap:18px; flex-wrap:wrap; margin-top:18px; font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; opacity:.6; }
+
+/* animated compare flows */
+.mini-flow div.step{ transition:border-color .35s var(--ease), color .35s var(--ease), background .35s var(--ease); }
+.mini-flow div.step.on{ border-color:var(--orange); color:var(--orange); background:rgba(255,77,0,.06); }
+</style>
+</helmet>
+
+<div class="grain"></div>
+
 <nav class="nav">
-  <div class="brand">Parada<span class="orange">.</span></div>
+  <span class="brand">Parada<span class="orange">.</span></span>
   <div class="links">
     <a href="#how">How it works</a>
     <a href="#features">Features</a>
@@ -255,35 +515,50 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
     <a href="#architecture">Architecture</a>
     <a href="#contact">Contact</a>
   </div>
+  <button type="button" class="btn-ghost" style="color:var(--on-dark);">GitHub</button>
 </nav>
 
-<!-- Hero -->
-<section class="hero" id="top">
-  <div class="hero-stripes" aria-hidden="true"></div>
-  <div class="hero-inner">
-    <h1 data-rev>PARADA</h1>
-    <p class="statement" data-rev style="--d:120ms">Smart parking, designed for <span class="orange">smarter campuses</span>.</p>
-    <div class="hero-cta" data-rev style="--d:240ms">
-      <a href="#demo"><button type="button" class="btn-primary">Explore the system</button></a>
-      <a href="#how"><button type="button" class="btn-ghost" style="color:var(--on-dark);">See how it works</button></a>
+<section class="pin-hero" data-pin="hero">
+  <div class="inner">
+    <canvas data-scan></canvas>
+    <h1 class="poster" data-poster>PARADA</h1>
+    <p class="statement" data-statement>Smart parking, designed for smarter campuses.</p>
+    <div class="hero-cta">
+      <button type="button" class="btn-primary">Explore the system</button>
+      <button type="button" class="btn-ghost" style="color:var(--on-dark);">See how it works</button>
     </div>
-  </div>
-  <div class="hero-meta">
-    <span>Capstone project · LPU Batangas</span>
-    <span>BS Information Technology</span>
-    <span>Scroll to explore ↓</span>
+    <div class="hero-meta">
+      <span>Capstone project · LPU Batangas</span>
+      <span>BS Information Technology</span>
+      <span>Scroll to explore ↓</span>
+    </div>
   </div>
 </section>
 
-<!-- 01 About -->
-<section class="band on-light">
+<section class="band on-light about-band">
   <div class="corners"><span>01</span><span>About</span></div>
+      <div class="blueprint" aria-hidden="true">
+        <svg viewBox="0 0 900 900" preserveAspectRatio="xMidYMid meet">
+          <g class="bp-ink">
+            <g class="bp-drift">
+              <path d="M120 120 H820 V780 H120 Z"></path>
+              <g class="bp-rows"><rect x="160" y="160" width="32" height="540" rx="4"></rect><line x1="162" y1="170.0" x2="190" y2="170.0"></line><line x1="162" y1="188.5" x2="190" y2="188.5"></line><line x1="162" y1="207.0" x2="190" y2="207.0"></line><line x1="162" y1="225.5" x2="190" y2="225.5"></line><line x1="162" y1="244.0" x2="190" y2="244.0"></line><line x1="162" y1="262.5" x2="190" y2="262.5"></line><line x1="162" y1="281.0" x2="190" y2="281.0"></line><line x1="162" y1="299.5" x2="190" y2="299.5"></line><line x1="162" y1="318.0" x2="190" y2="318.0"></line><line x1="162" y1="336.5" x2="190" y2="336.5"></line><line x1="162" y1="355.0" x2="190" y2="355.0"></line><line x1="162" y1="373.5" x2="190" y2="373.5"></line><line x1="162" y1="392.0" x2="190" y2="392.0"></line><line x1="162" y1="410.5" x2="190" y2="410.5"></line><line x1="162" y1="429.0" x2="190" y2="429.0"></line><line x1="162" y1="447.5" x2="190" y2="447.5"></line><line x1="162" y1="466.0" x2="190" y2="466.0"></line><line x1="162" y1="484.5" x2="190" y2="484.5"></line><line x1="162" y1="503.0" x2="190" y2="503.0"></line><line x1="162" y1="521.5" x2="190" y2="521.5"></line><line x1="162" y1="540.0" x2="190" y2="540.0"></line><line x1="162" y1="558.5" x2="190" y2="558.5"></line><line x1="162" y1="577.0" x2="190" y2="577.0"></line><line x1="162" y1="595.5" x2="190" y2="595.5"></line><line x1="162" y1="614.0" x2="190" y2="614.0"></line><line x1="162" y1="632.5" x2="190" y2="632.5"></line><line x1="162" y1="651.0" x2="190" y2="651.0"></line><line x1="162" y1="669.5" x2="190" y2="669.5"></line><rect x="206" y="160" width="32" height="540" rx="4"></rect><line x1="208" y1="170.0" x2="236" y2="170.0"></line><line x1="208" y1="188.5" x2="236" y2="188.5"></line><line x1="208" y1="207.0" x2="236" y2="207.0"></line><line x1="208" y1="225.5" x2="236" y2="225.5"></line><line x1="208" y1="244.0" x2="236" y2="244.0"></line><line x1="208" y1="262.5" x2="236" y2="262.5"></line><line x1="208" y1="281.0" x2="236" y2="281.0"></line><line x1="208" y1="299.5" x2="236" y2="299.5"></line><line x1="208" y1="318.0" x2="236" y2="318.0"></line><line x1="208" y1="336.5" x2="236" y2="336.5"></line><line x1="208" y1="355.0" x2="236" y2="355.0"></line><line x1="208" y1="373.5" x2="236" y2="373.5"></line><line x1="208" y1="392.0" x2="236" y2="392.0"></line><line x1="208" y1="410.5" x2="236" y2="410.5"></line><line x1="208" y1="429.0" x2="236" y2="429.0"></line><line x1="208" y1="447.5" x2="236" y2="447.5"></line><line x1="208" y1="466.0" x2="236" y2="466.0"></line><line x1="208" y1="484.5" x2="236" y2="484.5"></line><line x1="208" y1="503.0" x2="236" y2="503.0"></line><line x1="208" y1="521.5" x2="236" y2="521.5"></line><line x1="208" y1="540.0" x2="236" y2="540.0"></line><line x1="208" y1="558.5" x2="236" y2="558.5"></line><line x1="208" y1="577.0" x2="236" y2="577.0"></line><line x1="208" y1="595.5" x2="236" y2="595.5"></line><line x1="208" y1="614.0" x2="236" y2="614.0"></line><line x1="208" y1="632.5" x2="236" y2="632.5"></line><line x1="208" y1="651.0" x2="236" y2="651.0"></line><line x1="208" y1="669.5" x2="236" y2="669.5"></line><rect x="252" y="160" width="32" height="540" rx="4"></rect><line x1="254" y1="170.0" x2="282" y2="170.0"></line><line x1="254" y1="188.5" x2="282" y2="188.5"></line><line x1="254" y1="207.0" x2="282" y2="207.0"></line><line x1="254" y1="225.5" x2="282" y2="225.5"></line><line x1="254" y1="244.0" x2="282" y2="244.0"></line><line x1="254" y1="262.5" x2="282" y2="262.5"></line><line x1="254" y1="281.0" x2="282" y2="281.0"></line><line x1="254" y1="299.5" x2="282" y2="299.5"></line><line x1="254" y1="318.0" x2="282" y2="318.0"></line><line x1="254" y1="336.5" x2="282" y2="336.5"></line><line x1="254" y1="355.0" x2="282" y2="355.0"></line><line x1="254" y1="373.5" x2="282" y2="373.5"></line><line x1="254" y1="392.0" x2="282" y2="392.0"></line><line x1="254" y1="410.5" x2="282" y2="410.5"></line><line x1="254" y1="429.0" x2="282" y2="429.0"></line><line x1="254" y1="447.5" x2="282" y2="447.5"></line><line x1="254" y1="466.0" x2="282" y2="466.0"></line><line x1="254" y1="484.5" x2="282" y2="484.5"></line><line x1="254" y1="503.0" x2="282" y2="503.0"></line><line x1="254" y1="521.5" x2="282" y2="521.5"></line><line x1="254" y1="540.0" x2="282" y2="540.0"></line><line x1="254" y1="558.5" x2="282" y2="558.5"></line><line x1="254" y1="577.0" x2="282" y2="577.0"></line><line x1="254" y1="595.5" x2="282" y2="595.5"></line><line x1="254" y1="614.0" x2="282" y2="614.0"></line><line x1="254" y1="632.5" x2="282" y2="632.5"></line><line x1="254" y1="651.0" x2="282" y2="651.0"></line><line x1="254" y1="669.5" x2="282" y2="669.5"></line><rect x="298" y="160" width="32" height="540" rx="4"></rect><line x1="300" y1="170.0" x2="328" y2="170.0"></line><line x1="300" y1="188.5" x2="328" y2="188.5"></line><line x1="300" y1="207.0" x2="328" y2="207.0"></line><line x1="300" y1="225.5" x2="328" y2="225.5"></line><line x1="300" y1="244.0" x2="328" y2="244.0"></line><line x1="300" y1="262.5" x2="328" y2="262.5"></line><line x1="300" y1="281.0" x2="328" y2="281.0"></line><line x1="300" y1="299.5" x2="328" y2="299.5"></line><line x1="300" y1="318.0" x2="328" y2="318.0"></line><line x1="300" y1="336.5" x2="328" y2="336.5"></line><line x1="300" y1="355.0" x2="328" y2="355.0"></line><line x1="300" y1="373.5" x2="328" y2="373.5"></line><line x1="300" y1="392.0" x2="328" y2="392.0"></line><line x1="300" y1="410.5" x2="328" y2="410.5"></line><line x1="300" y1="429.0" x2="328" y2="429.0"></line><line x1="300" y1="447.5" x2="328" y2="447.5"></line><line x1="300" y1="466.0" x2="328" y2="466.0"></line><line x1="300" y1="484.5" x2="328" y2="484.5"></line><line x1="300" y1="503.0" x2="328" y2="503.0"></line><line x1="300" y1="521.5" x2="328" y2="521.5"></line><line x1="300" y1="540.0" x2="328" y2="540.0"></line><line x1="300" y1="558.5" x2="328" y2="558.5"></line><line x1="300" y1="577.0" x2="328" y2="577.0"></line><line x1="300" y1="595.5" x2="328" y2="595.5"></line><line x1="300" y1="614.0" x2="328" y2="614.0"></line><line x1="300" y1="632.5" x2="328" y2="632.5"></line><line x1="300" y1="651.0" x2="328" y2="651.0"></line><line x1="300" y1="669.5" x2="328" y2="669.5"></line><rect x="344" y="160" width="32" height="540" rx="4"></rect><line x1="346" y1="170.0" x2="374" y2="170.0"></line><line x1="346" y1="188.5" x2="374" y2="188.5"></line><line x1="346" y1="207.0" x2="374" y2="207.0"></line><line x1="346" y1="225.5" x2="374" y2="225.5"></line><line x1="346" y1="244.0" x2="374" y2="244.0"></line><line x1="346" y1="262.5" x2="374" y2="262.5"></line><line x1="346" y1="281.0" x2="374" y2="281.0"></line><line x1="346" y1="299.5" x2="374" y2="299.5"></line><line x1="346" y1="318.0" x2="374" y2="318.0"></line><line x1="346" y1="336.5" x2="374" y2="336.5"></line><line x1="346" y1="355.0" x2="374" y2="355.0"></line><line x1="346" y1="373.5" x2="374" y2="373.5"></line><line x1="346" y1="392.0" x2="374" y2="392.0"></line><line x1="346" y1="410.5" x2="374" y2="410.5"></line><line x1="346" y1="429.0" x2="374" y2="429.0"></line><line x1="346" y1="447.5" x2="374" y2="447.5"></line><line x1="346" y1="466.0" x2="374" y2="466.0"></line><line x1="346" y1="484.5" x2="374" y2="484.5"></line><line x1="346" y1="503.0" x2="374" y2="503.0"></line><line x1="346" y1="521.5" x2="374" y2="521.5"></line><line x1="346" y1="540.0" x2="374" y2="540.0"></line><line x1="346" y1="558.5" x2="374" y2="558.5"></line><line x1="346" y1="577.0" x2="374" y2="577.0"></line><line x1="346" y1="595.5" x2="374" y2="595.5"></line><line x1="346" y1="614.0" x2="374" y2="614.0"></line><line x1="346" y1="632.5" x2="374" y2="632.5"></line><line x1="346" y1="651.0" x2="374" y2="651.0"></line><line x1="346" y1="669.5" x2="374" y2="669.5"></line><rect x="390" y="160" width="32" height="540" rx="4"></rect><line x1="392" y1="170.0" x2="420" y2="170.0"></line><line x1="392" y1="188.5" x2="420" y2="188.5"></line><line x1="392" y1="207.0" x2="420" y2="207.0"></line><line x1="392" y1="225.5" x2="420" y2="225.5"></line><line x1="392" y1="244.0" x2="420" y2="244.0"></line><line x1="392" y1="262.5" x2="420" y2="262.5"></line><line x1="392" y1="281.0" x2="420" y2="281.0"></line><line x1="392" y1="299.5" x2="420" y2="299.5"></line><line x1="392" y1="318.0" x2="420" y2="318.0"></line><line x1="392" y1="336.5" x2="420" y2="336.5"></line><line x1="392" y1="355.0" x2="420" y2="355.0"></line><line x1="392" y1="373.5" x2="420" y2="373.5"></line><line x1="392" y1="392.0" x2="420" y2="392.0"></line><line x1="392" y1="410.5" x2="420" y2="410.5"></line><line x1="392" y1="429.0" x2="420" y2="429.0"></line><line x1="392" y1="447.5" x2="420" y2="447.5"></line><line x1="392" y1="466.0" x2="420" y2="466.0"></line><line x1="392" y1="484.5" x2="420" y2="484.5"></line><line x1="392" y1="503.0" x2="420" y2="503.0"></line><line x1="392" y1="521.5" x2="420" y2="521.5"></line><line x1="392" y1="540.0" x2="420" y2="540.0"></line><line x1="392" y1="558.5" x2="420" y2="558.5"></line><line x1="392" y1="577.0" x2="420" y2="577.0"></line><line x1="392" y1="595.5" x2="420" y2="595.5"></line><line x1="392" y1="614.0" x2="420" y2="614.0"></line><line x1="392" y1="632.5" x2="420" y2="632.5"></line><line x1="392" y1="651.0" x2="420" y2="651.0"></line><line x1="392" y1="669.5" x2="420" y2="669.5"></line><rect x="436" y="160" width="32" height="540" rx="4"></rect><line x1="438" y1="170.0" x2="466" y2="170.0"></line><line x1="438" y1="188.5" x2="466" y2="188.5"></line><line x1="438" y1="207.0" x2="466" y2="207.0"></line><line x1="438" y1="225.5" x2="466" y2="225.5"></line><line x1="438" y1="244.0" x2="466" y2="244.0"></line><line x1="438" y1="262.5" x2="466" y2="262.5"></line><line x1="438" y1="281.0" x2="466" y2="281.0"></line><line x1="438" y1="299.5" x2="466" y2="299.5"></line><line x1="438" y1="318.0" x2="466" y2="318.0"></line><line x1="438" y1="336.5" x2="466" y2="336.5"></line><line x1="438" y1="355.0" x2="466" y2="355.0"></line><line x1="438" y1="373.5" x2="466" y2="373.5"></line><line x1="438" y1="392.0" x2="466" y2="392.0"></line><line x1="438" y1="410.5" x2="466" y2="410.5"></line><line x1="438" y1="429.0" x2="466" y2="429.0"></line><line x1="438" y1="447.5" x2="466" y2="447.5"></line><line x1="438" y1="466.0" x2="466" y2="466.0"></line><line x1="438" y1="484.5" x2="466" y2="484.5"></line><line x1="438" y1="503.0" x2="466" y2="503.0"></line><line x1="438" y1="521.5" x2="466" y2="521.5"></line><line x1="438" y1="540.0" x2="466" y2="540.0"></line><line x1="438" y1="558.5" x2="466" y2="558.5"></line><line x1="438" y1="577.0" x2="466" y2="577.0"></line><line x1="438" y1="595.5" x2="466" y2="595.5"></line><line x1="438" y1="614.0" x2="466" y2="614.0"></line><line x1="438" y1="632.5" x2="466" y2="632.5"></line><line x1="438" y1="651.0" x2="466" y2="651.0"></line><line x1="438" y1="669.5" x2="466" y2="669.5"></line><rect x="482" y="160" width="32" height="540" rx="4"></rect><line x1="484" y1="170.0" x2="512" y2="170.0"></line><line x1="484" y1="188.5" x2="512" y2="188.5"></line><line x1="484" y1="207.0" x2="512" y2="207.0"></line><line x1="484" y1="225.5" x2="512" y2="225.5"></line><line x1="484" y1="244.0" x2="512" y2="244.0"></line><line x1="484" y1="262.5" x2="512" y2="262.5"></line><line x1="484" y1="281.0" x2="512" y2="281.0"></line><line x1="484" y1="299.5" x2="512" y2="299.5"></line><line x1="484" y1="318.0" x2="512" y2="318.0"></line><line x1="484" y1="336.5" x2="512" y2="336.5"></line><line x1="484" y1="355.0" x2="512" y2="355.0"></line><line x1="484" y1="373.5" x2="512" y2="373.5"></line><line x1="484" y1="392.0" x2="512" y2="392.0"></line><line x1="484" y1="410.5" x2="512" y2="410.5"></line><line x1="484" y1="429.0" x2="512" y2="429.0"></line><line x1="484" y1="447.5" x2="512" y2="447.5"></line><line x1="484" y1="466.0" x2="512" y2="466.0"></line><line x1="484" y1="484.5" x2="512" y2="484.5"></line><line x1="484" y1="503.0" x2="512" y2="503.0"></line><line x1="484" y1="521.5" x2="512" y2="521.5"></line><line x1="484" y1="540.0" x2="512" y2="540.0"></line><line x1="484" y1="558.5" x2="512" y2="558.5"></line><line x1="484" y1="577.0" x2="512" y2="577.0"></line><line x1="484" y1="595.5" x2="512" y2="595.5"></line><line x1="484" y1="614.0" x2="512" y2="614.0"></line><line x1="484" y1="632.5" x2="512" y2="632.5"></line><line x1="484" y1="651.0" x2="512" y2="651.0"></line><line x1="484" y1="669.5" x2="512" y2="669.5"></line><rect x="528" y="160" width="32" height="540" rx="4"></rect><line x1="530" y1="170.0" x2="558" y2="170.0"></line><line x1="530" y1="188.5" x2="558" y2="188.5"></line><line x1="530" y1="207.0" x2="558" y2="207.0"></line><line x1="530" y1="225.5" x2="558" y2="225.5"></line><line x1="530" y1="244.0" x2="558" y2="244.0"></line><line x1="530" y1="262.5" x2="558" y2="262.5"></line><line x1="530" y1="281.0" x2="558" y2="281.0"></line><line x1="530" y1="299.5" x2="558" y2="299.5"></line><line x1="530" y1="318.0" x2="558" y2="318.0"></line><line x1="530" y1="336.5" x2="558" y2="336.5"></line><line x1="530" y1="355.0" x2="558" y2="355.0"></line><line x1="530" y1="373.5" x2="558" y2="373.5"></line><line x1="530" y1="392.0" x2="558" y2="392.0"></line><line x1="530" y1="410.5" x2="558" y2="410.5"></line><line x1="530" y1="429.0" x2="558" y2="429.0"></line><line x1="530" y1="447.5" x2="558" y2="447.5"></line><line x1="530" y1="466.0" x2="558" y2="466.0"></line><line x1="530" y1="484.5" x2="558" y2="484.5"></line><line x1="530" y1="503.0" x2="558" y2="503.0"></line><line x1="530" y1="521.5" x2="558" y2="521.5"></line><line x1="530" y1="540.0" x2="558" y2="540.0"></line><line x1="530" y1="558.5" x2="558" y2="558.5"></line><line x1="530" y1="577.0" x2="558" y2="577.0"></line><line x1="530" y1="595.5" x2="558" y2="595.5"></line><line x1="530" y1="614.0" x2="558" y2="614.0"></line><line x1="530" y1="632.5" x2="558" y2="632.5"></line><line x1="530" y1="651.0" x2="558" y2="651.0"></line><line x1="530" y1="669.5" x2="558" y2="669.5"></line><rect x="574" y="160" width="32" height="540" rx="4"></rect><line x1="576" y1="170.0" x2="604" y2="170.0"></line><line x1="576" y1="188.5" x2="604" y2="188.5"></line><line x1="576" y1="207.0" x2="604" y2="207.0"></line><line x1="576" y1="225.5" x2="604" y2="225.5"></line><line x1="576" y1="244.0" x2="604" y2="244.0"></line><line x1="576" y1="262.5" x2="604" y2="262.5"></line><line x1="576" y1="281.0" x2="604" y2="281.0"></line><line x1="576" y1="299.5" x2="604" y2="299.5"></line><line x1="576" y1="318.0" x2="604" y2="318.0"></line><line x1="576" y1="336.5" x2="604" y2="336.5"></line><line x1="576" y1="355.0" x2="604" y2="355.0"></line><line x1="576" y1="373.5" x2="604" y2="373.5"></line><line x1="576" y1="392.0" x2="604" y2="392.0"></line><line x1="576" y1="410.5" x2="604" y2="410.5"></line><line x1="576" y1="429.0" x2="604" y2="429.0"></line><line x1="576" y1="447.5" x2="604" y2="447.5"></line><line x1="576" y1="466.0" x2="604" y2="466.0"></line><line x1="576" y1="484.5" x2="604" y2="484.5"></line><line x1="576" y1="503.0" x2="604" y2="503.0"></line><line x1="576" y1="521.5" x2="604" y2="521.5"></line><line x1="576" y1="540.0" x2="604" y2="540.0"></line><line x1="576" y1="558.5" x2="604" y2="558.5"></line><line x1="576" y1="577.0" x2="604" y2="577.0"></line><line x1="576" y1="595.5" x2="604" y2="595.5"></line><line x1="576" y1="614.0" x2="604" y2="614.0"></line><line x1="576" y1="632.5" x2="604" y2="632.5"></line><line x1="576" y1="651.0" x2="604" y2="651.0"></line><line x1="576" y1="669.5" x2="604" y2="669.5"></line><rect x="620" y="160" width="32" height="540" rx="4"></rect><line x1="622" y1="170.0" x2="650" y2="170.0"></line><line x1="622" y1="188.5" x2="650" y2="188.5"></line><line x1="622" y1="207.0" x2="650" y2="207.0"></line><line x1="622" y1="225.5" x2="650" y2="225.5"></line><line x1="622" y1="244.0" x2="650" y2="244.0"></line><line x1="622" y1="262.5" x2="650" y2="262.5"></line><line x1="622" y1="281.0" x2="650" y2="281.0"></line><line x1="622" y1="299.5" x2="650" y2="299.5"></line><line x1="622" y1="318.0" x2="650" y2="318.0"></line><line x1="622" y1="336.5" x2="650" y2="336.5"></line><line x1="622" y1="355.0" x2="650" y2="355.0"></line><line x1="622" y1="373.5" x2="650" y2="373.5"></line><line x1="622" y1="392.0" x2="650" y2="392.0"></line><line x1="622" y1="410.5" x2="650" y2="410.5"></line><line x1="622" y1="429.0" x2="650" y2="429.0"></line><line x1="622" y1="447.5" x2="650" y2="447.5"></line><line x1="622" y1="466.0" x2="650" y2="466.0"></line><line x1="622" y1="484.5" x2="650" y2="484.5"></line><line x1="622" y1="503.0" x2="650" y2="503.0"></line><line x1="622" y1="521.5" x2="650" y2="521.5"></line><line x1="622" y1="540.0" x2="650" y2="540.0"></line><line x1="622" y1="558.5" x2="650" y2="558.5"></line><line x1="622" y1="577.0" x2="650" y2="577.0"></line><line x1="622" y1="595.5" x2="650" y2="595.5"></line><line x1="622" y1="614.0" x2="650" y2="614.0"></line><line x1="622" y1="632.5" x2="650" y2="632.5"></line><line x1="622" y1="651.0" x2="650" y2="651.0"></line><line x1="622" y1="669.5" x2="650" y2="669.5"></line><rect x="666" y="160" width="32" height="540" rx="4"></rect><line x1="668" y1="170.0" x2="696" y2="170.0"></line><line x1="668" y1="188.5" x2="696" y2="188.5"></line><line x1="668" y1="207.0" x2="696" y2="207.0"></line><line x1="668" y1="225.5" x2="696" y2="225.5"></line><line x1="668" y1="244.0" x2="696" y2="244.0"></line><line x1="668" y1="262.5" x2="696" y2="262.5"></line><line x1="668" y1="281.0" x2="696" y2="281.0"></line><line x1="668" y1="299.5" x2="696" y2="299.5"></line><line x1="668" y1="318.0" x2="696" y2="318.0"></line><line x1="668" y1="336.5" x2="696" y2="336.5"></line><line x1="668" y1="355.0" x2="696" y2="355.0"></line><line x1="668" y1="373.5" x2="696" y2="373.5"></line><line x1="668" y1="392.0" x2="696" y2="392.0"></line><line x1="668" y1="410.5" x2="696" y2="410.5"></line><line x1="668" y1="429.0" x2="696" y2="429.0"></line><line x1="668" y1="447.5" x2="696" y2="447.5"></line><line x1="668" y1="466.0" x2="696" y2="466.0"></line><line x1="668" y1="484.5" x2="696" y2="484.5"></line><line x1="668" y1="503.0" x2="696" y2="503.0"></line><line x1="668" y1="521.5" x2="696" y2="521.5"></line><line x1="668" y1="540.0" x2="696" y2="540.0"></line><line x1="668" y1="558.5" x2="696" y2="558.5"></line><line x1="668" y1="577.0" x2="696" y2="577.0"></line><line x1="668" y1="595.5" x2="696" y2="595.5"></line><line x1="668" y1="614.0" x2="696" y2="614.0"></line><line x1="668" y1="632.5" x2="696" y2="632.5"></line><line x1="668" y1="651.0" x2="696" y2="651.0"></line><line x1="668" y1="669.5" x2="696" y2="669.5"></line><rect x="712" y="160" width="32" height="540" rx="4"></rect><line x1="714" y1="170.0" x2="742" y2="170.0"></line><line x1="714" y1="188.5" x2="742" y2="188.5"></line><line x1="714" y1="207.0" x2="742" y2="207.0"></line><line x1="714" y1="225.5" x2="742" y2="225.5"></line><line x1="714" y1="244.0" x2="742" y2="244.0"></line><line x1="714" y1="262.5" x2="742" y2="262.5"></line><line x1="714" y1="281.0" x2="742" y2="281.0"></line><line x1="714" y1="299.5" x2="742" y2="299.5"></line><line x1="714" y1="318.0" x2="742" y2="318.0"></line><line x1="714" y1="336.5" x2="742" y2="336.5"></line><line x1="714" y1="355.0" x2="742" y2="355.0"></line><line x1="714" y1="373.5" x2="742" y2="373.5"></line><line x1="714" y1="392.0" x2="742" y2="392.0"></line><line x1="714" y1="410.5" x2="742" y2="410.5"></line><line x1="714" y1="429.0" x2="742" y2="429.0"></line><line x1="714" y1="447.5" x2="742" y2="447.5"></line><line x1="714" y1="466.0" x2="742" y2="466.0"></line><line x1="714" y1="484.5" x2="742" y2="484.5"></line><line x1="714" y1="503.0" x2="742" y2="503.0"></line><line x1="714" y1="521.5" x2="742" y2="521.5"></line><line x1="714" y1="540.0" x2="742" y2="540.0"></line><line x1="714" y1="558.5" x2="742" y2="558.5"></line><line x1="714" y1="577.0" x2="742" y2="577.0"></line><line x1="714" y1="595.5" x2="742" y2="595.5"></line><line x1="714" y1="614.0" x2="742" y2="614.0"></line><line x1="714" y1="632.5" x2="742" y2="632.5"></line><line x1="714" y1="651.0" x2="742" y2="651.0"></line><line x1="714" y1="669.5" x2="742" y2="669.5"></line><rect x="758" y="160" width="32" height="540" rx="4"></rect><line x1="760" y1="170.0" x2="788" y2="170.0"></line><line x1="760" y1="188.5" x2="788" y2="188.5"></line><line x1="760" y1="207.0" x2="788" y2="207.0"></line><line x1="760" y1="225.5" x2="788" y2="225.5"></line><line x1="760" y1="244.0" x2="788" y2="244.0"></line><line x1="760" y1="262.5" x2="788" y2="262.5"></line><line x1="760" y1="281.0" x2="788" y2="281.0"></line><line x1="760" y1="299.5" x2="788" y2="299.5"></line><line x1="760" y1="318.0" x2="788" y2="318.0"></line><line x1="760" y1="336.5" x2="788" y2="336.5"></line><line x1="760" y1="355.0" x2="788" y2="355.0"></line><line x1="760" y1="373.5" x2="788" y2="373.5"></line><line x1="760" y1="392.0" x2="788" y2="392.0"></line><line x1="760" y1="410.5" x2="788" y2="410.5"></line><line x1="760" y1="429.0" x2="788" y2="429.0"></line><line x1="760" y1="447.5" x2="788" y2="447.5"></line><line x1="760" y1="466.0" x2="788" y2="466.0"></line><line x1="760" y1="484.5" x2="788" y2="484.5"></line><line x1="760" y1="503.0" x2="788" y2="503.0"></line><line x1="760" y1="521.5" x2="788" y2="521.5"></line><line x1="760" y1="540.0" x2="788" y2="540.0"></line><line x1="760" y1="558.5" x2="788" y2="558.5"></line><line x1="760" y1="577.0" x2="788" y2="577.0"></line><line x1="760" y1="595.5" x2="788" y2="595.5"></line><line x1="760" y1="614.0" x2="788" y2="614.0"></line><line x1="760" y1="632.5" x2="788" y2="632.5"></line><line x1="760" y1="651.0" x2="788" y2="651.0"></line><line x1="760" y1="669.5" x2="788" y2="669.5"></line></g>
+              <g class="bp-slots"><circle cx="140" cy="110" r="7"></circle><circle cx="230" cy="110" r="7"></circle><circle cx="320" cy="110" r="7"></circle><circle cx="410" cy="110" r="7"></circle><circle cx="500" cy="110" r="7"></circle><circle cx="590" cy="110" r="7"></circle><circle cx="680" cy="110" r="7"></circle><circle cx="770" cy="110" r="7"></circle><circle cx="140" cy="310" r="7"></circle><circle cx="230" cy="310" r="7"></circle><circle cx="320" cy="310" r="7"></circle><circle cx="410" cy="310" r="7"></circle><circle cx="500" cy="310" r="7"></circle><circle cx="590" cy="310" r="7"></circle><circle cx="680" cy="310" r="7"></circle><circle cx="770" cy="310" r="7"></circle><circle cx="140" cy="510" r="7"></circle><circle cx="230" cy="510" r="7"></circle><circle cx="320" cy="510" r="7"></circle><circle cx="410" cy="510" r="7"></circle><circle cx="500" cy="510" r="7"></circle><circle cx="590" cy="510" r="7"></circle><circle cx="680" cy="510" r="7"></circle><circle cx="770" cy="510" r="7"></circle><circle cx="140" cy="710" r="7"></circle><circle cx="230" cy="710" r="7"></circle><circle cx="320" cy="710" r="7"></circle><circle cx="410" cy="710" r="7"></circle><circle cx="500" cy="710" r="7"></circle><circle cx="590" cy="710" r="7"></circle><circle cx="680" cy="710" r="7"></circle><circle cx="770" cy="710" r="7"></circle></g>
+              <text x="200" y="742">Zone A — 30 slots</text>
+              <text x="430" y="742">Zone B — 50 slots</text>
+              <text x="655" y="742">Zone C — 40 slots</text>
+              <text class="bp-cap" x="770" y="146">N &#8593;</text>
+              <text class="bp-cap" x="748" y="806">Scale 1:500</text>
+            </g>
+          </g>
+        </svg>
+      </div>
   <div class="wrap">
     <span class="eyebrow">About the project</span>
-    <h2 data-rev>What is <span class="hl">PARADA?</span></h2>
+    <h2 data-split>What is PARADA?</h2>
     <div class="two-col">
-      <p class="lede" data-rev>PARADA is a mobile and web-based smart parking management system designed to help drivers and parking administrators understand, manage, and monitor parking availability through a unified platform.</p>
-      <p class="lede" data-rev style="--d:60ms">Instead of attempting to individually monitor every parking space, PARADA uses zone-based occupancy as its primary operational metric — the zone, not the individual slot, is the authoritative unit of availability.</p>
+      <p class="lede">PARADA is a mobile and web-based smart parking management system designed to help drivers and parking administrators understand, manage, and monitor parking availability through a unified platform.</p>
+      <p class="lede">Instead of attempting to individually monitor every parking space, PARADA uses zone-based occupancy as its primary operational metric — the zone, not the individual slot, is the authoritative unit of availability.</p>
     </div>
     <div class="zones-row" data-rev style="--d:0ms">
       <div class="zone-card"><div class="zn">Zone A</div><div class="bar"><span style="width:60%"></span></div><div class="figs"><span>18 / 30 occupied</span><span class="avail">12 available</span></div></div>
@@ -293,75 +568,288 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
   </div>
 </section>
 
-<!-- 02 Problem -->
 <section class="band on-dark">
   <div class="corners"><span>02</span><span>Problem</span></div>
   <div class="wrap">
     <span class="eyebrow">The problem</span>
-    <h2 data-rev>Parking should be easier <span class="hl">to understand.</span></h2>
+    <h2 data-split>Parking should be easier to understand.</h2>
     <div class="cells">
-      <div class="cell" data-rev style="--d:0ms"><div class="sub">For drivers</div><p>Uncertainty about where capacity is available.</p></div>
-      <div class="cell" data-rev style="--d:60ms"><div class="sub">For administrators</div><p>Difficulty monitoring occupancy and parking activity manually.</p></div>
-      <div class="cell" data-rev style="--d:120ms"><div class="sub">For establishments</div><p>Disconnected parking operations and limited visibility into utilization.</p></div>
+      <div class="cell" data-rev style="--d:0ms"><h3 class="sub">For drivers</h3><p>Uncertainty about where capacity is available.</p></div>
+      <div class="cell" data-rev style="--d:60ms"><h3 class="sub">For administrators</h3><p>Difficulty monitoring occupancy and parking activity manually.</p></div>
+      <div class="cell" data-rev style="--d:120ms"><h3 class="sub">For establishments</h3><p>Disconnected parking operations and limited visibility into utilization.</p></div>
     </div>
-    <p class="lede" style="margin-top:28px;" data-rev>PARADA brings these activities together through one connected system.</p>
+    <p class="lede" style="margin-top:28px;">PARADA brings these activities together through one connected system.</p>
   </div>
 </section>
 
-<!-- 03 Objective -->
 <section class="band on-light">
   <div class="corners"><span>03</span><span>Objective</span></div>
   <div class="wrap">
     <span class="eyebrow">Project objective</span>
-    <h2 data-rev>Our <span class="hl">goal</span></h2>
-    <p class="lede" style="font-size:17px;max-width:70ch;" data-rev>To develop a smart parking management system that combines computer vision, license-plate recognition, zone-based occupancy monitoring, parking operations, mobile navigation, and web-based administration into a unified platform.</p>
+    <h2 data-split>Our goal</h2>
+    <p class="lede" style="font-size:17px;max-width:70ch;">To develop a smart parking management system that combines computer vision, license-plate recognition, zone-based occupancy monitoring, parking operations, mobile navigation, and web-based administration into a unified platform.</p>
   </div>
 </section>
 
-<!-- 04 How it works (pipeline overview) -->
-<section class="band on-dark" id="how">
-  <div class="corners"><span>04</span><span>How it works</span></div>
-  <div class="wrap">
-    <span class="eyebrow">How PARADA works</span>
-    <h2 data-rev>From arrival to receipt, <span class="hl">one pipeline.</span></h2>
-    <div class="flow">
-      <div class="flow-step" data-rev style="--d:0ms"><span class="n">01</span><div><div class="t">Vehicle arrives</div><p class="d">The vehicle reaches a zone gate or entry point.</p></div></div>
-      <div class="flow-step" data-rev style="--d:20ms"><span class="n">02</span><div><div class="t">Zone-gate camera</div><p class="d">The gate camera observes the vehicle and captures the license plate.</p></div></div>
-      <div class="flow-step" data-rev style="--d:40ms"><span class="n">03</span><div><div class="t">Computer vision + OCR</div><p class="d">Image processing reads the plate text.</p></div></div>
-      <div class="flow-step" data-rev style="--d:60ms"><span class="n">04</span><div><div class="t">PARADA API</div><p class="d">The API determines the vehicle, user, zone, reservation, and admission policy.</p></div></div>
-      <div class="flow-step" data-rev style="--d:80ms"><span class="n">05</span><div><div class="t">Vehicle / user / guest resolution</div><p class="d">The plate resolves to a registered vehicle and user, or a guest candidate under policy.</p></div></div>
-      <div class="flow-step" data-rev style="--d:100ms"><span class="n">06</span><div><div class="t">Occupancy + session</div><p class="d">Zone occupancy and the parking session update in the same transaction.</p></div></div>
-      <div class="flow-step" data-rev style="--d:120ms"><span class="n">07</span><div><div class="t">Mobile + admin</div><p class="d">Both clients read the same backend-authoritative state — drivers on mobile, administrators on the web dashboard.</p></div></div>
-      <div class="flow-step" data-rev style="--d:140ms"><span class="n">08</span><div><div class="t">Vehicle exits</div><p class="d">The exit camera/OCR event enters the API.</p></div></div>
-      <div class="flow-step" data-rev style="--d:160ms"><span class="n">09</span><div><div class="t">Session closes</div><p class="d">Duration is computed, the fee is finalized, and the zone's occupancy is reconciled.</p></div></div>
+<section class="pipeline" id="how" data-pin="pipeline">
+  <div class="stage">
+    <div class="corners" style="color:var(--on-dark);"><span>04</span><span>How it works</span></div>
+    <div class="stage-head">
+      <span class="eyebrow">How PARADA works</span>
+      <h2>From arrival to receipt, one pipeline.</h2>
+    </div>
+
+    <div class="track" data-track>
+      <div class="scene" data-scene="0">
+        <div class="scene-copy"><span class="n">01</span><div class="t">Vehicle arrives</div><p class="d">The vehicle reaches a zone gate or entry point.</p></div>
+        <div class="scene-vis">
+          <svg class="svg-scene" data-svg="0" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet">
+            <path class="s-line" d="M0 250 H640" opacity=".5"></path>
+            <path class="s-line" d="M0 300 H640" opacity=".2" stroke-dasharray="18 14"></path>
+            <path class="s-accent" data-el="gate-post" d="M470 150 V300"></path>
+            <g data-el="gate-arm"><path class="s-accent" d="M470 158 H592"></path><path class="s-accent" d="M500 158 v6 M530 158 v6 M560 158 v6" opacity=".6"></path></g>
+            <circle class="s-dot" data-el="gate-light" cx="470" cy="140" r="6"></circle>
+            
+            <g data-el="car0" class="s-ink">
+              <path d="M0 30 L14 8 H58 L74 30 H82 V50 H-6 V30 Z"></path>
+              <path d="M18 12 H54 L64 29 H8 Z" opacity=".45"></path>
+              <circle cx="8" cy="50" r="7"></circle><circle cx="66" cy="50" r="7"></circle>
+            </g>
+            <text class="s-cap" x="0" y="360">Zone A — entry point</text>
+            <text class="s-cap" x="470" y="330">Gate</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="scene" data-scene="1">
+        <div class="scene-copy"><span class="n">02</span><div class="t">Zone-gate camera</div><p class="d">The gate camera observes the vehicle and captures the license plate.</p></div>
+        <div class="scene-vis">
+          <svg class="svg-scene" data-svg="1" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet">
+            <defs><clipPath id="plateClip"><rect x="60" y="212" width="220" height="66"></rect></clipPath></defs>
+            <path data-el="cone" d="M500 110 L180 250 L500 250 Z" fill="#ff4d00" fill-opacity=".10" stroke="none"></path>
+            
+            <g class="s-ink" transform="translate(470,66)">
+              <path d="M0 14 H12 L16 6 H38 L42 14 H56 V44 H0 Z"></path>
+              <circle cx="28" cy="29" r="11"></circle><circle cx="28" cy="29" r="4"></circle>
+              <path d="M48 20 h6"></path>
+            </g>
+            <g class="s-ink" opacity=".8" transform="translate(110,110) scale(.7)">
+              <path d="M0 30 L14 8 H58 L74 30 H82 V50 H-6 V30 Z"></path>
+              <circle cx="8" cy="50" r="7"></circle><circle cx="66" cy="50" r="7"></circle>
+            </g>
+            <rect class="s-node" data-el="plate-box" x="60" y="212" width="220" height="66"></rect>
+            <text class="s-plate" data-el="plate1" x="170" y="254" text-anchor="middle">........</text>
+            <g clip-path="url(#plateClip)"><path class="s-accent" data-el="scan1" d="M60 214 H280"></path></g>
+            <path class="s-accent" d="M60 212 h18 M60 212 v18 M262 212 h18 M280 212 v18 M60 278 h18 M60 260 v18 M262 278 h18 M280 260 v18"></path>
+            <text class="s-cap" x="0" y="360">Capture frame locked</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="scene" data-scene="2">
+        <div class="scene-copy"><span class="n">03</span><div class="t">Computer vision + OCR</div><p class="d">Image processing reads the plate text.</p></div>
+        <div class="scene-vis">
+          <svg class="svg-scene" data-svg="2" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet">
+            
+            <rect class="s-node" data-el="p3-0" x="180" y="20" width="280" height="46"></rect>
+            <text class="s-lbl" x="320" y="48" text-anchor="middle">Captured image</text>
+            <rect class="s-node" data-el="p3-1" x="180" y="94" width="280" height="46"></rect>
+            <text class="s-lbl" x="320" y="122" text-anchor="middle">Computer vision</text>
+            <rect class="s-node" data-el="p3-2" x="180" y="168" width="280" height="46"></rect>
+            <text class="s-lbl" x="320" y="196" text-anchor="middle">Plate detection</text>
+            <rect class="s-node" data-el="p3-3" x="180" y="242" width="280" height="46"></rect>
+            <text class="s-lbl" x="320" y="270" text-anchor="middle">OCR</text>
+            <path class="s-line" data-draw3="0" d="M320 66 V94"></path><path class="s-line" data-draw3="1" d="M320 140 V168"></path><path class="s-line" data-draw3="2" d="M320 214 V242"></path>
+            <path class="s-line" data-draw3="3" d="M320 288 V316"></path>
+            <rect class="s-accent" data-el="p3-out" x="180" y="316" width="280" height="56"></rect>
+            <text class="s-plate" data-el="plate2" x="320" y="352" text-anchor="middle">........</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="scene" data-scene="3">
+        <div class="scene-copy"><span class="n">04</span><div class="t">PARADA API</div><p class="d">The API determines the vehicle, user, zone, reservation, and admission policy.</p></div>
+        <div class="scene-vis">
+          <svg class="svg-scene" data-svg="3" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet">
+            <path class="s-line" data-draw4="0" d="M320 200 L96 92" opacity=".6"></path><path class="s-line" data-draw4="1" d="M320 200 L544 92" opacity=".6"></path><path class="s-line" data-draw4="2" d="M320 200 L96 312" opacity=".6"></path><path class="s-line" data-draw4="3" d="M320 200 L544 312" opacity=".6"></path><path class="s-line" data-draw4="4" d="M320 200 L320 372" opacity=".6"></path>
+            <text class="s-cap" x="96" y="78" text-anchor="middle">Vehicle</text><text class="s-cap" x="544" y="78" text-anchor="middle">User</text><text class="s-cap" x="96" y="336" text-anchor="middle">Zone</text><text class="s-cap" x="544" y="336" text-anchor="middle">Reservation</text><text class="s-cap" x="320" y="392" text-anchor="middle">Admission policy</text>
+            <circle class="s-accent" data-el="hub-ring" cx="320" cy="200" r="72" opacity="0"></circle>
+            <g data-el="hub">
+              <circle class="s-accent" cx="320" cy="200" r="46"></circle>
+              <path class="s-accent" data-el="hub-plus" d="M320 182 V218 M302 200 H338"></path>
+            </g>
+            <text class="s-lbl s-accent-lbl" x="320" y="272" text-anchor="middle">Parada API</text>
+            <circle class="s-dot" data-pk4="0" r="4" cx="320" cy="200" opacity="0"></circle><circle class="s-dot" data-pk4="1" r="4" cx="320" cy="200" opacity="0"></circle><circle class="s-dot" data-pk4="2" r="4" cx="320" cy="200" opacity="0"></circle><circle class="s-dot" data-pk4="3" r="4" cx="320" cy="200" opacity="0"></circle><circle class="s-dot" data-pk4="4" r="4" cx="320" cy="200" opacity="0"></circle>
+          </svg>
+        </div>
+      </div>
+
+      <div class="scene" data-scene="4">
+        <div class="scene-copy"><span class="n">05</span><div class="t">Vehicle / user / guest resolution</div><p class="d">The plate resolves to a registered vehicle and user, or a guest candidate under policy.</p></div>
+        <div class="scene-vis">
+          <svg class="svg-scene" data-svg="4" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet">
+            <rect class="s-node" x="10" y="176" width="130" height="48"></rect>
+            <text class="s-plate" x="75" y="207" text-anchor="middle" style="font-size:13px">ABC 1234</text>
+            <path class="s-line" data-draw5="stem" d="M140 200 H250"></path>
+            <path class="s-line" data-draw5="up" d="M250 200 V104 H352"></path>
+            <path class="s-accent" data-draw5="down" d="M250 200 V296 H352"></path>
+            <rect class="s-node" data-el="reg-node" x="352" y="76" width="270" height="56"></rect>
+            <text class="s-lbl" x="487" y="100" text-anchor="middle">Registered vehicle</text>
+            <text class="s-cap" x="487" y="118" text-anchor="middle">→ registered user → session</text>
+            <rect class="s-accent" data-el="guest-node" x="352" y="268" width="270" height="56"></rect>
+            <text class="s-lbl s-accent-lbl" x="487" y="292" text-anchor="middle">Guest candidate</text>
+            <text class="s-cap" x="487" y="310" text-anchor="middle">→ guest admission policy</text>
+            <circle class="s-accent" data-el="guest-ring" cx="487" cy="296" r="60" opacity="0"></circle>
+            <circle class="s-dot" data-el="branch-dot" r="5" cx="140" cy="200" opacity="0"></circle>
+          </svg>
+        </div>
+      </div>
+
+      <div class="scene" data-scene="5">
+        <div class="scene-copy"><span class="n">06</span><div class="t">Occupancy + session</div><p class="d">Zone occupancy and the parking session update in the same transaction.</p></div>
+        <div class="scene-vis">
+          <svg class="svg-scene" data-svg="5" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet">
+            <text class="s-cap" x="20" y="96">Zone A occupancy</text>
+            <text class="s-num" data-el="occ-count" x="20" y="140">18 / 30</text>
+            <rect class="s-node" x="20" y="168" width="600" height="18"></rect>
+            <rect data-el="occ-fill" fill="#ff4d00" x="20" y="168" width="600" height="18" style="transform-origin:20px 168px"></rect>
+            <path class="s-line" data-draw6="stem" d="M320 186 V240"></path>
+            <rect class="s-accent" data-el="session-chip" x="140" y="240" width="360" height="56" opacity="0"></rect>
+            <text class="s-lbl s-accent-lbl" data-el="session-lbl" x="320" y="266" text-anchor="middle" opacity="0">Session opened</text>
+            <text class="s-cap" data-el="session-cap" x="320" y="284" text-anchor="middle" opacity="0">ABC 1234 · one authoritative transaction</text>
+            <path class="s-line" data-draw6="brace" d="M40 330 V344 H600 V330" opacity=".4"></path>
+            <text class="s-cap" x="320" y="368" text-anchor="middle">Occupancy and session commit together</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="scene" data-scene="6">
+        <div class="scene-copy"><span class="n">07</span><div class="t">Mobile + admin</div><p class="d">Both clients read the same backend-authoritative state — drivers on mobile, administrators on the web dashboard.</p></div>
+        <div class="scene-vis">
+          <svg class="svg-scene" data-svg="6" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet">
+            <rect class="s-accent" x="200" y="20" width="240" height="52"></rect>
+            <text class="s-lbl s-accent-lbl" x="320" y="52" text-anchor="middle">Parada API state</text>
+            <path class="s-line" data-draw7="l" d="M320 72 V120 H130 V168"></path>
+            <path class="s-line" data-draw7="r" d="M320 72 V120 H470 V168"></path>
+            <g class="s-node">
+              <path d="M96 168 h68 a6 6 0 0 1 6 6 v150 a6 6 0 0 1 -6 6 h-68 a6 6 0 0 1 -6 -6 v-150 a6 6 0 0 1 6 -6 z"></path>
+              <path d="M118 178 h24"></path><path d="M114 316 h32"></path>
+              <path class="s-accent" data-el="m-row" d="M100 200 H160"></path>
+              <path d="M100 220 H160 M100 240 H160 M100 260 H160" opacity=".5"></path>
+            </g>
+            <text class="s-cap" x="130" y="352" text-anchor="middle">Mobile — driver</text>
+            <g class="s-node">
+              <path d="M350 168 H610 V330 H350 Z"></path>
+              <path d="M392 168 V330" opacity=".6"></path>
+              <path d="M360 190 H382 M360 210 H382 M360 230 H382 M360 250 H382" opacity=".5"></path>
+              <path class="s-accent" data-el="a-tile" d="M406 186 H470 V222 H406 Z"></path>
+              <path d="M482 186 H546 V222 H482 Z M558 186 H596 V222 H558 Z M406 236 H596 V310 H406 Z" opacity=".5"></path>
+            </g>
+            <text class="s-cap" x="480" y="352" text-anchor="middle">Admin web — operations</text>
+            <circle class="s-dot" data-pk7="l" r="4" cx="320" cy="72" opacity="0"></circle>
+            <circle class="s-dot" data-pk7="r" r="4" cx="320" cy="72" opacity="0"></circle>
+          </svg>
+        </div>
+      </div>
+
+      <div class="scene" data-scene="7">
+        <div class="scene-copy"><span class="n">08</span><div class="t">Vehicle exits</div><p class="d">The exit camera/OCR event enters the API.</p></div>
+        <div class="scene-vis">
+          <svg class="svg-scene" data-svg="7" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet">
+            <path class="s-line" d="M0 300 H330" opacity=".5"></path>
+            
+            <g class="s-ink" transform="translate(60,60)">
+              <path d="M0 14 H12 L16 6 H38 L42 14 H56 V44 H0 Z"></path>
+              <circle cx="28" cy="29" r="11"></circle><circle cx="28" cy="29" r="4"></circle>
+              <path d="M48 20 h6"></path>
+            </g>
+            <path data-el="cone8" d="M90 108 L20 250 L200 250 Z" fill="#ff4d00" fill-opacity=".10" stroke="none"></path>
+            <g data-el="car8" class="s-ink" transform="translate(60,266) scale(.8)">
+              <path d="M0 30 L14 8 H58 L74 30 H82 V50 H-6 V30 Z"></path>
+              <circle cx="8" cy="50" r="7"></circle><circle cx="66" cy="50" r="7"></circle>
+            </g>
+            
+            <rect class="s-node" data-el="p8-0" x="380" y="28" width="250" height="44"></rect>
+            <text class="s-lbl" x="505" y="56" text-anchor="middle">Exit camera</text>
+            <rect class="s-node" data-el="p8-1" x="380" y="116" width="250" height="44"></rect>
+            <text class="s-lbl" x="505" y="144" text-anchor="middle">Plate capture</text>
+            <rect class="s-node" data-el="p8-2" x="380" y="204" width="250" height="44"></rect>
+            <text class="s-lbl" x="505" y="232" text-anchor="middle">OCR</text>
+            <rect class="s-node" data-el="p8-3" x="380" y="292" width="250" height="44"></rect>
+            <text class="s-lbl" x="505" y="320" text-anchor="middle">Parada API</text>
+            <path class="s-line" data-draw8="0" d="M505 72 V116"></path><path class="s-line" data-draw8="1" d="M505 160 V204"></path><path class="s-line" data-draw8="2" d="M505 248 V292"></path>
+            <circle class="s-dot" data-el="pk8" r="4" cx="505" cy="72" opacity="0"></circle>
+            <text class="s-cap" x="0" y="360">Vehicle leaves — exit event enters the API</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="scene" data-scene="8">
+        <div class="scene-copy"><span class="n">09</span><div class="t">Session completed + fee</div><p class="d">The backend closes the session and calculates the fee where configured.</p></div>
+        <div class="scene-vis">
+          <svg class="svg-scene" data-svg="8" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet">
+            <path class="s-node" data-el="rcpt" d="M190 30 H450 V330 L438 342 L426 330 L414 342 L402 330 L390 342 L378 330 L366 342 L354 330 L342 342 L330 330 L318 342 L306 330 L294 342 L282 330 L270 342 L258 330 L246 342 L234 330 L222 342 L210 330 L198 342 L190 330 Z"></path>
+            <text class="s-lbl" x="320" y="66" text-anchor="middle">Session closed</text>
+            <path class="s-line" data-draw9="rule" d="M210 82 H430" opacity=".4"></path>
+            
+            <g data-el="r9-0" opacity="0">
+              <text class="s-cap" x="210" y="118">Plate</text>
+              <text class="s-cap" x="430" y="118" text-anchor="end" opacity="1">ABC 1234</text>
+            </g>
+            <g data-el="r9-1" opacity="0">
+              <text class="s-cap" x="210" y="152">Zone</text>
+              <text class="s-cap" x="430" y="152" text-anchor="end" opacity="1">A — Riverside</text>
+            </g>
+            <g data-el="r9-2" opacity="0">
+              <text class="s-cap" x="210" y="186">Duration</text>
+              <text class="s-cap" x="430" y="186" text-anchor="end" opacity="1">02:14</text>
+            </g>
+            <g data-el="r9-3" opacity="0">
+              <text class="s-cap" x="210" y="220">Rate</text>
+              <text class="s-cap" x="430" y="220" text-anchor="end" opacity="1">configured</text>
+            </g>
+            <path class="s-accent" data-draw9="total" d="M210 268 H430"></path>
+            <g data-el="r9-total" opacity="0">
+              <text class="s-lbl s-accent-lbl" x="210" y="298">Fee</text>
+              <text class="s-lbl s-accent-lbl" x="430" y="298" text-anchor="end">Calculated</text>
+            </g>
+            <circle class="s-accent" data-el="rcpt-ring" cx="320" cy="186" r="120" opacity="0"></circle>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="rail">
+      <div class="bar"><span></span></div>
+      <div class="dots" data-dots>
+        <i>01</i><i>02</i><i>03</i><i>04</i><i>05</i><i>06</i><i>07</i><i>08</i><i>09</i>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- 05 Zone occupancy -->
 <section class="band on-light">
-  <div class="corners"><span>05</span><span>Intelligence</span></div>
+  <div class="corners"><span>05</span><span>Zone-based</span></div>
   <div class="wrap">
-    <span class="eyebrow">Zone intelligence</span>
-    <h2 data-rev>PARADA doesn't need to know every space <span class="hl">individually.</span></h2>
-    <div class="cells" style="grid-template-columns:repeat(2,1fr);">
-      <div class="cell" data-rev style="--d:0ms"><div class="sub">Capacity − occupied</div><p>Availability is computed at the zone level, the authoritative unit of occupancy.</p></div>
-      <div class="cell" data-rev style="--d:60ms"><div class="sub">Camera events</div><p>Entry and exit events from zone-gate cameras keep occupancy current.</p></div>
-    </div>
+    <span class="eyebrow">Why zone-based?</span>
+    <h2 data-split>PARADA doesn't need to know every space individually.</h2>
+    <p class="lede" style="font-size:15.5px;">PARADA treats the parking zone as the authoritative unit of availability. Physical parking spaces can still exist as inventory or layout information, but operational occupancy is represented at the zone level — this keeps the system accurate with standard gate cameras instead of a sensor on every slot.</p>
   </div>
 </section>
 
-<!-- 06 Features -->
 <section class="band on-dark" id="features">
   <div class="corners"><span>06</span><span>Features</span></div>
   <div class="wrap">
-    <span class="eyebrow">Capabilities</span>
-    <h2 data-rev>Grouped by system <span class="hl">module.</span></h2>
-    <p class="mod-subtitle" data-rev>A modular breakdown of platform capabilities — from driver experience to intelligent infrastructure and operational control.</p>
+    <h2 data-split>Grouped by system module.</h2>
+    <p class="mod-subtitle">A modular breakdown of platform capabilities — from driver experience to intelligent infrastructure and operational control.</p>
     <div class="mod-cards">
       <div class="mod-card" data-rev style="--d:0ms">
         <div class="mod-card-inner">
-          <div class="mod-title-row"><div class="mod-title">Driver features</div></div>
+          <div class="mod-card-top">
+            <div class="mod-icon"><svg viewBox="0 0 24 24"><path d="M5 11l1.5-4.5h11L19 11M5 11H3v3h1m15-3h2v3h-1M5 11h14M7 16.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm10 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path></svg></div>
+            <span class="mod-num">01</span>
+          </div>
+          <div class="mod-title-row"><h3 class="mod-title">Driver features</h3></div>
           <ul class="mod-list dots">
             <li>Account registration and authentication</li><li>Multiple vehicle registration</li><li>Zone availability</li><li>Zone recommendation</li><li>Zone assignment</li><li>Reservations</li><li>Current parking status</li><li>Parking history</li><li>GPS navigation</li><li>Guest-related parking behavior</li>
           </ul>
@@ -370,7 +858,11 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
       </div>
       <div class="mod-card core" data-rev style="--d:60ms">
         <div class="mod-card-inner">
-          <div class="mod-title-row"><div class="mod-title">Parking intelligence</div><span class="mod-badge">Core</span></div>
+          <div class="mod-card-top">
+            <div class="mod-icon"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="6"></ellipse><circle cx="12" cy="12" r="3"></circle></svg></div>
+            <span class="mod-num">02</span>
+          </div>
+          <div class="mod-title-row"><h3 class="mod-title">Parking intelligence</h3><span class="mod-badge">Core</span></div>
           <ul class="mod-list dashes">
             <li>Camera-based vehicle observation</li><li>License plate recognition</li><li>OCR</li><li>Vehicle identification</li><li>Zone occupancy</li><li>Entry/exit processing</li><li>Guest admission</li><li>Session lifecycle</li>
           </ul>
@@ -379,7 +871,11 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
       </div>
       <div class="mod-card" data-rev style="--d:120ms">
         <div class="mod-card-inner">
-          <div class="mod-title-row"><div class="mod-title">Administration</div></div>
+          <div class="mod-card-top">
+            <div class="mod-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg></div>
+            <span class="mod-num">03</span>
+          </div>
+          <div class="mod-title-row"><h3 class="mod-title">Administration</h3></div>
           <ul class="mod-list dots">
             <li>Zone management</li><li>Capacity configuration</li><li>Camera configuration</li><li>Session monitoring</li><li>Reservation management</li><li>User and vehicle management</li><li>Violations</li><li>Appeals</li><li>Notifications</li><li>Analytics</li><li>Establishment configuration</li>
           </ul>
@@ -390,67 +886,177 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
   </div>
 </section>
 
-<!-- 07 Guest logic -->
 <section class="band on-light">
   <div class="corners"><span>07</span><span>Guest logic</span></div>
   <div class="wrap">
     <span class="eyebrow">Registered vehicle vs. guest</span>
-    <h2 data-rev>Guest admission is a policy decision, <span class="hl">not a default.</span></h2>
-    <div class="cells">
-      <div class="cell" data-rev style="--d:0ms"><div class="sub">Registered vehicle</div><p>Camera + OCR → plate resolves to a registered user → a parking session opens immediately.</p></div>
-      <div class="cell" data-rev style="--d:60ms"><div class="sub">Guest vehicle</div><p>Plate is unknown → treated as a guest candidate → admission depends on establishment-defined policy.</p></div>
-      <div class="cell" data-rev style="--d:120ms"><div class="sub">Policy result</div><p>Each candidate is either admitted or denied based on configured guest rules rather than automatic authorization.</p></div>
-    </div>
-    <p class="lede" style="margin-top:24px;" data-rev>Guest admission is controlled by establishment-defined policies rather than treating every unidentified vehicle as automatically authorized.</p>
+    <h2 data-split>Guest admission is a policy decision, not a default.</h2>
+    <svg class="cmp-svg" data-cmp viewBox="0 0 1080 620" role="img" aria-label="Registered vehicle and guest vehicle resolution">
+      <defs>
+        <marker id="cTick" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#12161D" stroke-width="1.2"></path></marker>
+        <marker id="cTickA" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#ff4d00" stroke-width="1.2"></path></marker>
+        <clipPath id="cClipL"><rect x="60" y="52" width="200" height="72"></rect></clipPath>
+        <clipPath id="cClipR"><rect x="620" y="52" width="200" height="72"></rect></clipPath>
+      </defs>
+
+      <text class="c-head" x="60" y="30">Registered vehicle</text>
+      <text class="c-head" x="620" y="30">Guest vehicle</text>
+
+      <rect class="c-node" x="60" y="52" width="200" height="72"></rect>
+      <g class="c-line" transform="translate(78,66)">
+        <path d="M0 12 H10 L14 4 H34 L38 12 H50 V40 H0 Z"></path><circle cx="25" cy="26" r="9"></circle>
+      </g>
+      <text class="c-lbl" x="190" y="86" text-anchor="middle">Zone gate</text>
+      <text class="c-lbl" x="190" y="102" text-anchor="middle">Camera</text>
+      <g clip-path="url(#cClipL)"><path class="c-accent" data-cscan="l" d="M60 54 H260"></path></g>
+
+      <rect class="c-node" x="620" y="52" width="200" height="72"></rect>
+      <g class="c-line" transform="translate(638,66)">
+        <path d="M0 12 H10 L14 4 H34 L38 12 H50 V40 H0 Z"></path><circle cx="25" cy="26" r="9"></circle>
+      </g>
+      <text class="c-lbl" x="750" y="86" text-anchor="middle">Zone gate</text>
+      <text class="c-lbl" x="750" y="102" text-anchor="middle">Camera</text>
+      <g clip-path="url(#cClipR)"><path class="c-accent" data-cscan="r" d="M620 54 H820"></path></g>
+
+      <path class="c-line" data-cdraw="l-cam-ocr" d="M160 124 V172" marker-end="url(#cTick)"></path>
+      <path class="c-line" data-cdraw="r-cam-ocr" d="M720 124 V172" marker-end="url(#cTick)"></path>
+
+      <rect class="c-node" x="60" y="172" width="200" height="64"></rect>
+      <text class="c-plate" data-cplate="l" x="160" y="212" text-anchor="middle">........</text>
+      <rect class="c-node" x="620" y="172" width="200" height="64"></rect>
+      <text class="c-plate" data-cplate="r" x="720" y="212" text-anchor="middle">........</text>
+
+      <path class="c-line" data-cdraw="l-ocr-veh" d="M160 236 V284" marker-end="url(#cTick)"></path>
+      <path class="c-accent" data-cdraw="r-ocr-cand" d="M720 236 V284" marker-end="url(#cTickA)"></path>
+
+      <rect class="c-node" data-cnode="reg" x="60" y="284" width="200" height="56"></rect>
+      <text class="c-lbl" x="160" y="318" text-anchor="middle">Registered vehicle</text>
+      <rect class="c-node" data-cnode="cand" x="620" y="284" width="200" height="56" stroke="#ff4d00"></rect>
+      <text class="c-lbl c-accent-lbl" x="720" y="318" text-anchor="middle">Guest candidate</text>
+
+      <path class="c-line" data-cdraw="l-veh-user" d="M160 340 V388" marker-end="url(#cTick)"></path>
+      <path class="c-accent" data-cdraw="r-cand-policy" d="M720 340 V388" marker-end="url(#cTickA)"></path>
+
+      <rect class="c-node" data-cnode="user" x="60" y="388" width="200" height="56"></rect>
+      <g class="c-line" transform="translate(78,400)"><circle cx="10" cy="9" r="7"></circle><path d="M-1 32 C-1 21 21 21 21 32"></path></g>
+      <text class="c-lbl" x="176" y="422" text-anchor="middle">Registered user</text>
+
+      <g data-cgate>
+        <rect class="c-node" data-cnode="policy" x="620" y="388" width="200" height="56" stroke="#ff4d00"></rect>
+        <g class="c-accent" transform="translate(638,398)"><path d="M11 0 L22 6 V18 C22 27 11 34 11 34 C11 34 0 27 0 18 V6 Z"></path></g>
+        <text class="c-lbl c-accent-lbl" x="742" y="422" text-anchor="middle">Guest policy</text>
+        <circle class="c-accent" data-cring cx="720" cy="416" r="56" opacity="0"></circle>
+      </g>
+
+      <path class="c-line" data-cdraw="l-user-session" d="M160 444 V500" marker-end="url(#cTick)"></path>
+      <rect class="c-node" data-cnode="session" x="60" y="500" width="200" height="56"></rect>
+      <g class="c-line" data-csuccess-icon transform="translate(80,516)"><path d="M0 12 L8 20 L22 4" fill="none"></path></g>
+      <text class="c-lbl" data-csuccess-lbl x="176" y="534" text-anchor="middle">Parking session</text>
+
+      <path class="c-accent" data-cdraw="r-admit" d="M720 444 V472 H646 V500" marker-end="url(#cTickA)"></path>
+      <path class="c-accent" data-cdraw="r-deny" d="M720 444 V472 H794 V500" marker-end="url(#cTickA)"></path>
+      <rect class="c-node" data-cnode="admit" x="566" y="500" width="160" height="52"></rect>
+      <text class="c-lbl" x="646" y="531" text-anchor="middle">Admit</text>
+      <rect class="c-node" data-cnode="deny" x="714" y="500" width="160" height="52"></rect>
+      <text class="c-lbl" x="794" y="531" text-anchor="middle">Deny</text>
+
+      <circle class="c-accent" data-cdot="l" r="5" fill="#ff4d00" stroke="none" cx="160" cy="124" opacity="0"></circle>
+      <circle class="c-accent" data-cdot="r" r="5" fill="#ff4d00" stroke="none" cx="720" cy="124" opacity="0"></circle>
+      <path class="c-line" d="M440 20 V576" stroke-dasharray="2 7" opacity=".3"></path>
+    </svg>
+    <p class="lede" style="margin-top:24px;">Guest admission is controlled by establishment-defined policies rather than treating every unidentified vehicle as automatically authorized.</p>
   </div>
 </section>
 
-<!-- 08 Mobile -->
 <section class="band on-dark">
   <div class="corners"><span>08</span><span>Mobile</span></div>
   <div class="wrap">
     <span class="eyebrow">Mobile experience</span>
-    <h2 data-rev>Parking from the driver's <span class="hl">perspective.</span></h2>
+    <h2 data-split>Parking from the driver's perspective.</h2>
     <div class="mob-exp">
-      <div class="phone-pair" data-rev style="--d:0ms">
+      <div class="phone-mock-enter" data-phone-rev>
+        <div class="phone-pair">
         <div class="iphone left">
+          <span class="side s1"></span><span class="side s2"></span><span class="side s3"></span><span class="side s4"></span>
           <div class="screen">
-            <div class="ph">Drop screen 01 here</div>
-            <span class="island"></span><span class="home"></span>
+            <image-slot id="mob-1" shape="rect" placeholder="Drop screen 01 here"></image-slot>
+            <span class="island"></span>
+            <span class="glare"></span>
+            <span class="home"></span>
           </div>
         </div>
         <div class="iphone right">
+          <span class="side s1"></span><span class="side s2"></span><span class="side s3"></span><span class="side s4"></span>
           <div class="screen">
-            <div class="ph">Drop screen 02 here</div>
-            <span class="island"></span><span class="home"></span>
+            <image-slot id="mob-2" shape="rect" placeholder="Drop screen 02 here"></image-slot>
+            <span class="island"></span>
+            <span class="glare"></span>
+            <span class="home"></span>
           </div>
+        </div>
         </div>
       </div>
       <div class="steps">
-        <div class="step" data-rev style="--d:0ms"><span class="n">01</span><div><div class="t">Find parking</div><p class="d">Live availability across every zone. See open spots before you even leave.</p></div><span class="pip"><i></i></span></div>
-        <div class="step" data-rev style="--d:50ms"><span class="n">02</span><div><div class="t">Choose your zone</div><p class="d">Compare rates, limits, and restrictions. Filter by EV, accessible, or covered.</p></div><span class="pip"><i></i></span></div>
-        <div class="step" data-rev style="--d:100ms"><span class="n">03</span><div><div class="t">Reserve</div><p class="d">Lock your bay in 2 taps. Guaranteed spot, instant confirmation.</p></div><span class="pip"><i></i></span></div>
-        <div class="step" data-rev style="--d:150ms"><span class="n">04</span><div><div class="t">Navigate</div><p class="d">Turn-by-turn to your exact space. No more circling the block.</p></div><span class="pip"><i></i></span></div>
-        <div class="step" data-rev style="--d:200ms"><span class="n">05</span><div><div class="t">Track</div><p class="d">Live timer, one-tap extension, and automatic checkout. All from your pocket.</p></div><span class="pip"><i></i></span></div>
+        <div class="step" data-rev style="--d:0ms">
+          <span class="n">01</span>
+          <div>
+            <div class="t">Find parking</div>
+            <p class="d">Live availability across every zone. See open spots before you even leave.</p>
+          </div>
+          <span class="pip"><i></i></span>
+        </div>
+        <div class="step" data-rev style="--d:50ms">
+          <span class="n">02</span>
+          <div>
+            <div class="t">Choose your zone</div>
+            <p class="d">Compare rates, limits, and restrictions. Filter by EV, accessible, or covered.</p>
+          </div>
+          <span class="pip"><i></i></span>
+        </div>
+        <div class="step" data-rev style="--d:100ms">
+          <span class="n">03</span>
+          <div>
+            <div class="t">Reserve</div>
+            <p class="d">Lock your bay in 2 taps. Guaranteed spot, instant confirmation.</p>
+          </div>
+          <span class="pip"><i></i></span>
+        </div>
+        <div class="step" data-rev style="--d:150ms">
+          <span class="n">04</span>
+          <div>
+            <div class="t">Navigate</div>
+            <p class="d">Turn-by-turn to your exact space. No more circling the block.</p>
+          </div>
+          <span class="pip"><i></i></span>
+        </div>
+        <div class="step" data-rev style="--d:200ms">
+          <span class="n">05</span>
+          <div>
+            <div class="t">Track</div>
+            <p class="d">Live timer, one-tap extension, and automatic checkout. All from your pocket.</p>
+          </div>
+          <span class="pip"><i></i></span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 09 Admin -->
 <section class="band on-light">
   <div class="corners"><span>09</span><span>Admin</span></div>
   <div class="wrap">
     <span class="eyebrow">Admin experience</span>
-    <h2 data-rev>A control center for parking <span class="hl">operations.</span></h2>
-    <p class="lede" style="margin-bottom:28px;" data-rev>Administrators work in the web application; drivers use the mobile app. The dashboard is the operational surface for zones, cameras, sessions and anomalies.</p>
+    <h2 data-split>A control center for parking operations.</h2>
+    <p class="lede" style="margin-bottom:28px;">Administrators work in the web application; drivers use the mobile app. The dashboard is the operational surface for zones, cameras, sessions and anomalies.</p>
     <div class="macbook-scene" data-rev style="--d:0ms">
-      <div class="device-stage">
-        <div class="hw-screen"><div class="ph">Drop your admin dashboard screenshot here</div></div>
+      <div class="device-stage macbook-stage">
+        <div class="hw-screen">
+          <image-slot id="admin-dashboard" shape="rect" placeholder="Drop your admin dashboard screenshot here"></image-slot>
+        </div>
         <img class="hw-img" src="assets/laptop-hw.png" alt="Laptop showing the PARADA admin dashboard">
       </div>
     </div>
-    <div class="exp">
+    <div class="exp" style="margin-top:36px;">
       <div class="exp-list">
         <div class="exp-item" data-rev style="--d:0ms"><div class="t">Monitor</div><div class="d">Zones, occupancy, sessions, cameras.</div></div>
         <div class="exp-item" data-rev style="--d:40ms"><div class="t">Manage</div><div class="d">Zones, capacities, cameras, reservations, users, vehicles.</div></div>
@@ -463,49 +1069,97 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
   </div>
 </section>
 
-<!-- 10 Config -->
 <section class="band on-dark">
   <div class="corners"><span>10</span><span>Config</span></div>
   <div class="wrap">
     <span class="eyebrow">Establishment configuration</span>
-    <h2 data-rev>PARADA is <span class="hl">configurable.</span></h2>
+    <h2 data-split>PARADA is configurable.</h2>
     <div class="config-grid">
       <div class="config-card" data-rev style="--d:0ms"><h4>Zones</h4><ul><li>Name</li><li>Code</li><li>Capacity</li><li>Status</li></ul></div>
       <div class="config-card" data-rev style="--d:40ms"><h4>Cameras</h4><ul><li>Identifier</li><li>Zone</li><li>Direction</li><li>Operational status</li></ul></div>
       <div class="config-card" data-rev style="--d:80ms"><h4>Policies</h4><ul><li>Guest policy</li><li>Reservation settings</li><li>Parking fees</li><li>Violation rules</li></ul></div>
       <div class="config-card" data-rev style="--d:120ms"><h4>Location</h4><ul><li>Address</li><li>Latitude</li><li>Longitude</li></ul></div>
     </div>
-    <p class="lede" style="margin-top:28px;" data-rev>This allows PARADA to adapt to different establishment layouts without changing the application's source code for every parking facility.</p>
+    <p class="lede" style="margin-top:28px;">This allows PARADA to adapt to different establishment layouts without changing the application's source code for every parking facility.</p>
   </div>
 </section>
 
-<!-- 11 Architecture -->
-<section class="band on-light" id="architecture">
+<section class="band on-light arch" id="architecture">
   <div class="corners"><span>11</span><span>Architecture</span></div>
   <div class="wrap">
     <span class="eyebrow">System architecture</span>
-    <h2 data-rev>The same journey, seen <span class="hl">technically.</span></h2>
-    <p class="lede" style="margin-bottom:28px;" data-rev>Section 04 showed what happens to a vehicle. This is how the system makes it happen: a camera event travels through vision/OCR into the API, which resolves identity, occupancy and sessions, persists them, and propagates the new state to both clients.</p>
-    <div class="cells">
-      <div class="cell" data-rev style="--d:0ms"><div class="sub">Zone Gate Camera</div><p>Entry / exit vehicle events.</p></div>
-      <div class="cell" data-rev style="--d:40ms"><div class="sub">Computer Vision / OCR</div><p>Python · FastAPI · OpenCV · EasyOCR.</p></div>
-      <div class="cell" data-rev style="--d:80ms"><div class="sub">PARADA API</div><p>Node.js · Express · TypeScript.</p></div>
+    <h2 data-split>The same journey, seen technically.</h2>
+    <p class="lede" style="margin-bottom:28px;">Section 04 showed what happens to a vehicle. This is how the system makes it happen: a camera event travels through vision/OCR into the API, which resolves identity, occupancy and sessions, persists them, and propagates the new state to both clients.</p>
+    <svg class="arch-pipe" viewBox="0 0 1000 700" data-pipe>
+      <defs><marker id="aTip" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#12161D" stroke-width="1.2"></path></marker></defs>
+      <path class="link" data-adraw id="aCamVision" d="M500 70 V120" marker-end="url(#aTip)"></path>
+      <path class="link" data-adraw id="aVisionApi" d="M500 180 V230" marker-end="url(#aTip)"></path>
+      <path class="link" data-adraw id="aApiFan" d="M500 290 V330"></path>
+      <path class="link" data-adraw id="aFanRes" d="M500 330 H180 V370" marker-end="url(#aTip)"></path>
+      <path class="link" data-adraw id="aFanOcc" d="M500 330 V370" marker-end="url(#aTip)"></path>
+      <path class="link" data-adraw id="aFanSes" d="M500 330 H820 V370" marker-end="url(#aTip)"></path>
+      <path class="link" data-adraw id="aResDb" d="M180 440 V480 H500 V520" marker-end="url(#aTip)"></path>
+      <path class="link" data-adraw id="aOccDb" d="M500 440 V520" marker-end="url(#aTip)"></path>
+      <path class="link" data-adraw id="aSesDb" d="M820 440 V480 H500 V520" marker-end="url(#aTip)"></path>
+      <path class="link" data-adraw id="aDbFan" d="M500 580 V615"></path>
+      <path class="link" data-adraw id="aDbMobile" d="M500 615 H280 V650" marker-end="url(#aTip)"></path>
+      <path class="link" data-adraw id="aDbAdmin" d="M500 615 H720 V650" marker-end="url(#aTip)"></path>
+
+      <rect class="box" data-box="0" x="370" y="20" width="260" height="50"></rect>
+      <text class="lbl" x="500" y="42" text-anchor="middle">Zone Gate Camera</text>
+      <text class="cap" x="500" y="60" text-anchor="middle">Entry / exit vehicle events</text>
+
+      <rect class="box" data-box="1" x="370" y="120" width="260" height="60"></rect>
+      <text class="lbl" x="500" y="145" text-anchor="middle">Computer Vision / OCR</text>
+      <text class="cap" x="500" y="164" text-anchor="middle">Python · FastAPI · OpenCV · EasyOCR</text>
+
+      <rect class="box" data-box="2" x="370" y="230" width="260" height="60"></rect>
+      <text class="lbl" x="500" y="255" text-anchor="middle">PARADA API</text>
+      <text class="cap" x="500" y="274" text-anchor="middle">Node.js · Express · TypeScript</text>
+
+      <rect class="box" data-box="3" x="60" y="370" width="240" height="70"></rect>
+      <text class="lbl" x="180" y="398" text-anchor="middle">User / Vehicle</text>
+      <text class="lbl" x="180" y="414" text-anchor="middle">Resolution</text>
+      <text class="cap" x="180" y="431" text-anchor="middle">Registered or guest candidate</text>
+
+      <rect class="box" data-box="4" x="380" y="370" width="240" height="70"></rect>
+      <text class="lbl" x="500" y="398" text-anchor="middle">Zones</text>
+      <text class="lbl" x="500" y="414" text-anchor="middle">Occupancy</text>
+      <text class="cap" x="500" y="431" text-anchor="middle">Capacity − occupied</text>
+
+      <rect class="box" data-box="5" x="700" y="370" width="240" height="70"></rect>
+      <text class="lbl" x="820" y="398" text-anchor="middle">Sessions</text>
+      <text class="lbl" x="820" y="414" text-anchor="middle">&amp; Fees</text>
+      <text class="cap" x="820" y="431" text-anchor="middle">Lifecycle, duration, fee</text>
+
+      <rect class="box" data-box="6" x="370" y="520" width="260" height="60"></rect>
+      <text class="lbl" x="500" y="545" text-anchor="middle">Database</text>
+      <text class="cap" x="500" y="564" text-anchor="middle">PostgreSQL · Prisma</text>
+
+      <rect class="box" data-box="7" x="160" y="650" width="240" height="50"></rect>
+      <text class="lbl" x="280" y="672" text-anchor="middle">Mobile Application</text>
+      <text class="cap" x="280" y="690" text-anchor="middle">React Native · Expo — drivers</text>
+
+      <rect class="box" data-box="8" x="600" y="650" width="240" height="50"></rect>
+      <text class="lbl" x="720" y="672" text-anchor="middle">Admin Web Panel</text>
+      <text class="cap" x="720" y="690" text-anchor="middle">Next.js — operations</text>
+
+      <circle class="pk" data-apk="a" r="5" cx="500" cy="70" opacity="0"></circle>
+      <circle class="pk" data-apk="b" r="5" cx="500" cy="70" opacity="0"></circle>
+      <text class="cap" data-apk-label x="516" y="96" opacity="0">vehicle event</text>
+    </svg>
+    <div class="arch-legend">
+      <span>● Animated packet = one camera event</span><span>Vision reads → API decides → DB persists → clients read</span>
     </div>
-    <div class="cells" style="grid-template-columns:repeat(3,1fr);margin-top:1px;">
-      <div class="cell" data-rev style="--d:0ms"><div class="sub">Resolution</div><p>Registered or guest candidate.</p></div>
-      <div class="cell" data-rev style="--d:60ms"><div class="sub">Occupancy &amp; sessions</div><p>Capacity − occupied · lifecycle, duration, fee.</p></div>
-      <div class="cell" data-rev style="--d:120ms"><div class="sub">Persist + serve</div><p>PostgreSQL via Prisma → mobile and admin clients.</p></div>
-    </div>
-    <div class="arch-note mono" style="margin-top:24px;opacity:.6;" data-rev>Vision reads → API decides → DB persists → clients read</div>
+</div>
   </div>
 </section>
 
-<!-- 12 Stack -->
 <section class="band on-dark">
   <div class="corners"><span>12</span><span>Stack</span></div>
   <div class="wrap">
     <span class="eyebrow">Technology stack</span>
-    <h2 data-rev>What it's <span class="hl">built with.</span></h2>
+    <h2 data-split>What it's built with.</h2>
     <div class="stack-grid">
       <div class="stack-card" data-rev style="--d:0ms"><h4>Mobile</h4><ul><li>React Native</li><li>Expo</li><li>TypeScript</li></ul></div>
       <div class="stack-card" data-rev style="--d:30ms"><h4>Web</h4><ul><li>Next.js</li><li>React</li><li>TypeScript</li><li>Tailwind CSS</li></ul></div>
@@ -516,12 +1170,11 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
   </div>
 </section>
 
-<!-- 13 Security -->
 <section class="band on-light">
   <div class="corners"><span>13</span><span>Security</span></div>
   <div class="wrap">
     <span class="eyebrow">Security</span>
-    <h2 data-rev>Designed with security <span class="hl">in mind.</span></h2>
+    <h2 data-split>Designed with security in mind.</h2>
     <div class="rule-rows">
       <div class="rule-row" data-rev style="--d:0ms"><span class="lbl">Authentication</span><span class="d">JWT-based authentication.</span></div>
       <div class="rule-row" data-rev style="--d:30ms"><span class="lbl">Authorization</span><span class="d">Two roles: USER and ADMIN.</span></div>
@@ -532,12 +1185,11 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
   </div>
 </section>
 
-<!-- 14 Capstone -->
 <section class="band on-dark">
   <div class="corners"><span>14</span><span>Capstone</span></div>
   <div class="wrap">
     <span class="eyebrow">Research / capstone context</span>
-    <h2 data-rev>An academic <span class="hl">project.</span></h2>
+    <h2 data-split>An academic project.</h2>
     <div class="capbox" data-rev style="--d:0ms">
       <div class="school">Lyceum of the Philippines University — Batangas</div>
       <p class="lede" style="margin-top:10px;">PARADA is developed as a capstone project for the Bachelor of Science in Information Technology program.</p>
@@ -548,12 +1200,11 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
   </div>
 </section>
 
-<!-- 15 Journey -->
 <section class="band on-light">
   <div class="corners"><span>15</span><span>Journey</span></div>
   <div class="wrap">
     <span class="eyebrow">Project development journey</span>
-    <h2 data-rev>Systematically <span class="hl">engineered.</span></h2>
+    <h2 data-split>Systematically engineered.</h2>
     <div class="flow">
       <div class="flow-step" data-rev style="--d:0ms"><span class="n">01</span><div><div class="t">Requirements</div></div></div>
       <div class="flow-step" data-rev style="--d:20ms"><span class="n">02</span><div><div class="t">Architecture</div></div></div>
@@ -571,30 +1222,28 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
   </div>
 </section>
 
-<!-- 16 Highlights -->
 <section class="band on-dark">
   <div class="corners"><span>16</span><span>Highlights</span></div>
   <div class="wrap">
     <span class="eyebrow">What makes PARADA interesting?</span>
-    <h2 data-rev>Built as one <span class="hl">connected system.</span></h2>
-    <div class="cells">
-      <div class="cell" data-rev style="--d:0ms"><div class="sub">Computer vision</div><p>Identifies vehicles from camera observations.</p></div>
-      <div class="cell" data-rev style="--d:40ms"><div class="sub">Zone intelligence</div><p>Makes availability understandable at the zone level.</p></div>
-      <div class="cell" data-rev style="--d:80ms"><div class="sub">Mobile + web</div><p>Drivers and administrators use connected interfaces.</p></div>
+    <h2 data-split>Built as one connected system.</h2>
+    <div class="cells" style="grid-template-columns:repeat(3,1fr);">
+      <div class="cell" data-rev style="--d:0ms"><h3 class="sub">Computer vision</h3><p>Identifies vehicles from camera observations.</p></div>
+      <div class="cell" data-rev style="--d:40ms"><h3 class="sub">Zone intelligence</h3><p>Makes availability understandable at the zone level.</p></div>
+      <div class="cell" data-rev style="--d:80ms"><h3 class="sub">Mobile + web</h3><p>Drivers and administrators use connected interfaces.</p></div>
     </div>
     <div class="cells" style="grid-template-columns:repeat(2,1fr);margin-top:1px;">
-      <div class="cell" data-rev style="--d:120ms"><div class="sub">Configurable</div><p>Parking facilities can configure zones, capacities, cameras, and policies.</p></div>
-      <div class="cell" data-rev style="--d:160ms"><div class="sub">Backend-authoritative</div><p>Critical parking state is managed centrally instead of being independently calculated by each client.</p></div>
+      <div class="cell" data-rev style="--d:120ms"><h3 class="sub">Configurable</h3><p>Parking facilities can configure zones, capacities, cameras, and policies.</p></div>
+      <div class="cell" data-rev style="--d:160ms"><h3 class="sub">Backend-authoritative</h3><p>Critical parking state is managed centrally instead of being independently calculated by each client.</p></div>
     </div>
   </div>
 </section>
 
-<!-- 17 Status -->
 <section class="band on-light">
   <div class="corners"><span>17</span><span>Status</span></div>
   <div class="wrap">
     <span class="eyebrow">Current project status</span>
-    <h2 data-rev>Where the build <span class="hl">stands.</span></h2>
+    <h2 data-split>Where the build stands.</h2>
     <div class="status-cols">
       <div class="status-col" data-rev style="--d:0ms"><h3>Implemented</h3><ul class="status-list done">
         <li><span class="dot">✓</span>Mobile application</li><li><span class="dot">✓</span>Admin web application</li><li><span class="dot">✓</span>Backend API</li><li><span class="dot">✓</span>PostgreSQL database</li>
@@ -607,38 +1256,35 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
   </div>
 </section>
 
-<!-- 18 Demo -->
 <section class="band on-dark" id="demo">
   <div class="corners"><span>18</span><span>Demo</span></div>
   <div class="wrap">
     <span class="eyebrow">Interactive demo</span>
-    <h2 data-rev>See the system <span class="hl">in action.</span></h2>
+    <h2 data-split>See the system in action.</h2>
     <div class="demo-cards">
-      <div class="demo-card" data-rev style="--d:0ms"><h3>Driver experience</h3><p>Walk through finding, reserving, and navigating to a zone.</p><a href="#top"><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;">Explore mobile</button></a></div>
-      <div class="demo-card" data-rev style="--d:40ms"><h3>Administrator experience</h3><p>See how operators monitor zones, sessions, and cameras.</p><a href="#top"><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;">Open admin</button></a></div>
-      <div class="demo-card" data-rev style="--d:80ms"><h3>System flow</h3><p>Watch a vehicle move through capture, OCR, resolution, and exit.</p><a href="#how"><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;">Watch how PARADA works</button></a></div>
+      <div class="demo-card" data-rev style="--d:0ms"><h3>Driver experience</h3><p>Walk through finding, reserving, and navigating to a zone.</p><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;" onclick="document.getElementById('mob-1').scrollIntoView({behavior:'smooth'})">Explore mobile</button></div>
+      <div class="demo-card" data-rev style="--d:40ms"><h3>Administrator experience</h3><p>See how operators monitor zones, sessions, and cameras.</p><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;" onclick="document.getElementById('admin-1').scrollIntoView({behavior:'smooth'})">Open admin</button></div>
+      <div class="demo-card" data-rev style="--d:80ms"><h3>System flow</h3><p>Watch a vehicle move through capture, OCR, resolution, and exit.</p><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">Watch how PARADA works</button></div>
     </div>
   </div>
 </section>
 
-<!-- 19 Transparency -->
 <section class="band on-light">
   <div class="corners"><span>19</span><span>Transparency</span></div>
   <div class="wrap">
     <span class="eyebrow">Research / technical transparency</span>
-    <h2 data-rev>What PARADA currently <span class="hl">demonstrates</span></h2>
-    <p class="lede" style="font-size:15px;" data-rev>PARADA demonstrates the integration of mobile development, web administration, backend services, database management, computer vision, OCR, GPS navigation, and configurable parking operations within a single system architecture.</p>
-    <p class="lede" style="font-size:15px;" data-rev style="--d:60ms">The system is developed as a capstone prototype and evaluated based on functionality, integration, correctness, and system behavior. Formal accuracy evaluation and production deployment are treated separately from the functional implementation.</p>
+    <h2 data-split>What PARADA currently demonstrates</h2>
+    <p class="lede" style="font-size:15px;">PARADA demonstrates the integration of mobile development, web administration, backend services, database management, computer vision, OCR, GPS navigation, and configurable parking operations within a single system architecture.</p>
+    <p class="lede" style="font-size:15px;">The system is developed as a capstone prototype and evaluated based on functionality, integration, correctness, and system behavior. Formal accuracy evaluation and production deployment are treated separately from the functional implementation.</p>
   </div>
 </section>
 
-<!-- 20 Contact -->
 <section class="band on-dark" id="contact">
   <div class="corners"><span>20</span><span>Contact</span></div>
   <div class="wrap">
     <span class="eyebrow">Contact</span>
-    <h2 data-rev>Interested in <span class="hl">PARADA?</span></h2>
-    <p class="lede" data-rev>Learn more about the project, explore the architecture, or get in touch with the team behind the system.</p>
+    <h2 data-split>Interested in PARADA?</h2>
+    <p class="lede">Learn more about the project, explore the architecture, or get in touch with the team behind the system.</p>
     <div class="contact-row" data-rev style="--d:0ms">
       <a href="https://github.com/E1yWrites/parada" target="_blank" rel="noopener"><button type="button" class="btn-primary">GitHub</button></a>
       <button type="button" class="btn-ghost" style="color:var(--on-dark);">Email</button>
@@ -647,43 +1293,432 @@ footer{ background:var(--ink); color:var(--on-dark); padding:70px 0 44px; border
   </div>
 </section>
 
-<!-- Footer -->
-<footer>
+<footer class="on-dark" style="overflow:hidden;">
   <div class="foot wrap">
     <div class="fcol">
-      <div class="brand">Parada<span class="orange">.</span></div>
-      <div class="muted">Smart Parking System</div>
-      <div class="muted">A Capstone Project</div>
-      <div class="muted">Lyceum of the Philippines University — Batangas</div>
-    </div>
-    <div class="fcol"><h5>Explore</h5>
-      <a href="#how">How it works</a><a href="#features">Features</a><a href="#demo">Demo</a><a href="#architecture">Architecture</a><a href="#contact">Contact</a>
-    </div>
-    <div class="fcol"><h5>Project</h5>
-      <a href="https://github.com/E1yWrites/parada" target="_blank" rel="noopener">GitHub</a><a href="#">LinkedIn</a>
-    </div>
+      <div style="font-family:var(--display);font-weight:900;font-stretch:63%;text-transform:uppercase;font-size:16px;">Parada<span class="orange">.</span></div>
+    <div style="opacity:.6;font-size:12px;margin-top:6px;">Smart Parking System</div>
+    <div style="opacity:.6;font-size:12px;">A Capstone Project</div>
+    <div style="opacity:.6;font-size:12px;">Lyceum of the Philippines University — Batangas</div>
+  </div>
+  <div class="fcol"><h5>Explore</h5>
+    <a href="#how">How it works</a><a href="#features">Features</a><a href="#demo">Demo</a><a href="#architecture">Architecture</a><a href="#contact">Contact</a>
+  </div>
+  <div class="fcol"><h5>Project</h5>
+    <a href="https://github.com/E1yWrites/parada" target="_blank" rel="noopener">GitHub</a><a href="#">LinkedIn</a>
+  </div>
   </div>
 </footer>
 
-<script>
-(function(){
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.splitWords();
+    this.setupReveal(reduced);
+    this.setupScanCanvas(reduced);
+    this.setupHeroDriver(reduced);
+    this.setupPosterFit();
+    this.whenGsap(() => {
+      gsap.registerPlugin(MotionPathPlugin);
+      this.setupPipeline(reduced);
+      this.setupArchPackets(reduced);
+      this.setupCompareFlows(reduced);
+    });
+  }
 
-  // reveal on scroll
-  var els = document.querySelectorAll('[data-rev]');
-  if (reduced || !('IntersectionObserver' in window)) {
-    els.forEach(function(el){ el.classList.add('in'); });
-  } else {
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
+  // helmet CDN scripts may still be in flight when componentDidMount fires
+  whenGsap(fn) {
+    const ready = () => typeof gsap !== 'undefined' && typeof MotionPathPlugin !== 'undefined';
+    if (ready()) return fn();
+    let tries = 0;
+    const poll = () => {
+      if (ready()) return fn();
+      if (++tries > 200) return;
+      requestAnimationFrame(poll);
+    };
+    poll();
+  }
+
+  splitWords() {
+    document.querySelectorAll('[data-split]').forEach((el) => {
+      if (el.dataset.splitDone) return;
+      el.dataset.splitDone = '1';
+      const words = el.textContent.trim().split(/\s+/);
+      el.innerHTML = words.map((w, i) => `<span class="word" style="--d:${i * 40}ms">${w}</span>`).join(' ');
+    });
+  }
+
+  setupReveal(reduced) {
+    if (reduced) {
+      document.querySelectorAll('.word,[data-rev]').forEach((el) => el.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
         if (!e.isIntersecting) return;
         e.target.classList.add('in');
+        e.target.querySelectorAll('.word').forEach((w) => w.classList.add('in'));
         io.unobserve(e.target);
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-    els.forEach(function(el){ io.observe(el); });
+    }, { threshold: 0.14, rootMargin: '0px 0px -6% 0px' });
+    document.querySelectorAll('[data-rev]').forEach((el) => io.observe(el));
+    const ioPhone = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (!e.isIntersecting) return; e.target.classList.add('in'); ioPhone.unobserve(e.target); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('[data-phone-rev]').forEach((el) => ioPhone.observe(el));
+    document.querySelectorAll('h2[data-split]').forEach((el) => io.observe(el));
   }
-})();
+
+  setupScanCanvas(reduced) {
+    const canvas = document.querySelector('[data-scan]');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const resize = () => { canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; };
+    resize();
+    window.addEventListener('resize', resize);
+    let t = 0;
+    const draw = () => {
+      const w = canvas.width, h = canvas.height;
+      ctx.fillStyle = 'rgba(11,14,20,1)';
+      ctx.fillRect(0, 0, w, h);
+      for (let y = 0; y < h; y += 5) {
+        const jitter = Math.sin(t * 0.6 + (y / 5) * 0.3) * 6;
+        ctx.strokeStyle = `rgba(233,237,242,${0.03 + Math.random() * 0.04})`;
+        ctx.beginPath(); ctx.moveTo(jitter, y); ctx.lineTo(w + jitter, y); ctx.stroke();
+      }
+      t += reduced ? 0 : 0.02;
+      requestAnimationFrame(draw);
+    };
+    draw();
+  }
+
+  progressFor(el) {
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    return Math.min(1, Math.max(0, -rect.top / (rect.height - vh || 1)));
+  }
+
+  setupHeroDriver(reduced) {
+    const hero = document.querySelector('[data-pin="hero"]');
+    if (!hero) return;
+    const onScroll = () => {
+      hero.style.setProperty('--hp', reduced ? 0 : this.progressFor(hero));
+      requestAnimationFrame(onScroll);
+    };
+    onScroll();
+  }
+
+  setupPosterFit() {
+    const poster = document.querySelector('[data-poster]');
+    const hero = document.querySelector('[data-pin="hero"] .inner');
+    if (!poster || !hero) return;
+    const fit = () => {
+      const target = hero.clientWidth * 0.9;
+      const scrollW = poster.scrollWidth;
+      if (scrollW > 0) {
+        const current = parseFloat(getComputedStyle(poster).fontSize);
+        poster.style.fontSize = Math.max(24, current * (target / scrollW)) + 'px';
+      }
+    };
+    fit();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    window.addEventListener('resize', fit);
+  }
+
+  setupPipeline(reduced) {
+    const sec = document.querySelector('[data-pin="pipeline"]');
+    if (!sec) return;
+    const scenes = [...sec.querySelectorAll('.scene')];
+    const dots = [...sec.querySelectorAll('[data-dots] i')];
+    const tls = scenes.map((s, i) => this.buildScene(i, s, reduced));
+    let last = -1;
+    const update = () => {
+      const p = this.progressFor(sec);
+      sec.style.setProperty('--tp', p);
+      const idx = Math.min(scenes.length - 1, Math.round(p * (scenes.length - 1)));
+      if (idx !== last) {
+        last = idx;
+        scenes.forEach((s, i) => { if (i === idx) s.setAttribute('data-active', ''); else s.removeAttribute('data-active'); });
+        dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+        tls.forEach((t, i) => { if (!t) return; if (i === idx) t.restart(true); else t.pause(); });
+      }
+      requestAnimationFrame(update);
+    };
+    update();
+  }
+
+  // ── shared helpers ──
+  prime(paths) {
+    paths.forEach((p) => {
+      if (!p) return;
+      const len = p.getTotalLength();
+      gsap.set(p, { strokeDasharray: len, strokeDashoffset: len, autoAlpha: 0 });
+    });
+  }
+  draw(tl, paths, at, dur, stagger) {
+    const els = paths.filter(Boolean);
+    if (!els.length) return tl;
+    tl.set(els, { autoAlpha: 1 }, at)
+      .to(els, { strokeDashoffset: 0, duration: dur, ease: 'power3.inOut', stagger: stagger || 0 }, at);
+    return tl;
+  }
+  decode(el, finalText, dur) {
+    const G = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+    const chars = finalText.split('');
+    const o = { i: 0 };
+    return gsap.to(o, {
+      i: chars.length, duration: dur, ease: 'none',
+      onUpdate() {
+        const s = Math.floor(o.i);
+        el.textContent = chars.map((c, k) => (k < s ? c : k === s ? (c === ' ' ? ' ' : G[(Math.random() * G.length) | 0]) : '.')).join('');
+      },
+      onComplete() { el.textContent = finalText; }
+    });
+  }
+
+  // ── one GSAP timeline per pipeline scene ──
+  buildScene(i, scene, reduced) {
+    if (typeof gsap === 'undefined') return null;
+    const svg = scene.querySelector('[data-svg]');
+    if (!svg) return null;
+    const q = (s) => svg.querySelector(s);
+    const qa = (s) => [...svg.querySelectorAll(s)];
+    const tl = gsap.timeline({ paused: true, repeat: reduced ? 0 : -1, repeatDelay: 1.1, defaults: { ease: 'expo.out' } });
+
+    if (i === 0) {
+      const arm = q('[data-el="gate-arm"]');
+      gsap.set(arm, { transformOrigin: '470px 158px' });
+      tl.fromTo(q('[data-el="car0"]'), { x: -140, y: 214, autoAlpha: 0 }, { x: 300, y: 214, autoAlpha: 1, duration: 1.6, ease: 'power2.out' }, 0)
+        .to(arm, { rotate: -58, duration: 0.7, ease: 'power3.inOut' }, 1.1)
+        .fromTo(q('[data-el="gate-light"]'), { scale: 0.6, autoAlpha: 0.4 }, { scale: 1.15, autoAlpha: 1, duration: 0.5, transformOrigin: '50% 50%' }, 1.1)
+        .to(q('[data-el="car0"]'), { x: 430, duration: 0.9, ease: 'power1.in' }, 1.7);
+    }
+
+    if (i === 1) {
+      const scan = q('[data-el="scan1"]');
+      tl.fromTo(q('[data-el="cone"]'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5 }, 0)
+        .fromTo(q('[data-el="plate-box"]'), { scale: 0.97, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.5, transformOrigin: '50% 50%' }, 0.2)
+        .fromTo(scan, { y: 0, autoAlpha: 1 }, { y: 64, duration: 1, ease: 'power2.inOut' }, 0.4)
+        .add(this.decode(q('[data-el="plate1"]'), 'ABC 1234', 0.7), 0.9)
+        .to(scan, { autoAlpha: 0, duration: 0.3 }, 1.4);
+    }
+
+    if (i === 2) {
+      const boxes = qa('[data-el^="p3-"]');
+      const links = qa('[data-draw3]');
+      this.prime(links);
+      gsap.set(boxes, { transformOrigin: '50% 50%' });
+      boxes.forEach((b, k) => tl.fromTo(b, { autoAlpha: 0.25, scale: 0.985 }, { autoAlpha: 1, scale: 1, duration: 0.4 }, k * 0.42));
+      links.forEach((l, k) => this.draw(tl, [l], 0.3 + k * 0.42, 0.36));
+      tl.add(this.decode(q('[data-el="plate2"]'), 'ABC 1234', 0.6), 1.8);
+    }
+
+    if (i === 3) {
+      const spokes = qa('[data-draw4]');
+      const pks = qa('[data-pk4]');
+      this.prime(spokes);
+      gsap.set([q('[data-el="hub"]'), q('[data-el="hub-ring"]')], { transformOrigin: '320px 200px' });
+      tl.fromTo(q('[data-el="hub"]'), { scale: 0.9, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.6 }, 0)
+        .to(q('[data-el="hub-plus"]'), { rotate: 90, duration: 0.8, ease: 'power3.inOut', transformOrigin: '320px 200px' }, 0.2)
+        .fromTo(q('[data-el="hub-ring"]'), { scale: 0.6, autoAlpha: 0.8 }, { scale: 1.2, autoAlpha: 0, duration: 1 }, 0.3);
+      spokes.forEach((s, k) => {
+        this.draw(tl, [s], 0.5 + k * 0.16, 0.5);
+        tl.set(pks[k], { autoAlpha: 1 }, 0.6 + k * 0.16)
+          .to(pks[k], { motionPath: { path: s, align: s, alignOrigin: [0.5, 0.5] }, duration: 0.7, ease: 'none' }, 0.6 + k * 0.16)
+          .to(pks[k], { autoAlpha: 0, duration: 0.2 }, 1.3 + k * 0.16);
+      });
+    }
+
+    if (i === 4) {
+      const stem = q('[data-draw5="stem"]'), up = q('[data-draw5="up"]'), down = q('[data-draw5="down"]');
+      const dot = q('[data-el="branch-dot"]');
+      this.prime([stem, up, down]);
+      gsap.set([q('[data-el="reg-node"]'), q('[data-el="guest-node"]'), q('[data-el="guest-ring"]')], { transformOrigin: '50% 50%' });
+      this.draw(tl, [stem], 0, 0.5);
+      tl.set(dot, { autoAlpha: 1 }, 0)
+        .to(dot, { motionPath: { path: stem, align: stem, alignOrigin: [0.5, 0.5] }, duration: 0.5, ease: 'none' }, 0);
+      this.draw(tl, [up], 0.55, 0.6);
+      tl.to(dot, { motionPath: { path: up, align: up, alignOrigin: [0.5, 0.5] }, duration: 0.6, ease: 'none' }, 0.55)
+        .fromTo(q('[data-el="reg-node"]'), { autoAlpha: 0, scale: 0.97 }, { autoAlpha: 1, scale: 1, duration: 0.45 }, 1.1);
+      this.draw(tl, [down], 1.5, 0.6);
+      tl.set(dot, { autoAlpha: 1 }, 1.5)
+        .to(dot, { motionPath: { path: down, align: down, alignOrigin: [0.5, 0.5] }, duration: 0.6, ease: 'none' }, 1.5)
+        .fromTo(q('[data-el="guest-node"]'), { autoAlpha: 0, scale: 0.97 }, { autoAlpha: 1, scale: 1, duration: 0.45 }, 2.05)
+        // the decision gets its own beat — a pause, then a pulse
+        .fromTo(q('[data-el="guest-ring"]'), { scale: 0.7, autoAlpha: 0.85 }, { scale: 1.15, autoAlpha: 0, duration: 0.75, ease: 'power2.out' }, 2.5)
+        .fromTo(q('[data-el="guest-ring"]'), { scale: 0.7, autoAlpha: 0.6 }, { scale: 1.15, autoAlpha: 0, duration: 0.75, ease: 'power2.out' }, 2.9)
+        .to(dot, { autoAlpha: 0, duration: 0.2 }, 2.5);
+    }
+
+    if (i === 5) {
+      const fill = q('[data-el="occ-fill"]');
+      const count = q('[data-el="occ-count"]');
+      const brace = q('[data-draw6="brace"]'), stem = q('[data-draw6="stem"]');
+      this.prime([brace, stem]);
+      const o = { v: 18 };
+      gsap.set(fill, { scaleX: 0.6, transformOrigin: '20px 168px' });
+      tl.to(fill, { scaleX: 0.633, duration: 0.9, ease: 'power3.inOut' }, 0.4)
+        .to(o, { v: 19, duration: 0.9, ease: 'power3.inOut', onUpdate: () => { count.textContent = Math.round(o.v) + ' / 30'; } }, 0.4);
+      this.draw(tl, [stem], 0.9, 0.4);
+      tl.fromTo([q('[data-el="session-chip"]'), q('[data-el="session-lbl"]'), q('[data-el="session-cap"]')],
+        { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.06 }, 1.2);
+      this.draw(tl, [brace], 1.6, 0.6);
+    }
+
+    if (i === 6) {
+      const l = q('[data-draw7="l"]'), r = q('[data-draw7="r"]');
+      const pl = q('[data-pk7="l"]'), pr = q('[data-pk7="r"]');
+      this.prime([l, r]);
+      this.draw(tl, [l, r], 0.2, 0.7, 0.08);
+      tl.set([pl, pr], { autoAlpha: 1 }, 0.5)
+        .to(pl, { motionPath: { path: l, align: l, alignOrigin: [0.5, 0.5] }, duration: 0.9, ease: 'none' }, 0.5)
+        .to(pr, { motionPath: { path: r, align: r, alignOrigin: [0.5, 0.5] }, duration: 0.9, ease: 'none' }, 0.5)
+        .to([pl, pr], { autoAlpha: 0, duration: 0.2 }, 1.4)
+        .fromTo(q('[data-el="m-row"]'), { autoAlpha: 0.2 }, { autoAlpha: 1, duration: 0.4 }, 1.4)
+        .fromTo(q('[data-el="a-tile"]'), { autoAlpha: 0.2 }, { autoAlpha: 1, duration: 0.4 }, 1.4);
+    }
+
+    if (i === 7) {
+      const links = qa('[data-draw8]');
+      const boxes = qa('[data-el^="p8-"]');
+      const pk = q('[data-el="pk8"]');
+      this.prime(links);
+      tl.fromTo(q('[data-el="car8"]'), { x: 0, autoAlpha: 1 }, { x: 260, autoAlpha: 0, duration: 1.3, ease: 'power2.in' }, 0)
+        .fromTo(q('[data-el="cone8"]'), { autoAlpha: 0.3 }, { autoAlpha: 1, duration: 0.4, yoyo: true, repeat: 1 }, 0.3);
+      boxes.forEach((b, k) => tl.fromTo(b, { autoAlpha: 0.3 }, { autoAlpha: 1, duration: 0.35 }, 0.5 + k * 0.4));
+      links.forEach((lk, k) => {
+        this.draw(tl, [lk], 0.8 + k * 0.4, 0.34);
+        tl.set(pk, { autoAlpha: 1 }, 0.8 + k * 0.4)
+          .to(pk, { motionPath: { path: lk, align: lk, alignOrigin: [0.5, 0.5] }, duration: 0.34, ease: 'none' }, 0.8 + k * 0.4);
+      });
+      tl.to(pk, { autoAlpha: 0, duration: 0.2 }, 2.2);
+    }
+
+    if (i === 8) {
+      const rows = qa('[data-el^="r9-"]');
+      const rule = q('[data-draw9="rule"]'), total = q('[data-draw9="total"]');
+      this.prime([rule, total]);
+      gsap.set(q('[data-el="rcpt-ring"]'), { transformOrigin: '320px 186px' });
+      tl.fromTo(q('[data-el="rcpt"]'), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.6 }, 0);
+      this.draw(tl, [rule], 0.4, 0.45);
+      rows.forEach((r, k) => {
+        if (r.getAttribute('data-el') === 'r9-total') return;
+        tl.fromTo(r, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 0.7 + k * 0.28);
+      });
+      this.draw(tl, [total], 1.9, 0.5);
+      tl.fromTo(q('[data-el="r9-total"]'), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.45 }, 2.2)
+        .fromTo(q('[data-el="rcpt-ring"]'), { scale: 0.72, autoAlpha: 0.5 }, { scale: 1.08, autoAlpha: 0, duration: 0.9, ease: 'power2.out' }, 2.3);
+    }
+
+    if (reduced) { tl.progress(1).pause(); return null; }
+    return tl;
+  }
+
+  // ── registered vs guest (page section) ──
+  setupCompareFlows(reduced) {
+    const svg = document.querySelector('[data-cmp]');
+    if (!svg || typeof gsap === 'undefined') return;
+    const q = (s) => svg.querySelector(s);
+    const P = (n) => svg.querySelector('[data-cdraw="' + n + '"]');
+    const links = [...svg.querySelectorAll('[data-cdraw]')];
+    const plateL = q('[data-cplate="l"]'), plateR = q('[data-cplate="r"]');
+
+    if (reduced) {
+      links.forEach((p) => gsap.set(p, { autoAlpha: 1, strokeDashoffset: 0 }));
+      plateL.textContent = 'ABC 1234'; plateR.textContent = 'UNKNOWN';
+      return;
+    }
+    this.prime(links);
+    const scans = [q('[data-cscan="l"]'), q('[data-cscan="r"]')];
+    const tl = gsap.timeline({ paused: true, defaults: { ease: 'expo.out' } });
+
+    tl.fromTo(scans, { y: 0, autoAlpha: 1 }, { y: 68, duration: 0.7, ease: 'power3.inOut', stagger: 0.05 }, 0)
+      .to(scans, { autoAlpha: 0, duration: 0.2 }, 0.7);
+    this.draw(tl, [P('l-cam-ocr'), P('r-cam-ocr')], 0.2, 0.4, 0.04);
+    tl.add(this.decode(plateL, 'ABC 1234', 0.5), 0.4)
+      .add(this.decode(plateR, 'UNKNOWN', 0.5), 0.42);
+    this.draw(tl, [P('l-ocr-veh'), P('r-ocr-cand')], 0.9, 0.45, 0.04);
+    tl.fromTo([q('[data-cnode="reg"]'), q('[data-cnode="cand"]')], { autoAlpha: 0, scale: 0.97 },
+      { autoAlpha: 1, scale: 1, duration: 0.45, transformOrigin: '50% 50%', stagger: 0.05 }, 1.05);
+    this.draw(tl, [P('l-veh-user')], 1.3, 0.4);
+    this.draw(tl, [P('l-user-session')], 1.7, 0.4);
+    tl.fromTo(q('[data-cnode="user"]'), { autoAlpha: 0, scale: 0.97 }, { autoAlpha: 1, scale: 1, duration: 0.4, transformOrigin: '50% 50%' }, 1.45)
+      .fromTo(q('[data-cnode="session"]'), { autoAlpha: 0, scale: 0.97 }, { autoAlpha: 1, scale: 1, duration: 0.4, transformOrigin: '50% 50%' }, 1.9)
+      .to([q('[data-cnode="session"]'), q('[data-csuccess-icon]')], { stroke: '#1f7a4d', duration: 0.4 }, 2.0)
+      .to(q('[data-csuccess-lbl]'), { fill: '#1f7a4d', duration: 0.4 }, 2.0);
+    // guest branch: draw to the gate, hold on the decision, then split
+    this.draw(tl, [P('r-cand-policy')], 1.3, 0.4);
+    tl.fromTo(q('[data-cnode="policy"]'), { autoAlpha: 0, scale: 0.97 }, { autoAlpha: 1, scale: 1, duration: 0.4, transformOrigin: '50% 50%' }, 1.45)
+      // two pulses, strictly sequential — overlapping fromTos on the same ring
+      // snapped its scale back mid-flight and read as a bounce
+      .fromTo(q('[data-cring]'), { scale: 0.72, autoAlpha: 0.9 }, { scale: 1.14, autoAlpha: 0, duration: 0.55, ease: 'power2.out', transformOrigin: '720px 416px' }, 1.8)
+      .fromTo(q('[data-cring]'), { scale: 0.72, autoAlpha: 0.55 }, { scale: 1.14, autoAlpha: 0, duration: 0.55, ease: 'power2.out', transformOrigin: '720px 416px' }, 2.4);
+    this.draw(tl, [P('r-admit'), P('r-deny')], 2.5, 0.5, 0.06);
+    tl.fromTo([q('[data-cnode="admit"]'), q('[data-cnode="deny"]')], { autoAlpha: 0, scale: 0.95 },
+      { autoAlpha: 1, scale: 1, duration: 0.45, transformOrigin: '50% 50%', stagger: 0.08 }, 2.7);
+
+    const io = new IntersectionObserver((es) => {
+      const last = es[es.length - 1];
+      if (last.isIntersecting) tl.restart(true);
+    }, { threshold: 0.2 });
+    io.observe(svg);
+    if (svg.getBoundingClientRect().top < window.innerHeight) tl.restart(true);
+  }
+
+  // ── architecture: drawn pipeline + looping packets on motionPath ──
+  setupArchPackets(reduced) {
+    const svg = document.querySelector('[data-pipe]');
+    if (!svg || typeof gsap === 'undefined') return;
+    const q = (s) => svg.querySelector(s);
+    const boxes = [...svg.querySelectorAll('[data-box]')];
+    const links = [...svg.querySelectorAll('[data-adraw]')];
+    const pkA = q('[data-apk="a"]'), pkB = q('[data-apk="b"]'), label = q('[data-apk-label]');
+
+    if (reduced) {
+      links.forEach((p) => gsap.set(p, { autoAlpha: 1, strokeDashoffset: 0 }));
+      boxes.forEach((b) => b.classList.add('live'));
+      gsap.set([pkA, pkB, label], { autoAlpha: 0 });
+      return;
+    }
+    this.prime(links);
+    gsap.set(boxes, { transformOrigin: '50% 50%' });
+
+    const intro = gsap.timeline({ paused: true, defaults: { ease: 'expo.out' } });
+    const order = ['#aCamVision', '#aVisionApi', '#aApiFan', '#aFanRes', '#aFanOcc', '#aFanSes', '#aResDb', '#aOccDb', '#aSesDb', '#aDbFan', '#aDbMobile', '#aDbAdmin'];
+    order.forEach((sel, k) => this.draw(intro, [q(sel)], k * 0.12, 0.5));
+    boxes.forEach((b, k) => intro.fromTo(b, { autoAlpha: 0.3 }, { autoAlpha: 1, duration: 0.4 }, k * 0.1));
+
+    // packet A: camera → vision → api → occupancy → db → mobile
+    const routeA = ['#aCamVision', '#aVisionApi', '#aApiFan', '#aFanOcc', '#aOccDb', '#aDbFan', '#aDbMobile'];
+    // packet B: api → resolution → db → admin
+    const routeB = ['#aApiFan', '#aFanRes', '#aResDb', '#aDbFan', '#aDbAdmin'];
+    const mkLoop = (pk, route, delay, tag) => {
+      const t = gsap.timeline({ repeat: -1, repeatDelay: 0.6, delay, paused: true });
+      t.set(pk, { autoAlpha: 1 }, 0);
+      route.forEach((sel) => {
+        const path = q(sel);
+        if (!path) return;
+        t.to(pk, { motionPath: { path, align: path, alignOrigin: [0.5, 0.5] }, duration: 0.5, ease: 'none',
+          onStart: () => { if (label && tag) { label.textContent = tag; gsap.to(label, { autoAlpha: 0.8, duration: 0.2 }); } } });
+      });
+      t.to(pk, { autoAlpha: 0, duration: 0.2 });
+      return t;
+    };
+    const loopA = mkLoop(pkA, routeA, 0, 'vehicle event');
+    const loopB = mkLoop(pkB, routeB, 0.8, 'state read');
+
+    const io = new IntersectionObserver((es) => {
+      const on = es[es.length - 1].isIntersecting;
+      if (on) { intro.restart(true); loopA.play(0); loopB.play(0); } else { loopA.pause(); loopB.pause(); }
+    }, { threshold: 0.15 });
+    io.observe(svg);
+    if (svg.getBoundingClientRect().top < window.innerHeight) { intro.restart(true); loopA.play(0); loopB.play(0); }
+  }
+
+  renderVals() { return {}; }
+}
 </script>
 </body>
 </html>
