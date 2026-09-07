@@ -233,6 +233,96 @@ button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing
   .iphone.right{ display:none; }
   .iphone.left{ transform:none; }
 }
+
+/* ── demo mockup panels ── */
+.mock{ position:absolute; inset:0; overflow:hidden; font-family:var(--display); font-size:11px; line-height:1.5; }
+.mock b{ font-weight:800; }
+.mock i{ font-style:normal; }
+.mock .orange{ color:var(--orange); }
+
+/* admin dashboard mock */
+.mock-admin{ background:#0d1117; color:#c9d1d9; padding:0; }
+.mock-admin-top{ display:flex; align-items:center; gap:10px; padding:10px 14px; background:#161b22; border-bottom:1px solid #30363d; }
+.ma-brand b{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--orange); text-transform:uppercase; }
+.ma-brand span{ font-family:var(--mono); font-size:9px; letter-spacing:.08em; color:#8b949e; margin-left:5px; text-transform:uppercase; }
+.ma-search{ flex:1; font-size:9px; color:#8b949e; background:#0d1117; border:1px solid #30363d; border-radius:4px; padding:4px 8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ma-ava{ width:22px; height:22px; background:var(--orange); color:var(--ink); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; }
+.mock-admin-body{ padding:12px 14px 14px; display:flex; flex-direction:column; gap:10px; height:calc(100% - 40px); overflow:hidden; }
+.ma-cards{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.ma-card{ background:#161b22; border:1px solid #30363d; border-radius:6px; padding:10px; display:flex; gap:8px; align-items:start; }
+.ma-ic{ width:24px; height:24px; border-radius:5px; background:#21262d; color:#8b949e; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+.ma-ic.orange{ background:rgba(255,77,0,.15); color:var(--orange); }
+.ma-ic.green{ background:rgba(46,160,67,.15); color:#3fb950; }
+.ma-ic.blue{ background:rgba(56,132,244,.15); color:#58a6ff; }
+.ma-k{ display:block; font-size:8px; text-transform:uppercase; letter-spacing:.08em; color:#8b949e; font-family:var(--mono); }
+.ma-v{ display:block; font-size:18px; font-weight:800; color:#f0f6fc; margin-top:2px; }
+.ma-cols{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.ma-sec-head{ display:flex; justify-content:space-between; align-items:center; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#f0f6fc; margin-bottom:8px; }
+.ma-sec-head i{ font-size:8px; padding:2px 5px; border-radius:4px; background:rgba(46,160,67,.15); color:#3fb950; letter-spacing:.04em; }
+.ma-zone{ background:#161b22; border:1px solid #30363d; border-radius:6px; padding:8px 10px; margin-bottom:6px; }
+.mz-top{ display:flex; align-items:center; gap:8px; }
+.mz-code{ width:22px; height:22px; background:var(--ink); color:var(--glacier); border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; font-family:var(--mono); flex-shrink:0; border:1px solid #30363d; }
+.mz-top b{ font-size:11px; color:#f0f6fc; }
+.mz-top em{ font-size:10px; color:var(--orange); font-family:var(--mono); margin-left:auto; font-weight:600; }
+.mz-bar{ height:4px; background:#21262d; border-radius:2px; margin:6px 0 4px; overflow:hidden; }
+.mz-bar i{ display:block; height:100%; width:var(--occ,50%); background:var(--orange); border-radius:2px; }
+.mz-sub{ font-size:8px; color:#8b949e; }
+.ma-row{ display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid #21262d; font-size:10px; }
+.mr-tag{ font-family:var(--mono); font-size:8px; letter-spacing:.06em; padding:2px 5px; border-radius:3px; font-weight:600; text-transform:uppercase; }
+.mr-tag.in{ background:rgba(46,160,67,.15); color:#3fb950; }
+.mr-tag.out{ background:rgba(56,132,244,.15); color:#58a6ff; }
+.mr-tag.guest{ background:rgba(139,148,158,.15); color:#8b949e; }
+.mr-plate{ font-family:var(--mono); font-size:9px; color:#f0f6fc; letter-spacing:.04em; }
+.mr-where{ font-size:10px; color:#8b949e; }
+.mr-time{ font-size:9px; color:#484f58; margin-left:auto; font-family:var(--mono); }
+.ma-chip{ display:flex; align-items:center; justify-content:space-between; padding:5px 10px; background:#161b22; border:1px solid #30363d; border-radius:4px; margin-bottom:4px; font-size:9px; }
+.ma-chip b{ color:#c9d1d9; font-family:var(--mono); font-size:8px; letter-spacing:.04em; }
+.ma-chip .ok{ color:#3fb950; font-size:8px; font-weight:600; }
+.ma-chip .warn{ color:#d29922; font-size:8px; font-weight:600; }
+.ma-alert{ display:flex; align-items:start; gap:7px; font-size:9px; color:#c9d1d9; padding:5px 0; border-bottom:1px solid #21262d; }
+.ma-dot{ width:6px; height:6px; background:var(--orange); border-radius:50%; margin-top:4px; flex-shrink:0; }
+.ma-dot.green{ background:#3fb950; }
+.ma-cams{ grid-column:1; }
+.ma-alerts{ grid-column:2; }
+
+/* phone mockups */
+.mock-phone{ background:#fff; color:#1a1a1a; padding:0; display:flex; flex-direction:column; height:100%; overflow:auto; }
+.mp-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 14px 8px; }
+.mp-t{ font-size:15px; font-weight:800; color:#1a1a1a; text-transform:uppercase; letter-spacing:-.01em; }
+.mp-live{ font-size:9px; padding:3px 6px; border-radius:4px; background:rgba(46,160,67,.12); color:#16a34a; font-weight:600; }
+.mp-live b{ font-size:7px; }
+.mp-live.on{ background:rgba(255,77,0,.12); color:var(--orange); }
+.mp-sub{ font-size:9px; color:#666; padding:0 14px 10px; }
+.mp-zones{ padding:0 14px; flex:1; overflow:hidden; }
+.mp-zone{ background:#f5f5f5; border:1px solid #e5e5e5; border-radius:8px; padding:9px; margin-bottom:8px; transition:border-color .2s; }
+.mp-zone.sel{ border-color:var(--orange); box-shadow:0 0 0 2px rgba(255,77,0,.15); }
+.mz-h{ display:flex; align-items:center; gap:8px; }
+.mz-h .mz-code{ background:var(--orange); color:var(--ink); font-family:var(--mono); font-size:10px; font-weight:700; }
+.mz-h div{ flex:1; }
+.mz-h b{ display:block; font-size:11px; color:#1a1a1a; }
+.mz-h em{ display:block; font-size:8px; color:#999; font-style:normal; }
+.mz-num{ font-family:var(--mono); font-size:12px; font-weight:700; color:#1a1a1a; white-space:nowrap; }
+.mz-num u{ text-decoration:none; color:#999; font-weight:400; }
+.mp-zone .mz-bar{ margin:6px 0 3px; }
+.mp-zone .mz-avail{ font-size:8px; color:#999; }
+.mp-panel{ padding:10px 14px; margin-top:auto; }
+.mp-pk{ display:block; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#1a1a1a; margin-bottom:3px; }
+.mp-panel p{ font-size:9px; color:#666; margin:0 0 8px; }
+.mp-pact{ display:flex; gap:6px; }
+.mp-btn{ font-family:var(--mono); font-size:8px; letter-spacing:.06em; text-transform:uppercase; padding:7px 12px; border-radius:5px; border:none; cursor:pointer; flex:1; text-align:center; }
+.mp-btn.main{ background:var(--orange); color:var(--ink); }
+.mp-btn.ghost{ background:transparent; border:1px solid #ddd; color:#1a1a1a; }
+.mp-state{ padding:10px 14px; background:#f9fafb; border-top:1px solid #eee; border-bottom:1px solid #eee; }
+.mp-mech{ display:block; font-size:8px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:#999; margin-bottom:3px; }
+.mp-plate{ display:block; font-size:14px; font-family:var(--mono); letter-spacing:.06em; color:var(--orange); font-weight:700; margin-bottom:6px; }
+.mp-sess{ display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:8px; }
+.mp-sess div{ display:flex; flex-direction:column; }
+.ms-k{ font-size:8px; color:#999; font-family:var(--mono); text-transform:uppercase; letter-spacing:.04em; }
+.ms-k.mtimer{ color:var(--orange); }
+.ms-k.mtimer i{ font-size:6px; }
+.ms-v{ font-size:10px; color:#1a1a1a; font-weight:600; }
+.mp-panel.nav{ background:#f9fafb; }
+
 .steps{ border-top:1px solid rgba(233,237,242,.12); }
 .step{ display:flex; gap:22px; padding:24px 0; border-bottom:1px solid rgba(233,237,242,.12); transition:border-color .3s var(--ease); }
 .step:hover{ border-bottom-color:rgba(233,237,242,.28); }
@@ -979,7 +1069,38 @@ button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing
         <div class="iphone left">
           <span class="side s1"></span><span class="side s2"></span><span class="side s3"></span><span class="side s4"></span>
           <div class="screen">
-            <image-slot id="mob-1" shape="rect" placeholder="Drop screen 01 here"></image-slot>
+            <div class="mock mock-phone" id="mob-1">
+              <div class="mp-head">
+                <span class="mp-t">Parking</span>
+                <i class="mp-live"><b>●</b> LIVE</i>
+              </div>
+              <div class="mp-sub">Find an opening · live availability</div>
+              <div class="mp-zones">
+                <div class="mp-zone">
+                  <div class="mz-h"><span class="mz-code">A</span><div><b>Zone A</b><em>North area</em></div><span class="mz-num">18<u>/30</u></span></div>
+                  <div class="mz-bar" style="--occ:60%"><i></i></div>
+                  <span class="mz-avail">6 spots free · entry cam</span>
+                </div>
+                <div class="mp-zone sel">
+                  <div class="mz-h"><span class="mz-code">B</span><div><b>Zone B</b><em>East area</em></div><span class="mz-num">42<u>/50</u></span></div>
+                  <div class="mz-bar" style="--occ:84%"><i></i></div>
+                  <span class="mz-avail">8 spots free · near full</span>
+                </div>
+                <div class="mp-zone">
+                  <div class="mz-h"><span class="mz-code">C</span><div><b>Zone C</b><em>South area</em></div><span class="mz-num">15<u>/40</u></span></div>
+                  <div class="mz-bar" style="--occ:38%"><i></i></div>
+                  <span class="mz-avail">25 spots free · entry cam</span>
+                </div>
+              </div>
+              <div class="mp-panel">
+                <span class="mp-pk">Selected · Zone B</span>
+                <p>Reserve your spot, guarantee it in seconds.</p>
+                <div class="mp-pact">
+                  <button type="button" class="mp-btn main">Reserve slot</button>
+                  <button type="button" class="mp-btn ghost">Navigate</button>
+                </div>
+              </div>
+            </div>
             <span class="island"></span>
             <span class="glare"></span>
             <span class="home"></span>
@@ -988,7 +1109,33 @@ button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing
         <div class="iphone right">
           <span class="side s1"></span><span class="side s2"></span><span class="side s3"></span><span class="side s4"></span>
           <div class="screen">
-            <image-slot id="mob-2" shape="rect" placeholder="Drop screen 02 here"></image-slot>
+            <div class="mock mock-phone" id="mob-2">
+              <div class="mp-head">
+                <span class="mp-t">My parking</span>
+                <i class="mp-live on"><b>●</b> SESSION</i>
+              </div>
+              <div class="mp-state">
+                <span class="mp-mech">Current parking state</span>
+                <b class="mp-plate">ABC 1234</b>
+                <div class="mp-sess">
+                  <div><span class="ms-k">Zone</span><span class="ms-v">B · spot B12</span></div>
+                  <div><span class="ms-k">Started</span><span class="ms-v">09:40</span></div>
+                  <div><span class="ms-k mtimer"><i>●</i>Elapsed</span><span class="ms-v">00:18:24</span></div>
+                  <div><span class="ms-k">Est. fee</span><span class="ms-v">₱ 18.00</span></div>
+                </div>
+                <div class="mp-pact">
+                  <button type="button" class="mp-btn main">Extend 30 min</button>
+                  <button type="button" class="mp-btn ghost">How to exit</button>
+                </div>
+              </div>
+              <div class="mp-panel nav">
+                <span class="mp-pk">Navigate</span>
+                <p>Turn-by-turn to B12 — 180 m away.</p>
+                <div class="mp-pact">
+                  <button type="button" class="mp-btn main">Open GPS</button>
+                </div>
+              </div>
+            </div>
             <span class="island"></span>
             <span class="glare"></span>
             <span class="home"></span>
@@ -1051,7 +1198,50 @@ button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing
     <div class="macbook-scene" data-rev style="--d:0ms">
       <div class="device-stage macbook-stage">
         <div class="hw-screen">
-          <image-slot id="admin-dashboard" shape="rect" placeholder="Drop your admin dashboard screenshot here"></image-slot>
+          <div class="mock mock-admin" id="admin-dashboard">
+            <div class="mock-admin-top">
+              <div class="ma-brand"><b>PARADA</b><span>operations</span></div>
+              <div class="ma-search"><span>🔍</span>Search plates, users, zones…</div>
+              <div class="ma-ava">A</div>
+            </div>
+            <div class="mock-admin-body">
+              <div class="ma-cards">
+                <div class="ma-card"><i class="ma-ic">Z</i><div><span class="ma-k">Total capacity</span><b class="ma-v">120</b></div></div>
+                <div class="ma-card"><i class="ma-ic orange">◇</i><div><span class="ma-k">Occupied</span><b class="ma-v">75</b></div></div>
+                <div class="ma-card"><i class="ma-ic green">✓</i><div><span class="ma-k">Available</span><b class="ma-v">45</b></div></div>
+                <div class="ma-card"><i class="ma-ic blue">∙</i><div><span class="ma-k">Active sessions</span><b class="ma-v">8</b></div></div>
+              </div>
+              <div class="ma-cols">
+                <div class="ma-col ma-zones">
+                  <div class="ma-sec-head"><span>Zone status</span><i>live</i></div>
+                  <div class="ma-zone" style="--occ:60%"><div class="mz-top"><span class="mz-code">A</span><b>Zone A</b><em>18 / 30</em></div><div class="mz-bar"><i></i></div><span class="mz-sub">North parking area · entry cam OK</span></div>
+                  <div class="ma-zone" style="--occ:84%"><div class="mz-top"><span class="mz-code">B</span><b>Zone B</b><em>42 / 50</em></div><div class="mz-bar"><i></i></div><span class="mz-sub">East parking area · exit cam OK</span></div>
+                  <div class="ma-zone" style="--occ:38%"><div class="mz-top"><span class="mz-code">C</span><b>Zone C</b><em>15 / 40</em></div><div class="mz-bar"><i></i></div><span class="mz-sub">South parking area · entry cam OK</span></div>
+                </div>
+                <div class="ma-col ma-activity">
+                  <div class="ma-sec-head"><span>Recent activity</span><i>live</i></div>
+                  <div class="ma-row"><span class="mr-tag in">ENTRY</span><b class="mr-plate">ABC 1234</b><span class="mr-where">Zone A</span><i class="mr-time">09:42</i></div>
+                  <div class="ma-row"><span class="mr-tag out">EXIT</span><b class="mr-plate">XYZ 5678</b><span class="mr-where">Zone B</span><i class="mr-time">09:38</i></div>
+                  <div class="ma-row"><span class="mr-tag in">ENTRY</span><b class="mr-plate">MNO 9999</b><span class="mr-where">Zone C</span><i class="mr-time">09:31</i></div>
+                  <div class="ma-row"><span class="mr-tag guest">GUEST</span><b class="mr-plate">—</b><span class="mr-where">Zone A</span><i class="mr-time">09:19</i></div>
+                </div>
+              </div>
+              <div class="ma-cols">
+                <div class="ma-col ma-cams">
+                  <div class="ma-sec-head"><span>Camera health</span></div>
+                  <div class="ma-chip"><b>cam-a-entry</b><span class="ok">ONLINE</span></div>
+                  <div class="ma-chip"><b>cam-a-exit</b><span class="ok">ONLINE</span></div>
+                  <div class="ma-chip"><b>cam-b-entry</b><span class="warn">DEGRADED</span></div>
+                  <div class="ma-chip"><b>cam-c-entry</b><span class="ok">ONLINE</span></div>
+                </div>
+                <div class="ma-col ma-alerts">
+                  <div class="ma-sec-head"><span>Flags</span></div>
+                  <div class="ma-alert"><span class="ma-dot"></span>Unknown vehicle at Zone C gate</div>
+                  <div class="ma-alert"><span class="ma-dot green"></span>Zone A 60% — near full</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <img class="hw-img" src="assets/laptop-hw.png" alt="Laptop showing the PARADA admin dashboard">
       </div>
@@ -1262,9 +1452,9 @@ button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing
     <span class="eyebrow">Interactive demo</span>
     <h2 data-split>See the system in action.</h2>
     <div class="demo-cards">
-      <div class="demo-card" data-rev style="--d:0ms"><h3>Driver experience</h3><p>Walk through finding, reserving, and navigating to a zone.</p><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;" onclick="document.getElementById('mob-1').scrollIntoView({behavior:'smooth'})">Explore mobile</button></div>
-      <div class="demo-card" data-rev style="--d:40ms"><h3>Administrator experience</h3><p>See how operators monitor zones, sessions, and cameras.</p><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;" onclick="document.getElementById('admin-1').scrollIntoView({behavior:'smooth'})">Open admin</button></div>
-      <div class="demo-card" data-rev style="--d:80ms"><h3>System flow</h3><p>Watch a vehicle move through capture, OCR, resolution, and exit.</p><button type="button" class="btn-ghost" style="color:var(--on-dark);align-self:flex-start;" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">Watch how PARADA works</button></div>
+      <div class="demo-card" data-rev style="--d:0ms"><h3>Driver experience</h3><p>Walk through finding, reserving, and navigating to a zone.</p><button type="button" class="btn-ghost js-demo-mobile" style="color:var(--on-dark);align-self:flex-start;" data-scroll-to="mob-1">Explore mobile</button></div>
+      <div class="demo-card" data-rev style="--d:40ms"><h3>Administrator experience</h3><p>See how operators monitor zones, sessions, and cameras.</p><button type="button" class="btn-ghost js-demo-admin" style="color:var(--on-dark);align-self:flex-start;" data-scroll-to="admin-dashboard">Open admin</button></div>
+      <div class="demo-card" data-rev style="--d:80ms"><h3>System flow</h3><p>Watch a vehicle move through capture, OCR, resolution, and exit.</p><button type="button" class="btn-ghost js-demo-flow" style="color:var(--on-dark);align-self:flex-start;" data-scroll-to="how">Watch how PARADA works</button></div>
     </div>
   </div>
 </section>
@@ -1320,12 +1510,14 @@ class Component extends DCLogic {
     this.setupScanCanvas(reduced);
     this.setupHeroDriver(reduced);
     this.setupPosterFit();
+    this.setupDemoButtons();
     this.whenGsap(() => {
       gsap.registerPlugin(MotionPathPlugin);
       this.setupPipeline(reduced);
       this.setupArchPackets(reduced);
       this.setupCompareFlows(reduced);
     });
+    window.goPipeline = () => this.goPipeline();
   }
 
   // helmet CDN scripts may still be in flight when componentDidMount fires
@@ -1427,6 +1619,22 @@ class Component extends DCLogic {
     window.addEventListener('resize', fit);
   }
 
+  setupDemoButtons() {
+    const scrollTo = (id) => {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    };
+    document.querySelectorAll('[data-scroll-to]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-scroll-to');
+        if (id === 'how') { this.goPipeline(); return; }
+        scrollTo(id);
+      });
+    });
+  }
+
   setupPipeline(reduced) {
     const sec = document.querySelector('[data-pin="pipeline"]');
     if (!sec) return;
@@ -1447,6 +1655,14 @@ class Component extends DCLogic {
       requestAnimationFrame(update);
     };
     update();
+  }
+
+  // ── demo button helper: snap pipeline to scene 01 (Vehicle arrives) ──
+  goPipeline() {
+    const sec = document.querySelector('[data-pin="pipeline"]');
+    if (!sec) return;
+    const r = sec.getBoundingClientRect();
+    window.scrollTo({ top: window.scrollY + r.top, behavior: 'smooth' });
   }
 
   // ── shared helpers ──
