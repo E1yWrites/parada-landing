@@ -1075,38 +1075,7 @@ button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing
         <div class="iphone left">
           <span class="side s1"></span><span class="side s2"></span><span class="side s3"></span><span class="side s4"></span>
           <div class="screen">
-            <div class="mock mock-phone" id="mob-1">
-              <div class="mp-head">
-                <span class="mp-t">Parking</span>
-                <i class="mp-live"><b>●</b> LIVE</i>
-              </div>
-              <div class="mp-sub">Find an opening · live availability</div>
-              <div class="mp-zones">
-                <div class="mp-zone">
-                  <div class="mz-h"><span class="mz-code">A</span><div><b>Zone A</b><em>North area</em></div><span class="mz-num">18<u>/30</u></span></div>
-                  <div class="mz-bar" style="--occ:60%"><i></i></div>
-                  <span class="mz-avail">6 spots free · entry cam</span>
-                </div>
-                <div class="mp-zone sel">
-                  <div class="mz-h"><span class="mz-code">B</span><div><b>Zone B</b><em>East area</em></div><span class="mz-num">42<u>/50</u></span></div>
-                  <div class="mz-bar" style="--occ:84%"><i></i></div>
-                  <span class="mz-avail">8 spots free · near full</span>
-                </div>
-                <div class="mp-zone">
-                  <div class="mz-h"><span class="mz-code">C</span><div><b>Zone C</b><em>South area</em></div><span class="mz-num">15<u>/40</u></span></div>
-                  <div class="mz-bar" style="--occ:38%"><i></i></div>
-                  <span class="mz-avail">25 spots free · entry cam</span>
-                </div>
-              </div>
-              <div class="mp-panel">
-                <span class="mp-pk">Selected · Zone B</span>
-                <p>Reserve your spot, guarantee it in seconds.</p>
-                <div class="mp-pact">
-                  <button type="button" class="mp-btn main">Reserve slot</button>
-                  <button type="button" class="mp-btn ghost">Navigate</button>
-                </div>
-              </div>
-            </div>
+            <image-slot id="mob-1" shape="rect" role="img" aria-label="PARADA mobile app onboarding screen: live zone-level availability from gate cameras" placeholder="Onboarding screen" src="assets/mob-1-onboarding.png"></image-slot>
             <span class="island"></span>
             <span class="glare"></span>
             <span class="home"></span>
@@ -1115,33 +1084,7 @@ button{ font-family:var(--mono); border-radius:0; cursor:pointer; letter-spacing
         <div class="iphone right">
           <span class="side s1"></span><span class="side s2"></span><span class="side s3"></span><span class="side s4"></span>
           <div class="screen">
-            <div class="mock mock-phone" id="mob-2">
-              <div class="mp-head">
-                <span class="mp-t">My parking</span>
-                <i class="mp-live on"><b>●</b> SESSION</i>
-              </div>
-              <div class="mp-state">
-                <span class="mp-mech">Current parking state</span>
-                <b class="mp-plate">ABC 1234</b>
-                <div class="mp-sess">
-                  <div><span class="ms-k">Zone</span><span class="ms-v">B · spot B12</span></div>
-                  <div><span class="ms-k">Started</span><span class="ms-v">09:40</span></div>
-                  <div><span class="ms-k mtimer"><i>●</i>Elapsed</span><span class="ms-v">00:18:24</span></div>
-                  <div><span class="ms-k">Est. fee</span><span class="ms-v">₱ 18.00</span></div>
-                </div>
-                <div class="mp-pact">
-                  <button type="button" class="mp-btn main">Extend 30 min</button>
-                  <button type="button" class="mp-btn ghost">How to exit</button>
-                </div>
-              </div>
-              <div class="mp-panel nav">
-                <span class="mp-pk">Navigate</span>
-                <p>Turn-by-turn to B12 — 180 m away.</p>
-                <div class="mp-pact">
-                  <button type="button" class="mp-btn main">Open GPS</button>
-                </div>
-              </div>
-            </div>
+            <image-slot id="mob-2" shape="rect" role="img" aria-label="PARADA mobile app sessions screen showing an active parking session in Zone A with elapsed time" placeholder="Sessions screen" src="assets/mob-2-session.png"></image-slot>
             <span class="island"></span>
             <span class="glare"></span>
             <span class="home"></span>
