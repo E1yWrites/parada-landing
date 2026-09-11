@@ -1,0 +1,6 @@
+# PARADA
+
+> PARADA is a mobile and web-based smart parking management system using computer vision, license-plate recognition, and zone-based occupancy monitoring. Built as an academic capstone project at Lyceum of the Philippines University — Batangas.
+
+- [Homepage](https://parada-landing.vercel.app/): Product overview, architecture, features, and demo walkthrough.
+- [GitHub](https://github.com/E1yWrites/parada): Source code.
