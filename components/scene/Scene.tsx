@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
-import Lot from './Lot';
+import Campus from './Campus';
+import Pipeline from './Pipeline';
 import CameraRig from './CameraRig';
 import { CAM } from './cameraPath';
 
@@ -31,19 +32,21 @@ export default function Scene() {
       onCreated={() => setReady(true)}
     >
       <color attach="background" args={['#0B0F15']} />
-      <fog attach="fog" args={['#0B0F15', 140, 320]} />
+      <fog attach="fog" args={['#0B0F15', 190, 440]} />
       <hemisphereLight args={['#c8d4e6', '#0b0f15', 0.7]} />
       <directionalLight
-        position={[40, 60, 30]}
+        position={[50, 90, 40]}
         intensity={1.6}
         castShadow={!mobile}
         shadow-mapSize={[2048, 2048]}
-        shadow-camera-left={-70}
-        shadow-camera-right={70}
-        shadow-camera-top={60}
-        shadow-camera-bottom={-60}
+        shadow-camera-left={-100}
+        shadow-camera-right={100}
+        shadow-camera-top={80}
+        shadow-camera-bottom={-80}
+        shadow-camera-far={300}
       />
-      <Lot shadows={!mobile} />
+      <Campus shadows={!mobile} />
+      <Pipeline />
       <CameraRig path={path} reduced={reduced} />
     </Canvas>
   );

@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CAM, type CamStop } from './cameraPath';
+import { scroll } from './state';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -26,6 +27,7 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
   useEffect(() => {
     const els = [...document.querySelectorAll<HTMLElement>('[data-cam]')];
     stops.current = els.map((el) => CAM[el.dataset.cam!] ?? CAM.hero);
+    scroll.keys = els.map((el) => el.dataset.cam!);
     const wake = () => {
       settled.current = 0;
       setFrameloop('always');
@@ -53,6 +55,7 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
   }, [path, reduced, setFrameloop]);
 
   useFrame((state, dt) => {
+    scroll.t = t.current;
     const list = stops.current;
     const i = Math.min(Math.floor(t.current), list.length - 1);
     const a = list[i];

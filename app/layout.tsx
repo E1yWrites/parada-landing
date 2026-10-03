@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Chakra_Petch, IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
+import SoundToggle from '@/components/SoundToggle';
 import Experience from '@/components/Experience';
 import { DESCRIPTION, EMAIL, GITHUB_URL, SITE_URL } from '@/lib/content';
 import './globals.css';
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <span className="brand-mark" aria-hidden="true">P</span>PARADA
           </Link>
           <Nav />
+          <SoundToggle />
           <a className="header-link" href={GITHUB_URL} rel="noopener">GitHub</a>
         </header>
         <main id="content">{children}</main>
