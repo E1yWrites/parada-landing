@@ -1,7 +1,7 @@
 // Synthesised UI sounds (Web Audio, no files). Off by default; the header toggle turns it on.
 // Browsers only allow audio after a user gesture, so the context is created on first enable.
 
-export type Sfx = 'scan' | 'ocr' | 'whoosh' | 'decide' | 'chime' | 'tick' | 'ping' | 'deny' | 'print';
+export type Sfx = 'scan' | 'ocr' | 'whoosh' | 'decide' | 'chime' | 'tick' | 'ping' | 'deny' | 'print' | 'horn';
 
 const KEY = 'parada-sound';
 let ctx: AudioContext | null = null;
@@ -65,6 +65,7 @@ const SOUNDS: Record<Sfx, () => void> = {
   ping: () => { tone(1320, 1320, 0.16, 'sine', 0.13); tone(1760, 1760, 0.3, 'sine', 0.1, 0.1); },
   deny: () => { tone(190, 120, 0.42, 'sawtooth', 0.1); tone(150, 100, 0.42, 'square', 0.05, 0.05); },
   print: () => { for (let i = 0; i < 9; i++) noise(0.035, 3500, 3000, 0.1, i * 0.055); },
+  horn: () => { tone(415, 415, 0.32, 'square', 0.06); tone(523, 523, 0.32, 'square', 0.05); },
 };
 
 export const sound = {

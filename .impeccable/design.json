@@ -1,0 +1,473 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-03T22:12:29.657349+00:00",
+  "title": "Design System: PARADA",
+  "extensions": {
+    "colorMeta": {
+      "board": {
+        "role": "primary",
+        "displayName": "Route Board Ultramarine",
+        "canonical": "#1b3fb8",
+        "tonalRamp": [
+          "#040045",
+          "#040674",
+          "#0e2aa4",
+          "#274fc9",
+          "#4776f2",
+          "#699cff",
+          "#95c6ff",
+          "#c1ecff"
+        ]
+      },
+      "board-deep": {
+        "role": "primary",
+        "displayName": "Deep Ultramarine",
+        "canonical": "#12297d",
+        "tonalRamp": [
+          "#040045",
+          "#061368",
+          "#1c368b",
+          "#3757ae",
+          "#577bd6",
+          "#7aa0ff",
+          "#9ec7ff",
+          "#c3ecff"
+        ]
+      },
+      "jeep": {
+        "role": "secondary",
+        "displayName": "Jeep Red",
+        "canonical": "#c42525",
+        "tonalRamp": [
+          "#320000",
+          "#5e0000",
+          "#8b0000",
+          "#b10312",
+          "#dc403a",
+          "#ff695e",
+          "#ff9b8d",
+          "#ffc9bb"
+        ]
+      },
+      "jeep-deep": {
+        "role": "secondary",
+        "displayName": "Jeep Red Deep",
+        "canonical": "#921717",
+        "tonalRamp": [
+          "#320000",
+          "#5a0000",
+          "#7f0003",
+          "#a42c27",
+          "#cd5349",
+          "#f8796d",
+          "#ff9f91",
+          "#ffc9bb"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Sign Cream",
+        "canonical": "#fff3d1",
+        "tonalRamp": [
+          "#120a00",
+          "#2c2306",
+          "#493f22",
+          "#675d3f",
+          "#8a8061",
+          "#afa484",
+          "#d6caa9",
+          "#faeecc"
+        ]
+      },
+      "cream-soft": {
+        "role": "neutral",
+        "displayName": "Faded Cream",
+        "canonical": "#eee3c3",
+        "tonalRamp": [
+          "#120a00",
+          "#2c2308",
+          "#483f24",
+          "#675d41",
+          "#8a8062",
+          "#afa486",
+          "#d5caab",
+          "#f9eece"
+        ]
+      },
+      "curb": {
+        "role": "tertiary",
+        "displayName": "Curb Yellow",
+        "canonical": "#f6c31c",
+        "tonalRamp": [
+          "#210000",
+          "#431400",
+          "#623400",
+          "#835300",
+          "#a87700",
+          "#cf9d00",
+          "#f6c31d",
+          "#ffea78"
+        ]
+      },
+      "chrome": {
+        "role": "neutral",
+        "displayName": "Polished Chrome",
+        "canonical": "#c9cfd6",
+        "tonalRamp": [
+          "#080c10",
+          "#20242a",
+          "#3b4046",
+          "#595e64",
+          "#7b8187",
+          "#9fa5ac",
+          "#c5cbd2",
+          "#e9eff6"
+        ]
+      },
+      "asphalt": {
+        "role": "neutral",
+        "displayName": "Asphalt",
+        "canonical": "#24262b",
+        "tonalRamp": [
+          "#090b0f",
+          "#222429",
+          "#3d4045",
+          "#5b5d63",
+          "#7e8086",
+          "#a2a4ab",
+          "#c8cad1",
+          "#eceef5"
+        ]
+      },
+      "asphalt-2": {
+        "role": "neutral",
+        "displayName": "Asphalt Lift",
+        "canonical": "#33363d",
+        "tonalRamp": [
+          "#090b11",
+          "#21242b",
+          "#3d4047",
+          "#5a5e65",
+          "#7d8088",
+          "#a1a5ad",
+          "#c7cad3",
+          "#eaeef8"
+        ]
+      },
+      "leaf-deep": {
+        "role": "tertiary",
+        "displayName": "Leaf Deep",
+        "canonical": "#1f6b3b",
+        "tonalRamp": [
+          "#001500",
+          "#003103",
+          "#004f20",
+          "#236e3e",
+          "#4a9260",
+          "#6fb883",
+          "#95dfa8",
+          "#b8ffcb"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#121418",
+        "tonalRamp": [
+          "#090b0f",
+          "#222428",
+          "#3d4044",
+          "#5b5e63",
+          "#7e8086",
+          "#a2a5aa",
+          "#c8cbd0",
+          "#ebeef4"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Ink Soft",
+        "canonical": "#4a4f57",
+        "tonalRamp": [
+          "#080b11",
+          "#20242b",
+          "#3b4048",
+          "#595e66",
+          "#7b8189",
+          "#9fa5ae",
+          "#c5cbd4",
+          "#e9eff9"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Spec Paper",
+        "canonical": "#fff8e6",
+        "tonalRamp": [
+          "#0f0b02",
+          "#292416",
+          "#453f31",
+          "#635d4e",
+          "#868070",
+          "#aba493",
+          "#d1cab9",
+          "#f5eedc"
+        ]
+      },
+      "sky": {
+        "role": "neutral",
+        "displayName": "Noon Sky",
+        "canonical": "#bfe3f5",
+        "tonalRamp": [
+          "#000e1a",
+          "#072835",
+          "#254453",
+          "#426372",
+          "#648696",
+          "#88abbc",
+          "#add1e3",
+          "#d1f5ff"
+        ]
+      },
+      "free": {
+        "role": "state",
+        "displayName": "Free",
+        "canonical": "#3ccf74",
+        "tonalRamp": [
+          "#001700",
+          "#003600",
+          "#005600",
+          "#00771f",
+          "#009c44",
+          "#2ac369",
+          "#66e991",
+          "#a3ffbf"
+        ]
+      },
+      "busy": {
+        "role": "state",
+        "displayName": "Busy",
+        "canonical": "#f6c31c",
+        "tonalRamp": [
+          "#210000",
+          "#431400",
+          "#623400",
+          "#835300",
+          "#a87700",
+          "#cf9d00",
+          "#f6c31d",
+          "#ffea78"
+        ]
+      },
+      "full": {
+        "role": "state",
+        "displayName": "Full",
+        "canonical": "#ff4a3d",
+        "tonalRamp": [
+          "#320000",
+          "#5e0000",
+          "#8d0000",
+          "#ba0000",
+          "#e62e26",
+          "#ff6556",
+          "#ff9b89",
+          "#ffc9b9"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Wordmark",
+        "purpose": "PARADA wordmark in the hero board only."
+      },
+      "headline": {
+        "displayName": "Board heading",
+        "purpose": "Chapter headings with jeep-red drop shade."
+      },
+      "title": {
+        "displayName": "Step title",
+        "purpose": "Step, card and receipt headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Paragraphs on boards and the spec sheet."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Tagline under a heading."
+      },
+      "label": {
+        "displayName": "Sign label",
+        "purpose": "Legends, gauge labels, who-list terms in curb yellow."
+      },
+      "data": {
+        "displayName": "Tally",
+        "purpose": "Counts, plates, timers, receipt rows."
+      }
+    },
+    "shadows": [
+      {
+        "name": "board-hang",
+        "value": "0 24px 44px -20px rgb(18 20 24 / 0.6), 0 3px 8px -2px rgb(18 20 24 / 0.3)",
+        "purpose": "Every route board."
+      },
+      {
+        "name": "button-proud",
+        "value": "0 8px 16px -8px rgb(18 20 24 / 0.65), inset 0 -3px 0 rgb(18 20 24 / 0.14)",
+        "purpose": "Buttons at rest."
+      },
+      {
+        "name": "button-lift",
+        "value": "0 12px 20px -10px rgb(18 20 24 / 0.7), inset 0 -3px 0 rgb(18 20 24 / 0.14)",
+        "purpose": "Button hover."
+      },
+      {
+        "name": "pinstripe",
+        "value": "inset 0 0 0 9px var(--board), inset 0 0 0 11px #f6c31c",
+        "purpose": "Yellow line inside board frames."
+      },
+      {
+        "name": "letter-shade",
+        "value": "0.06em 0.06em 0 #c42525 (text-shadow)",
+        "purpose": "Sign-painter shade on Bungee lettering only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Button lift, lamp scale, toast and receipt entrance."
+      },
+      {
+        "name": "toast-in",
+        "value": "0.45s from opacity 0.3, translateY(-10px) scale(0.98)",
+        "purpose": "Drive-mode toasts."
+      },
+      {
+        "name": "lamp-chase",
+        "value": "3.6s steps(1) infinite, 0.4s stagger",
+        "purpose": "Idle lamp strip in the hero; disabled under reduced motion."
+      },
+      {
+        "name": "camera",
+        "value": "scroll-scrubbed, hold 55% of each stop, power2.inOut",
+        "purpose": "3D camera between chapter stops; snaps under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "520px"
+      },
+      {
+        "name": "tablet",
+        "value": "768px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Jeep-red enamel plate for the one main action (DRIVE IN, Drive again).",
+      "html": "<button class=\"ds-btn-primary\">Drive in</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;min-height:48px;padding:0 1.3rem;border:2px solid transparent;border-radius:9px;background:linear-gradient(#c42525,#c42525) padding-box,linear-gradient(155deg,#f6f8fa,#a9b1ba 38%,#eef1f4 55%,#8d96a0 80%,#d8dde3) border-box;color:#fff3d1;font-family: var(--font-display, Bungee), system-ui, sans-serif;font-size:1rem;letter-spacing:.02em;text-shadow:.06em .06em 0 #921717;box-shadow:0 8px 16px -8px rgb(18 20 24/.65),inset 0 -3px 0 rgb(18 20 24/.14);cursor:pointer;transition:transform .16s cubic-bezier(.16,1,.3,1),box-shadow .16s}.ds-btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 20px -10px rgb(18 20 24/.7),inset 0 -3px 0 rgb(18 20 24/.14)}.ds-btn-primary:active{transform:translateY(1px)}.ds-btn-primary:focus-visible{outline:3px solid #f6c31c;outline-offset:3px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Cream plate with ink lettering for the alternative action.",
+      "html": "<button class=\"ds-btn\">Watch the trip</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;min-height:48px;padding:0 1.3rem;border:2px solid transparent;border-radius:9px;background:linear-gradient(#fff3d1,#fff3d1) padding-box,linear-gradient(155deg,#f6f8fa,#a9b1ba 38%,#eef1f4 55%,#8d96a0 80%,#d8dde3) border-box;color:#121418;font-family: var(--font-display, Bungee), system-ui, sans-serif;font-size:1rem;letter-spacing:.02em;box-shadow:0 8px 16px -8px rgb(18 20 24/.65),inset 0 -3px 0 rgb(18 20 24/.14);cursor:pointer;transition:transform .16s cubic-bezier(.16,1,.3,1)}.ds-btn:hover{transform:translateY(-2px)}.ds-btn:focus-visible{outline:3px solid #f6c31c;outline-offset:3px}"
+    },
+    {
+      "name": "Route Board",
+      "kind": "card",
+      "refersTo": "route-board",
+      "description": "The signature container: enamel, chrome frame, yellow pinstripe, rivets.",
+      "html": "<section class=\"ds-board\"><h2>What is PARADA?</h2><p>Smart parking with zone-gate cameras and live zone counts.</p></section>",
+      "css": ".ds-board{position:relative;max-width:34rem;padding:2rem;border:3px solid transparent;border-radius:12px;background: linear-gradient(#1b3fb8,#1b3fb8) padding-box, linear-gradient(155deg,#f6f8fa,#a9b1ba 38%,#eef1f4 55%,#8d96a0 80%,#d8dde3) border-box;color:#fff3d1;font:400 1.0625rem/1.55 Barlow,system-ui,sans-serif;box-shadow:inset 0 0 0 9px #1b3fb8,inset 0 0 0 11px #f6c31c,0 24px 44px -20px rgb(18 20 24/.6),0 3px 8px -2px rgb(18 20 24/.3)}.ds-board h2{margin:0 0 .55em;font-family: var(--font-display, Bungee), system-ui, sans-serif;font-weight:400;font-size:2rem;line-height:1.06;text-shadow:.06em .06em 0 #c42525}.ds-board p{margin:0;color:#eee3c3}"
+    },
+    {
+      "name": "Tally Strip",
+      "kind": "custom",
+      "refersTo": "tally-cell",
+      "description": "Zone lamps with mono counts; colour only where counts change.",
+      "html": "<ul class=\"ds-tally\"><li data-band=\"busy\"><b>A</b><span>18/30</span></li><li data-band=\"full\"><b>B</b><span>42/50</span></li><li><b>C</b><span>15/40</span></li></ul>",
+      "css": ".ds-tally{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:0;padding:.75rem;list-style:none;background:#1b3fb8}.ds-tally li{--c:#3ccf74;display:flex;align-items:center;gap:.55rem;padding:.55rem .75rem;border-radius:7px;background:#12297d;box-shadow:inset 0 0 0 1px rgb(255 243 209/.16);color:#fff3d1}.ds-tally li::before{content:'';width:10px;height:10px;border-radius:50%;background:var(--c)}.ds-tally [data-band=busy]{--c:#f6c31c}.ds-tally [data-band=full]{--c:#ff4a3d}.ds-tally b{font-family: var(--font-display, Bungee), system-ui, sans-serif;font-weight:400}.ds-tally span{font:500 1.05rem 'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Choice Chips",
+      "kind": "chip",
+      "refersTo": "choice-chip",
+      "description": "Radio options as enamel chips; selected flips to cream.",
+      "html": "<fieldset class=\"ds-choice\"><legend>Plate</legend><label><input type=\"radio\" name=\"p\" checked><span>Registered<small>ABC 1234</small></span></label><label><input type=\"radio\" name=\"p\"><span>Guest<small>NBC 4821</small></span></label></fieldset>",
+      "css": ".ds-choice{display:flex;flex-wrap:wrap;gap:.5rem;margin:0;padding:1rem;border:0;background:#1b3fb8}.ds-choice legend{float:left;width:100%;margin-bottom:.45rem;font-family: var(--font-display, Bungee), system-ui, sans-serif;font-size:.85rem;color:#f6c31c}.ds-choice label{position:relative;cursor:pointer}.ds-choice input{position:absolute;inset:0;opacity:0;margin:0}.ds-choice span{display:inline-flex;flex-direction:column;justify-content:center;min-height:44px;padding:.35rem .9rem;border-radius:8px;background:#12297d;box-shadow:inset 0 0 0 1px rgb(255 243 209/.22);color:#fff3d1;font:600 1rem/1.2 Barlow,sans-serif}.ds-choice small{font:500 .8rem 'JetBrains Mono',monospace;color:#eee3c3}.ds-choice input:checked+span{background:#fff3d1;color:#121418;box-shadow:inset 0 0 0 2px #f6c31c}.ds-choice input:checked+span small{color:#4a4f57}.ds-choice input:focus-visible+span{outline:3px solid #f6c31c;outline-offset:3px}"
+    },
+    {
+      "name": "Header Navigation",
+      "kind": "nav",
+      "refersTo": "nav-tab-current",
+      "description": "Asphalt bar with curb-paint edge; current tab is a yellow plate.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-brand\" href=\"#\"><span>P</span>PARADA</a><a href=\"#\" aria-current=\"page\">Experience</a><a href=\"#\">Technical</a></nav>",
+      "css": ".ds-nav{position:relative;display:flex;align-items:center;gap:.25rem;padding:.6rem 1.5rem .85rem;background:#24262b}.ds-nav::after{content:'';position:absolute;inset:auto 0 0;height:5px;background:repeating-linear-gradient(90deg,#f6c31c 0 34px,#24262b 34px 46px)}.ds-nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 .9rem;border-radius:7px;color:#eee3c3;text-decoration:none;font:600 .875rem Barlow,sans-serif}.ds-nav a:hover{background:#33363d;color:#fff3d1}.ds-nav a[aria-current=page]{background:#f6c31c;color:#121418}.ds-nav .ds-brand{margin-right:auto;gap:.55rem;font-family: var(--font-display, Bungee), system-ui, sans-serif;font-size:1.2rem;font-weight:400;color:#fff3d1}.ds-brand span{display:grid;place-items:center;width:2rem;height:2rem;border-radius:6px;background:#c42525;box-shadow:inset 0 0 0 2px #c9cfd6,inset 0 0 0 3.5px #c42525,inset 0 0 0 4.5px #f6c31c}"
+    },
+    {
+      "name": "Receipt",
+      "kind": "custom",
+      "refersTo": "spec-sheet",
+      "description": "Paper slip shown when the exit camera closes the session.",
+      "html": "<section class=\"ds-receipt\"><h2>Session closed</h2><dl><dt>Plate</dt><dd>ABC 1234</dd><dt>Duration</dt><dd>02:14</dd><dt>Fee</dt><dd>Calculated</dd></dl></section>",
+      "css": ".ds-receipt{max-width:25rem;padding:1.5rem;border-radius:6px;background:#fff8e6;color:#121418;box-shadow:0 30px 50px -24px rgb(18 20 24/.8)}.ds-receipt h2{margin:0 0 .2em;font-family: var(--font-display, Bungee), system-ui, sans-serif;font-weight:400;text-shadow:.06em .06em 0 #c42525}.ds-receipt dl{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;margin:10px 0 0;padding-top:10px;border-top:2px dashed #c8c2b2;font:500 .95rem/1.45 'JetBrains Mono',monospace}.ds-receipt dt{color:#4a4f57}.ds-receipt dd{margin:0;text-align:right}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Route Board",
+    "overview": "**Creative North Star: \"The Route Board\"**\n\nEvery piece of interface is a sign you would see on a Batangas jeepney or at a campus gate: a flat enamel board in ultramarine or jeep red, framed in polished chrome, with a thin yellow pinstripe set inside the frame and a rivet in each corner. Lettering is cream, painted in a chunky display face with a red drop shade, the way a sign painter shades block letters. The boards float over a real place, a sunlit 3D model of the LPU-Batangas parking loop at tropical noon, and the camera moves through it as you read.\n\nThe world is bright and specific, not dark-mode SaaS. Asphalt grey belongs to the road furniture (header, footer, lamp strip, touch pedals), curb yellow marks what is live or selected, and the green / yellow / red occupancy ramp appears only where a zone count actually changes. Numbers are tallies, set in mono. The technical tab keeps the same voice as a printed spec sheet laid over the dimmed campus.",
+    "keyCharacteristics": [
+      "Enamel boards with chrome frame, inset yellow pinstripe and corner rivets",
+      "Cream Bungee lettering with a hard sign-painter drop shade",
+      "Sunlit low-poly campus (Kenney kits) as the permanent backdrop",
+      "Curb-paint stripes and a nine-lamp strip as the page chrome",
+      "Occupancy colour only on state that changes; mono for every count, plate and timer"
+    ],
+    "rules": [
+      {
+        "name": "The State Colour Rule",
+        "body": "Free (#3ccf74), busy (#f6c31c) and full (#ff4a3d) appear only as zone lamps, meters and scene pad tints, and only where an occupancy number can change. They are never decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Cream On Enamel Rule",
+        "body": "Text on a board is cream or faded cream; on red, cream only. Grey text never sits on a coloured board.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono Means Measured Rule",
+        "body": "Mono is only for counts, plates, durations and identifiers, never for a \"technical\" mood.",
+        "section": "typography"
+      },
+      {
+        "name": "The Painted Shade Rule",
+        "body": "Bungee headings carry a hard drop shade (0.05\u20130.06em offset, no blur) in jeep red, or deep ultramarine on red boards. This is sign lettering, not a box shadow; boxes never get a hard offset shadow.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do put every new panel on a route board (ultramarine by default, red for a warning or policy statement) with the chrome frame, pinstripe and rivets.",
+      "Do keep lettering cream on enamel and ink on paper, cream or white plates.",
+      "Do use curb yellow (#f6c31c) for focus, selection, the current tab and live highlights.",
+      "Do set every count, plate and duration in JetBrains Mono with tabular figures, sourced from `lib/content.ts` or live drive state.",
+      "Do leave the 3D campus visible: boards are 31\u201334rem (54rem wide) and alternate sides."
+    ],
+    "donts": [
+      "Don't add eyebrow or kicker labels above headings; the heading carries itself.",
+      "Don't put a hard offset `box-shadow` on a box; the hard shade belongs only to Bungee lettering.",
+      "Don't use the free/busy/full colours anywhere a number can't change.",
+      "Don't put faded cream on red boards or grey text on any enamel.",
+      "Don't use emoji or Unicode glyphs as icons; icons are inline SVG at a 2.2\u20132.4 stroke."
+    ]
+  }
+}

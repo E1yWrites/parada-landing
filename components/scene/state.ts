@@ -12,3 +12,6 @@ export const near = (key: string, radius = 0.75) => {
   if (i < 0) return 0;
   return Math.max(0, 1 - Math.abs(scroll.t - i) / radius);
 };
+
+// Animated gate parts (0..1). Written by the scroll pipeline or by drive mode, drawn by <Gates>.
+export const gates = { entryBoom: 0, entryCone: 0, exitSlide: 0, exitCone: 0 };

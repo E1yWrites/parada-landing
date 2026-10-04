@@ -1,23 +1,25 @@
-// The arrival → receipt pipeline. One paused GSAP timeline (1 unit per step) tweens the plain
-// numbers in `S`; each frame we seek it from scroll position and apply S to meshes and labels.
-import { useEffect, useMemo, useRef } from 'react';
+// The scroll tour: one car from the street, through ENTRY, into Zone A, round the U and out of EXIT.
+// One paused GSAP timeline (1 unit per step) tweens the plain numbers in `S`; each frame we seek it
+// from scroll position and apply S to meshes, gates and labels. Hidden while drive mode is on.
+import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { DEMO_PLATE, RECEIPT, ZONES } from '@/lib/content';
 import { sound, type Sfx } from '@/lib/sfx';
-import { carGeometry } from './Campus';
-import { PATHS, MAIN_GATE, EXIT_GATE, AVENUE_Z, FRONT_Z, DEMO_SLOT } from './layout';
-import { scroll, stopIndex, near } from './state';
+import { game } from '@/lib/game';
+import { PATHS, EXIT, WEST_X, WALL_Z, DEMO_SLOT } from './layout';
+import { scroll, stopIndex, near, gates } from './state';
+import { ENTRY_CAM, ENTRY_PLATE } from './Gates';
+import { useCars } from './kit';
+import { plateTexture } from './signs';
 
-export const API_POS = new THREE.Vector3(-40, 20, 2);
-export const PHONE_POS = new THREE.Vector3(-46, 17.5, 6);
-export const LAPTOP_POS = new THREE.Vector3(-33, 16, 5);
-const GATE_CAM = new THREE.Vector3(MAIN_GATE.x - 1.5, 4.6, AVENUE_Z + 5.2);
-const EXIT_CAM = new THREE.Vector3(EXIT_GATE.x - 1.5, 4.6, FRONT_Z + 5.2);
-const PLATE_FLOAT = new THREE.Vector3(-61.5, 3.4, 21);
-const OCR_VIEW = new THREE.Vector3(-66, 3.8, 27.5); // the 'ocr' camera stop, plate turns to face it
+export const API_POS = new THREE.Vector3(-33, 17, 30);
+export const PHONE_POS = new THREE.Vector3(-39.5, 14.5, 33);
+export const LAPTOP_POS = new THREE.Vector3(-26.5, 13.5, 33.5);
+const PLATE_FLOAT = new THREE.Vector3(WEST_X, 3.3, WALL_Z + 0.6);
+const OCR_VIEW = new THREE.Vector3(-46.5, 3.6, 35.5); // the 'ocr' camera stop; the lifted plate turns to face it
 const ZONE_A = ZONES[0];
 
 const S = {
@@ -25,7 +27,6 @@ const S = {
   boom: 0, park: 0, count: ZONE_A.occupied, session: 0, fan: 0, screens: 0,
   reverse: 0, leave: 0, exitCone: 0, slide: 0, out: 0, receipt: 0,
 };
-export type PipelineState = typeof S;
 
 const CUES: [number, Sfx][] = [
   [1.3, 'scan'], [2.5, 'ocr'], [3.1, 'whoosh'], [4.5, 'decide'], [5.05, 'chime'], [5.9, 'tick'],
@@ -70,29 +71,6 @@ const buildTimeline = () => {
   return tl;
 };
 
-const plateTexture = () => {
-  const c = document.createElement('canvas');
-  c.width = 512;
-  c.height = 160;
-  const g = c.getContext('2d')!;
-  g.fillStyle = '#f4f5f2';
-  g.fillRect(0, 0, 512, 160);
-  g.strokeStyle = '#1b1f26';
-  g.lineWidth = 8;
-  g.strokeRect(6, 6, 500, 148);
-  g.fillStyle = '#1b1f26';
-  g.font = '700 96px "IBM Plex Mono", ui-monospace, monospace';
-  g.textAlign = 'center';
-  g.textBaseline = 'middle';
-  g.fillText(DEMO_PLATE, 256, 86);
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  t.anisotropy = 4;
-  return t;
-};
-
-const coneGeometry = (len: number) => new THREE.ConeGeometry(1.6, len, 24, 1, true).translate(0, -len / 2, 0).rotateX(-Math.PI / 2);
-
 const tmpV = new THREE.Vector3();
 const tmpT = new THREE.Vector3();
 const show = (el: HTMLElement | null, v: number) => {
@@ -102,34 +80,45 @@ const show = (el: HTMLElement | null, v: number) => {
   el.style.visibility = v > 0.01 ? 'visible' : 'hidden';
 };
 
+// The player's car model with a readable plate on the nose. Shared with drive mode.
+export function PlayerCar({ plate }: { plate: THREE.Texture }) {
+  const { player, material } = useCars();
+  return (
+    <>
+      <mesh geometry={player} material={material} castShadow />
+      <mesh position={[0, 0.62, 2.17]}>
+        <planeGeometry args={[0.62, 0.2]} />
+        <meshBasicMaterial map={plate} />
+      </mesh>
+      <mesh position={[0, 0.66, -2.17]} rotation-y={Math.PI}>
+        <planeGeometry args={[0.62, 0.2]} />
+        <meshBasicMaterial map={plate} />
+      </mesh>
+    </>
+  );
+}
+
 export default function Pipeline() {
   const tl = useMemo(buildTimeline, []);
   const res = useMemo(
     () => ({
-      car: carGeometry(),
-      plate: plateTexture(),
-      cone: coneGeometry(GATE_CAM.distanceTo(new THREE.Vector3(-60.8, 0.6, AVENUE_Z))),
-      exitCone: coneGeometry(EXIT_CAM.distanceTo(new THREE.Vector3(70.2, 0.6, FRONT_Z))),
-      arc: new THREE.QuadraticBezierCurve3(GATE_CAM, new THREE.Vector3(-52, 24, 14), API_POS),
-      toPhone: new THREE.QuadraticBezierCurve3(API_POS, new THREE.Vector3(-44, 22, 5), PHONE_POS),
-      toLaptop: new THREE.QuadraticBezierCurve3(API_POS, new THREE.Vector3(-36, 22, 5), LAPTOP_POS),
+      plate: plateTexture(DEMO_PLATE),
+      arc: new THREE.QuadraticBezierCurve3(ENTRY_CAM, new THREE.Vector3(-38, 22, 40), API_POS),
+      toPhone: new THREE.QuadraticBezierCurve3(API_POS, new THREE.Vector3(-37, 19, 32), PHONE_POS),
+      toLaptop: new THREE.QuadraticBezierCurve3(API_POS, new THREE.Vector3(-29, 19, 32), LAPTOP_POS),
     }),
     [],
   );
   useEffect(
     () => () => {
       tl.kill();
-      res.car.dispose();
       res.plate.dispose();
-      res.cone.dispose();
-      res.exitCone.dispose();
     },
     [tl, res],
   );
 
+  const root = useRef<THREE.Group>(null!);
   const car = useRef<THREE.Group>(null!);
-  const cone = useRef<THREE.Mesh>(null!);
-  const exitCone = useRef<THREE.Mesh>(null!);
   const plate = useRef<THREE.Group>(null!);
   const scanLine = useRef<THREE.Mesh>(null!);
   const packet = useRef<THREE.Mesh>(null!);
@@ -138,16 +127,20 @@ export default function Pipeline() {
   const api = useRef<THREE.Mesh>(null!);
   const apiGroup = useRef<THREE.Group>(null!);
   const devices = useRef<THREE.Group>(null!);
-  const boom = useRef<THREE.Group>(null!);
-  const slide = useRef<THREE.Mesh>(null!);
   const ui = useRef<Record<string, HTMLElement | null>>({});
   const bind = (k: string) => (el: HTMLElement | null) => {
     ui.current[k] = el;
   };
   const last = useRef(0);
-  const lastCount = useRef(-1);
 
   useFrame(() => {
+    const driving = game.get().driving;
+    root.current.visible = !driving;
+    if (driving) {
+      last.current = 0;
+      for (const k of ['ocr', 'branch', 'session', 'phone', 'laptop', 'receipt', 'apiLabel']) show(ui.current[k], 0);
+      return;
+    }
     const base = stopIndex('arrive') - 1;
     const time = base < 0 ? 0 : gsap.utils.clamp(0, tl.duration(), scroll.t - base);
     const prev = last.current;
@@ -164,16 +157,14 @@ export default function Pipeline() {
     car.current.rotation.y = Math.atan2(tmpT.x * dir, tmpT.z * dir);
     car.current.visible = S.arrive > 0.001 && S.out < 0.999;
 
-    const coneMat = cone.current.material as THREE.MeshBasicMaterial;
-    coneMat.opacity = S.cone * 0.28;
-    cone.current.visible = S.cone > 0.01;
-    (exitCone.current.material as THREE.MeshBasicMaterial).opacity = S.exitCone * 0.28;
-    exitCone.current.visible = S.exitCone > 0.01;
+    gates.entryCone = S.cone;
+    gates.entryBoom = S.boom;
+    gates.exitCone = S.exitCone;
+    gates.exitSlide = S.slide;
 
     // plate lifts off the bumper, grows, faces the viewer; scan line sweeps across it
-    const front = tmpV.set(-60.85, 0.55, AVENUE_Z);
-    plate.current.position.lerpVectors(front, PLATE_FLOAT, S.plate);
-    plate.current.scale.setScalar(0.5 + S.plate * 2.5);
+    plate.current.position.lerpVectors(ENTRY_PLATE, PLATE_FLOAT, S.plate);
+    plate.current.scale.setScalar(0.6 + S.plate * 2.6);
     plate.current.lookAt(OCR_VIEW);
     plate.current.visible = S.plate > 0.01;
     scanLine.current.position.x = -0.5 + S.scan;
@@ -190,70 +181,30 @@ export default function Pipeline() {
     apiGroup.current.visible = apiOn;
     devices.current.visible = devOn;
     show(ui.current.apiLabel, apiOn ? 1 : 0);
-    if (!devOn) S.screens = 0;
+    const screens = devOn ? Math.max(S.screens, near('apps', 1) > 0 ? 1 : 0) : 0;
     const apiMat = api.current.material as THREE.MeshStandardMaterial;
-    apiMat.emissiveIntensity = 0.25 + S.api * 1.2;
+    apiMat.emissiveIntensity = 0.3 + S.api * 1.4;
     api.current.rotation.y += 0.005;
-
-    boom.current.rotation.x = S.boom * 1.35;
-    slide.current.position.z = S.slide * 7.5;
 
     show(ui.current.ocr, S.ocr);
     show(ui.current.branch, S.branch);
     ui.current.registered?.classList.toggle('is-on', S.registered > 0.5);
     ui.current.guest?.classList.toggle('is-off', S.registered > 0.5);
     show(ui.current.session, S.session);
-    show(ui.current.phone, S.screens);
-    show(ui.current.laptop, S.screens);
+    show(ui.current.phone, screens);
+    show(ui.current.laptop, screens);
     show(ui.current.receipt, S.receipt);
 
-    const n = Math.round(S.count);
-    if (n !== lastCount.current) {
-      lastCount.current = n;
-      const el = document.getElementById(`zone-count-${ZONE_A.code}`);
-      if (el) el.textContent = `${n} / ${ZONE_A.capacity}`;
-    }
+    game.setCount(0, Math.round(S.count));
   });
 
   return (
-    <group>
+    <group ref={root}>
       <group ref={car}>
-        <mesh geometry={res.car} castShadow>
-          <meshStandardMaterial color="#5b92ff" roughness={0.45} metalness={0.2} flatShading />
-        </mesh>
-        <mesh position={[0, 0.55, 2.16]}>
-          <planeGeometry args={[0.52, 0.16]} />
-          <meshBasicMaterial map={res.plate} />
-        </mesh>
+        <Suspense fallback={null}>
+          <PlayerCar plate={res.plate} />
+        </Suspense>
       </group>
-
-      {/* main gate: camera head, scan cone, boom */}
-      <mesh position={GATE_CAM}>
-        <boxGeometry args={[0.6, 0.45, 0.9]} />
-        <meshStandardMaterial color="#20252c" />
-      </mesh>
-      <mesh ref={cone} geometry={res.cone} position={GATE_CAM} onUpdate={(m) => m.lookAt(-60.8, 0.6, AVENUE_Z)}>
-        <meshBasicMaterial color="#5b92ff" transparent depthWrite={false} side={THREE.DoubleSide} />
-      </mesh>
-      <group ref={boom} position={[MAIN_GATE.x + 1.2, 1.1, AVENUE_Z + 3.6]}>
-        <mesh position={[0, 0, -3.6]}>
-          <boxGeometry args={[0.18, 0.18, 7.2]} />
-          <meshStandardMaterial color="#e8e8e8" />
-        </mesh>
-      </group>
-
-      {/* exit gate: camera, cone, sliding gate panel */}
-      <mesh position={EXIT_CAM}>
-        <boxGeometry args={[0.6, 0.45, 0.9]} />
-        <meshStandardMaterial color="#20252c" />
-      </mesh>
-      <mesh ref={exitCone} geometry={res.exitCone} position={EXIT_CAM} onUpdate={(m) => m.lookAt(70.2, 0.6, FRONT_Z)}>
-        <meshBasicMaterial color="#5b92ff" transparent depthWrite={false} side={THREE.DoubleSide} />
-      </mesh>
-      <mesh ref={slide} position={[EXIT_GATE.x + 0.8, 1.2, FRONT_Z]}>
-        <boxGeometry args={[0.2, 2.4, 7.4]} />
-        <meshStandardMaterial color="#e9ebee" />
-      </mesh>
 
       {/* lifted plate + OCR scan line + result */}
       <group ref={plate}>
@@ -263,10 +214,10 @@ export default function Pipeline() {
         </mesh>
         <mesh ref={scanLine} position={[0, 0, 0.01]}>
           <planeGeometry args={[0.02, 0.4]} />
-          <meshBasicMaterial color="#5b92ff" />
+          <meshBasicMaterial color="#d22b2b" />
         </mesh>
       </group>
-      <Html position={[PLATE_FLOAT.x, PLATE_FLOAT.y + 1.6, PLATE_FLOAT.z]} center zIndexRange={[1, 0]}>
+      <Html position={[PLATE_FLOAT.x, PLATE_FLOAT.y + 1.7, PLATE_FLOAT.z]} center zIndexRange={[1, 0]}>
         <div ref={bind('ocr')} className="chip3d">
           OCR <b>{DEMO_PLATE}</b>
         </div>
@@ -274,17 +225,17 @@ export default function Pipeline() {
 
       {/* API node, packet, registered vs guest branch */}
       <group ref={apiGroup}>
-      <mesh ref={api} position={API_POS}>
-        <octahedronGeometry args={[1.8, 0]} />
-        <meshStandardMaterial color="#1c2a44" emissive="#5b92ff" emissiveIntensity={0.25} flatShading />
-      </mesh>
+        <mesh ref={api} position={API_POS}>
+          <octahedronGeometry args={[1.8, 0]} />
+          <meshStandardMaterial color="#1b3fb8" emissive="#f6c31c" emissiveIntensity={0.3} flatShading roughness={0.3} />
+        </mesh>
+      </group>
       <Html position={[API_POS.x, API_POS.y + 3, API_POS.z]} center zIndexRange={[1, 0]}>
         <div ref={bind('apiLabel')} className="chip3d">PARADA API</div>
       </Html>
-      </group>
       <mesh ref={packet}>
         <sphereGeometry args={[0.45, 12, 12]} />
-        <meshBasicMaterial color="#9cc0ff" />
+        <meshBasicMaterial color="#f6c31c" />
       </mesh>
       <Html position={[API_POS.x, API_POS.y - 3.2, API_POS.z]} center zIndexRange={[1, 0]}>
         <div ref={bind('branch')} className="branch3d">
@@ -298,7 +249,7 @@ export default function Pipeline() {
       </Html>
 
       {/* session opened, next to the slot */}
-      <Html position={[DEMO_SLOT.x, 4, DEMO_SLOT.z]} center zIndexRange={[1, 0]}>
+      <Html position={[DEMO_SLOT.x + 3, 4, DEMO_SLOT.z]} center zIndexRange={[1, 0]}>
         <div ref={bind('session')} className="chip3d">
           Session opened · <b>{DEMO_PLATE}</b>
         </div>
@@ -307,11 +258,11 @@ export default function Pipeline() {
       {/* state fans out to the clients */}
       <mesh ref={fanA}>
         <sphereGeometry args={[0.35, 10, 10]} />
-        <meshBasicMaterial color="#9cc0ff" />
+        <meshBasicMaterial color="#f6c31c" />
       </mesh>
       <mesh ref={fanB}>
         <sphereGeometry args={[0.35, 10, 10]} />
-        <meshBasicMaterial color="#9cc0ff" />
+        <meshBasicMaterial color="#f6c31c" />
       </mesh>
       <group ref={devices}>
         <Device kind="phone" at={PHONE_POS} bind={bind('phone')} />
@@ -319,7 +270,7 @@ export default function Pipeline() {
       </group>
 
       {/* receipt at the exit gate */}
-      <Html position={[EXIT_GATE.x - 5, 8, FRONT_Z + 3]} center zIndexRange={[1, 0]}>
+      <Html position={[EXIT.x - 14, 9, EXIT.z - 6]} center zIndexRange={[1, 0]}>
         <div ref={bind('receipt')} className="receipt3d">
           <b>Session closed</b>
           <dl>
@@ -347,23 +298,23 @@ function Device({ kind, at, bind }: { kind: 'phone' | 'laptop'; at: THREE.Vector
       {phone ? (
         <mesh>
           <boxGeometry args={[2.2, 4.4, 0.25]} />
-          <meshStandardMaterial color="#111418" roughness={0.4} />
+          <meshStandardMaterial color="#15171b" roughness={0.4} />
         </mesh>
       ) : (
         <>
           <mesh position={[0, 1.6, -1.6]} rotation-x={-0.2}>
             <boxGeometry args={[6, 3.8, 0.2]} />
-            <meshStandardMaterial color="#111418" roughness={0.4} />
+            <meshStandardMaterial color="#15171b" roughness={0.4} />
           </mesh>
           <mesh position={[0, -0.25, 0]}>
             <boxGeometry args={[6, 0.2, 3.6]} />
-            <meshStandardMaterial color="#2a2f37" roughness={0.5} />
+            <meshStandardMaterial color="#c9cfd6" roughness={0.4} metalness={0.5} />
           </mesh>
         </>
       )}
       <Html transform position={phone ? [0, 0, 0.14] : [0, 1.62, -1.48]} rotation-x={phone ? 0 : -0.2} distanceFactor={phone ? 4.2 : 5} zIndexRange={[1, 0]}>
-        <div className={phone ? 'screen3d phone' : 'screen3d laptop'}>
-          <div ref={bind}>
+        <div ref={bind} className={phone ? 'screen3d phone' : 'screen3d laptop'}>
+          <div>
             <small>{phone ? 'PARADA · Driver' : 'PARADA operations'}</small>
             <b>
               {ZONE_A.name} {ZONE_A.occupied + 1} / {ZONE_A.capacity}

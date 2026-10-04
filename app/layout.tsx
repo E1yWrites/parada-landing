@@ -1,15 +1,18 @@
 import type { Metadata, Viewport } from 'next';
-import { Chakra_Petch, IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google';
+import { Bungee, Barlow, JetBrains_Mono } from 'next/font/google';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import SoundToggle from '@/components/SoundToggle';
 import Experience from '@/components/Experience';
+import LightBar from '@/components/LightBar';
+import DriveHUD from '@/components/DriveHUD';
 import { DESCRIPTION, EMAIL, GITHUB_URL, SITE_URL } from '@/lib/content';
 import './globals.css';
 
-const display = Chakra_Petch({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-display' });
-const sans = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-sans' });
-const mono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-mono' });
+// Route-board lettering (Bungee), plain reading text (Barlow), tallies and plates (JetBrains Mono).
+const display = Bungee({ subsets: ['latin'], weight: '400', variable: '--font-display' });
+const sans = Barlow({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-sans' });
+const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500', '700'], variable: '--font-mono' });
 
 const TITLE = 'PARADA — Smart Parking Management System';
 
@@ -22,7 +25,7 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION },
 };
 
-export const viewport: Viewport = { themeColor: '#0B0F15', colorScheme: 'dark' };
+export const viewport: Viewport = { themeColor: '#24262b', colorScheme: 'light' };
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -48,12 +51,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Nav />
           <SoundToggle />
           <a className="header-link" href={GITHUB_URL} rel="noopener">GitHub</a>
+          <LightBar />
         </header>
+        <DriveHUD />
         <main id="content">{children}</main>
         <footer className="site-footer">
           <div>
             <p className="brand">PARADA</p>
-            <p>Smart Parking System · A Capstone Project</p>
+            <p>Smart parking system · a BSIT capstone project</p>
             <p>Lyceum of the Philippines University — Batangas</p>
           </div>
           <nav aria-label="Footer">

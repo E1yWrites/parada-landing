@@ -23,9 +23,8 @@ export default function Technical() {
   return (
     <div className="doc" data-cam="tech">
       <header>
-        <span className="eyebrow">Technical overview</span>
-        <h1 style={{ fontSize: 'var(--step-3)' }}>How PARADA is built, and where the build stands.</h1>
-        <p className="lead muted">Architecture, modules, stack, security, and status, all on one page.</p>
+        <h1>How PARADA is built, and where the build stands.</h1>
+        <p className="lead">Architecture, modules, stack, security, and status, all on one page.</p>
         <nav className="toc" aria-label="On this page">
           {TOC.map(([id, label]) => (
             <a key={id} href={`#${id}`}>{label}</a>
@@ -44,7 +43,7 @@ export default function Technical() {
 
       <section id="architecture" aria-labelledby="architecture-title">
         <h2 id="architecture-title">System architecture</h2>
-        <p className="muted">
+        <p className="soft">
           A camera event travels through vision/OCR into the API, which resolves identity, occupancy and sessions,
           persists them, and propagates the new state to both clients. Vision reads → API decides → DB persists →
           clients read.
@@ -69,7 +68,7 @@ export default function Technical() {
 
       <section id="features" aria-labelledby="features-title">
         <h2 id="features-title">Features, grouped by system module.</h2>
-        <p className="muted">
+        <p className="soft">
           A modular breakdown of platform capabilities — from driver experience to intelligent infrastructure and
           operational control.
         </p>
@@ -97,7 +96,7 @@ export default function Technical() {
             </div>
           ))}
         </div>
-        <p className="muted" style={{ marginTop: '1rem' }}>
+        <p className="soft" style={{ marginTop: '1rem' }}>
           This allows PARADA to adapt to different establishment layouts without changing the application&rsquo;s
           source code for every parking facility.
         </p>
@@ -169,12 +168,12 @@ export default function Technical() {
           Bachelor of Science in Information Technology program.
         </p>
         <h3>What PARADA currently demonstrates</h3>
-        <p className="muted">
+        <p className="soft">
           PARADA demonstrates the integration of mobile development, web administration, backend services, database
           management, computer vision, OCR, GPS navigation, and configurable parking operations within a single system
           architecture.
         </p>
-        <p className="muted">
+        <p className="soft">
           The system is developed as a capstone prototype and evaluated based on functionality, integration,
           correctness, and system behavior. Formal accuracy evaluation and production deployment are treated separately
           from the functional implementation.

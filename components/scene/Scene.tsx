@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
 import Campus from './Campus';
 import Pipeline from './Pipeline';
+import Drive from './Drive';
 import CameraRig from './CameraRig';
 import { CAM } from './cameraPath';
 
@@ -31,22 +32,27 @@ export default function Scene() {
       camera={{ fov: 40, near: 0.5, far: 400, position: CAM.hero.pos }}
       onCreated={() => setReady(true)}
     >
-      <color attach="background" args={['#0B0F15']} />
-      <fog attach="fog" args={['#0B0F15', 190, 440]} />
-      <hemisphereLight args={['#c8d4e6', '#0b0f15', 0.7]} />
+      {/* tropical noon: high warm sun, sky-blue fill, light haze */}
+      <color attach="background" args={['#bfe3f5']} />
+      <fog attach="fog" args={['#cfe8f3', 300, 650]} />
+      <hemisphereLight args={['#d8efff', '#6f8a4a', 1.1]} />
       <directionalLight
-        position={[50, 90, 40]}
-        intensity={1.6}
+        position={[60, 120, 40]}
+        intensity={2.4}
+        color="#fff4dc"
         castShadow={!mobile}
         shadow-mapSize={[2048, 2048]}
-        shadow-camera-left={-100}
-        shadow-camera-right={100}
-        shadow-camera-top={80}
-        shadow-camera-bottom={-80}
-        shadow-camera-far={300}
+        shadow-bias={-0.0004}
+        shadow-camera-left={-120}
+        shadow-camera-right={120}
+        shadow-camera-top={110}
+        shadow-camera-bottom={-110}
+        shadow-camera-far={320}
       />
-      <Campus shadows={!mobile} />
-      <Pipeline />
+      {/* drei <Html> re-roots when the Canvas connects its events, so mount labelled parts after that */}
+      {ready && <Campus shadows={!mobile} />}
+      {ready && <Pipeline />}
+      <Drive reduced={reduced} />
       <CameraRig path={path} reduced={reduced} />
     </Canvas>
   );

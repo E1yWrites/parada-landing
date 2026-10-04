@@ -7,6 +7,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CAM, type CamStop } from './cameraPath';
 import { scroll } from './state';
+import { game } from '@/lib/game';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -56,10 +57,16 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
 
   useFrame((state, dt) => {
     scroll.t = t.current;
+    if (game.get().driving) {
+      (camera as THREE.PerspectiveCamera).clearViewOffset(); // drive mode flies its own chase camera
+      return;
+    }
     const list = stops.current;
     const i = Math.min(Math.floor(t.current), list.length - 1);
-    const a = list[i];
-    const b = list[Math.min(i + 1, list.length - 1)];
+    const tall = state.size.width / state.size.height < 0.9;
+    const pose = (s: CamStop) => (tall && s.portrait ? { ...s, ...s.portrait } : s);
+    const a = pose(list[i]);
+    const b = pose(list[Math.min(i + 1, list.length - 1)]);
     const f = t.current - i;
 
     vPos.lerpVectors(vA.set(...a.pos), vB.set(...b.pos), f);
@@ -80,6 +87,14 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     camera.position.lerp(vPos, k);
     look.current.lerp(vLook, k);
     camera.lookAt(look.current);
+
+    // Board-side offset: wide screens slide the target right of the board; tall screens slide it up,
+    // above the board that sits at the bottom.
+    const shift = aspect > 1.2 || tall ? (a.shift ?? 0) + ((b.shift ?? 0) - (a.shift ?? 0)) * f : 0;
+    const cam = camera as THREE.PerspectiveCamera;
+    const { width: w, height: h } = state.size;
+    if (shift > 1e-4) cam.setViewOffset(w, h, tall ? 0 : -shift * w, tall ? shift * h : 0, w, h);
+    else if (cam.view?.enabled) cam.clearViewOffset();
 
     const dim = (a.dim ?? 0) + ((b.dim ?? 0) - (a.dim ?? 0)) * f;
     const el = document.getElementById('stage-dim');
