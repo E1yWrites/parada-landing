@@ -42,7 +42,7 @@ function Choice<T extends string>({ legend, value, options, onPick }: { legend: 
   );
 }
 
-// Plate + guest policy, then DRIVE IN. Also shown on the HUD while the car waits at the gate.
+// Plate + guest policy (two of the app's establishment policies), then DRIVE IN. Also on the HUD between zones.
 export function DriveSetup({ compact = false }: { compact?: boolean }) {
   const { plate, policy } = useGame();
   return (
@@ -61,8 +61,8 @@ export function DriveSetup({ compact = false }: { compact?: boolean }) {
         value={policy}
         onPick={(p) => game.set({ policy: p })}
         options={[
-          ['admit', 'Admit guests'],
-          ['deny', 'Deny guests'],
+          ['primary', 'Primary zone only', 'guests: Zone C'],
+          ['space', 'Any zone with space'],
         ]}
       />
     </div>

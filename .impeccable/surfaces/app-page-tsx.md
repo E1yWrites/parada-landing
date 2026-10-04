@@ -12,7 +12,7 @@ Mode: Persuade (the game section is Experience inside it).
 Audience/job: LPU-Batangas drivers, admins, stakeholders; capstone panel secondarily. Understand zone-gate plate reading in one trip.
 Action: DRIVE IN (play the trip yourself) — primary; "Watch the trip" (scroll tour) — secondary.
 Proof: the trip itself, counts from lib/content.ts, receipt.
-Constraints: PRODUCT.md. One entry gate, one exit gate, U-shaped one-way loop (A avenue left leg, B open lot base, C main-building right leg).
+Constraints: PRODUCT.md. Real campus geometry (OSM + imagery). Zones change counts only at their gate cameras: Zone A loop with one entry (main-gate canopy) and one exit (north gate); B and C fenced lots, one camera each.
 Unresolved: real app screenshots (absent).
 
 ## Direction contract

@@ -1,5 +1,5 @@
 // Kenney models (CC0), each kit baked into one meshopt-compressed GLB (public/models/CREDITS.txt):
-// cars from the Car Kit, buildings / trees / lampposts / fountain from the City Builder starter kit.
+// cars from the Car Kit; street tiles, paving, buildings, trees, lampposts and the fountain from the City Builder kit.
 // Each model is flattened to a single float geometry so repeats render as one InstancedMesh per model.
 import { useEffect, useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
@@ -13,6 +13,7 @@ export const PARKED_MODELS = ['sedan', 'suv', 'taxi', 'van', 'sedan-sports', 'su
 export const CITY_MODELS = [
   'building-small-a', 'building-small-b', 'building-small-c', 'building-small-d', 'building-garage',
   'grass-trees', 'grass-trees-tall', 'pavement-fountain', 'road-straight-lightposts',
+  'road-straight', 'road-corner', 'road-split', 'pavement',
 ] as const;
 export type CityModel = (typeof CITY_MODELS)[number];
 export const CAR_LENGTH = 4.3; // metres, nose along +z

@@ -2,6 +2,7 @@ cars.glb: sedan, sedan-sports, hatchback-sports, suv, suv-luxury, taxi, van, del
 from Kenney Car Kit 3.1 (https://kenney.nl/assets/car-kit), CC0 1.0.
 Merged, tangents removed, quantized + meshopt-compressed with glTF-Transform.
 
-city.glb: building-small-a..d, building-garage, grass-trees, grass-trees-tall, pavement-fountain, road-straight-lightposts
+city.glb: building-small-a..d, building-garage, grass-trees, grass-trees-tall, pavement-fountain, road-straight-lightposts,
+road-straight, road-corner, road-split, road-intersection, pavement
 from Kenney Starter Kit City Builder (https://github.com/KenneyNL/Starter-Kit-City-Builder), models CC0 1.0.
 Merged, quantized + meshopt-compressed with glTF-Transform. Ground slabs are cut away at load time.

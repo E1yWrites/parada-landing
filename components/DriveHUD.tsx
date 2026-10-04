@@ -11,12 +11,15 @@ const KEYS: Record<string, keyof typeof input> = {
   KeyW: 'up', ArrowUp: 'up', KeyS: 'down', ArrowDown: 'down', KeyA: 'left', ArrowLeft: 'left', KeyD: 'right', ArrowRight: 'right', Space: 'brake',
 };
 
-const OBJECTIVE = {
-  gate: 'Drive to the ENTRY gate and stop at the camera.',
-  park: 'Park in any free slot, or follow the arrows to EXIT.',
-  exit: 'Drive out through the EXIT gate.',
-  done: 'Session closed.',
-};
+// What to do next, from the state the gate cameras left behind.
+const EXIT_VIA = ['the north gate on Doña Aurelia St', 'its gate on Gamboa Rd', 'its gate off P. Herrera St'];
+const objective = (g: ReturnType<typeof game.get>) =>
+  g.denied ??
+  (g.session
+    ? `Counted into ${ZONES[g.session.zone].name}. Park anywhere, or leave through ${EXIT_VIA[g.session.zone]}.`
+    : g.receipt
+      ? 'Session closed. Drive into another zone, or leave.'
+      : 'Pull up at a zone’s gate camera. Zone A’s entry is the canopy at the corner ahead.');
 
 const leave = () => {
   game.stop();
@@ -50,6 +53,7 @@ export default function DriveHUD() {
   const timer = useRef<HTMLSpanElement>(null);
   const again = useRef<HTMLButtonElement>(null);
   const [toast, setToast] = useState(g.toast);
+  const [shown, setShown] = useState<typeof g.receipt>(null); // receipt open on screen
 
   // page chrome steps aside while driving
   useEffect(() => {
@@ -61,6 +65,7 @@ export default function DriveHUD() {
   useEffect(() => {
     if (!g.driving) return;
     const down = (e: KeyboardEvent) => {
+      if (document.querySelector('.hud-done')) return; // the receipt has the keyboard
       const k = KEYS[e.code];
       if (k) {
         input[k] = true;
@@ -90,7 +95,7 @@ export default function DriveHUD() {
     let raf = 0;
     const tick = () => {
       if (speed.current) speed.current.textContent = String(Math.round(live.speed)).padStart(2, '0');
-      if (timer.current) timer.current.textContent = game.get().sessionStart ? fmtDuration(live.elapsed) : '--:--';
+      if (timer.current) timer.current.textContent = game.get().session ? fmtDuration(live.elapsed) : '--:--';
       raf = requestAnimationFrame(tick);
     };
     tick();
@@ -105,20 +110,29 @@ export default function DriveHUD() {
     return () => clearTimeout(t);
   }, [g.toast]);
 
+  // an exit camera closing the session opens the receipt; the car stops while it's read
   useEffect(() => {
-    if (g.step === 'done') again.current?.focus();
-  }, [g.step]);
+    if (!g.receipt) return;
+    setShown(g.receipt);
+    Object.keys(input).forEach((k) => (input[k as keyof typeof input] = false));
+  }, [g.receipt]);
+  useEffect(() => {
+    if (shown) again.current?.focus();
+  }, [shown]);
+  useEffect(() => {
+    if (!g.driving) setShown(null);
+  }, [g.driving]);
 
   if (!g.driving) return null;
-  const r = g.receipt;
+  const r = shown;
   return (
     <div className="hud" role="region" aria-label="Drive mode">
       <div className="hud-top">
         <div className="hud-left">
           <section className="board hud-goal" data-blocked={g.denied || undefined}>
             <span className="plate num">{plateText(g.plate)}</span>
-            <p>{g.denied ? 'Turned away by the guest policy. Switch it to admit, or use the registered plate, then pull up again.' : OBJECTIVE[g.step]}</p>
-            {g.step === 'gate' && <DriveSetup compact />}
+            <p>{objective(g)}</p>
+            {!g.session && <DriveSetup compact />}
           </section>
           <div className="hud-toast" aria-live="polite">
             {toast && (
@@ -133,7 +147,7 @@ export default function DriveHUD() {
         <section className="board hud-meter" aria-label="Trip">
           <ul className="tally" aria-label="Zone occupancy (demo figures)">
             {ZONES.map((z, i) => (
-              <li key={z.code} data-band={band({ ...z, occupied: g.counts[i] })} className={g.parkedZone === i ? 'is-mine' : undefined}>
+              <li key={z.code} data-band={band({ ...z, occupied: g.counts[i] })} className={g.session?.zone === i ? 'is-mine' : undefined}>
                 <b>{z.code}</b>
                 <span className="num">
                   {g.counts[i]}/{z.capacity}
@@ -145,7 +159,7 @@ export default function DriveHUD() {
             <div>
               <dt>Session</dt>
               <dd className="num">
-                <span ref={timer}>{g.sessionStart ? fmtDuration(live.elapsed) : '--:--'}</span>
+                <span ref={timer}>{g.session ? fmtDuration(live.elapsed) : '--:--'}</span>
               </dd>
             </div>
             <div>
@@ -178,7 +192,7 @@ export default function DriveHUD() {
         </div>
       </div>
 
-      {g.step === 'done' && r && (
+      {r && (
         <div className="hud-done">
           <section className="receipt" aria-labelledby="receipt-title">
             <h2 id="receipt-title">Session closed</h2>
@@ -194,10 +208,16 @@ export default function DriveHUD() {
               <dt>Fee</dt>
               <dd>{r.fee}</dd>
             </dl>
-            <p>The exit camera read the plate, the backend closed the session and the zone count settled.</p>
+            <p>
+              Camera <span className="num">{r.camera}</span> read the plate as you left. The backend closed the session, released
+              the space in the zone count and calculated the fee where configured.
+            </p>
             <div className="actions">
-              <button ref={again} type="button" className="btn primary" onClick={() => game.start()}>
-                Drive again
+              <button ref={again} type="button" className="btn primary" onClick={() => setShown(null)}>
+                Keep driving
+              </button>
+              <button type="button" className="btn" onClick={() => game.start()}>
+                Start over
               </button>
               <button type="button" className="btn" onClick={leave}>
                 Back to the tour

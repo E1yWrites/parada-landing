@@ -60,6 +60,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <p className="brand">PARADA</p>
             <p>Smart parking system · a BSIT capstone project</p>
             <p>Lyceum of the Philippines University — Batangas</p>
+            <p className="credit">
+              Campus map data ©{' '}
+              <a href="https://www.openstreetmap.org/copyright" rel="noopener">
+                OpenStreetMap contributors
+              </a>
+              . 3D models by <a href="https://kenney.nl" rel="noopener">Kenney</a> (CC0).
+            </p>
           </div>
           <nav aria-label="Footer">
             <Link href="/">Experience</Link>

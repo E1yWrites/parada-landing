@@ -109,8 +109,9 @@ export default function Home() {
         <div className="board">
           <h2 id="play-title">Now you drive.</h2>
           <p className="needs-webgl">
-            Pull up at the entry gate, let the camera read your plate, park in any zone and leave through the exit.
-            Try a guest plate with the policy set to deny.
+            Each zone counts cars at its gate cameras, not at the bays. Pull up to a gate, let the camera read your
+            plate and watch that zone&rsquo;s count go up; leave through its exit camera to close the session. Try the
+            guest plate: under the primary-zone policy, only Zone C lets guests in.
           </p>
           <p className="no-webgl">
             Drive mode needs WebGL, which this browser has turned off. The pipeline above walks through the same trip.

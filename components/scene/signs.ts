@@ -45,6 +45,46 @@ export function signTexture(lines: string[], { w = 512, h = 256, bg = '#1b3fb8',
   return t;
 }
 
+// A client screen (phone or admin laptop) in the board style: label, zone, count, session line.
+export function screenTexture({ w, h, label, title, count, line }: { w: number; h: number; label: string; title: string; count: string; line: string }) {
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 8;
+  const mono = getComputedStyle(document.documentElement).getPropertyValue('--font-mono').trim() || 'ui-monospace, monospace';
+  const draw = () => {
+    const g = c.getContext('2d')!;
+    const u = Math.min(w, h) / 100;
+    g.fillStyle = '#12297d';
+    g.fillRect(0, 0, w, h);
+    g.fillStyle = '#1b3fb8';
+    g.fillRect(4 * u, 4 * u, w - 8 * u, h - 8 * u);
+    g.fillStyle = '#f6c31c';
+    g.fillRect(4 * u, 4 * u, w - 8 * u, 1.2 * u);
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.font = `600 ${7 * u}px ${mono}`;
+    g.fillStyle = '#f6c31c';
+    g.fillText(label, w / 2, h * 0.2);
+    g.font = `400 ${14 * u}px ${family()}`;
+    g.fillStyle = '#c42525';
+    g.fillText(title, w / 2 + u, h * 0.42 + u);
+    g.fillStyle = '#fff3d1';
+    g.fillText(title, w / 2, h * 0.42);
+    g.font = `700 ${17 * u}px ${mono}`;
+    g.fillText(count, w / 2, h * 0.62);
+    g.font = `500 ${6.5 * u}px ${mono}`;
+    g.fillStyle = '#eee3c3';
+    g.fillText(line, w / 2, h * 0.82);
+    t.needsUpdate = true;
+  };
+  draw();
+  document.fonts?.ready.then(draw, () => {});
+  return t;
+}
+
 export function plateTexture(text: string) {
   const c = document.createElement('canvas');
   c.width = 512;
