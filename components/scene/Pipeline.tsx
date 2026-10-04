@@ -35,7 +35,7 @@ const S = {
 
 const CUES: [number, Sfx][] = [
   [1.05, 'scan'], [2.4, 'ocr'], [3.1, 'whoosh'], [4.45, 'decide'], [5.45, 'chime'],
-  [6.95, 'ping'], [7.95, 'scan'], [8.2, 'print'],
+  [6.7, 'ping'], [7.95, 'scan'], [8.2, 'print'],
 ];
 
 const buildTimeline = () => {
@@ -62,12 +62,12 @@ const buildTimeline = () => {
     .to(S, { boom: 0, duration: 0.25 }, 6.0)
     .to(S, { branch: 0, registered: 0, duration: 0.2 }, 6.05)
     // both clients read the new state
-    .to(S, { fan: 1, duration: 0.45, ease: 'power1.inOut' }, 6.5)
-    .to(S, { screens: 1, duration: 0.1 }, 6.95)
-    .to(S, { session: 0, duration: 0.1 }, 7.15)
-    // out of the bay and round the loop to the exit camera
-    .to(S, { reverse: 1, duration: 0.17, ease: 'power1.inOut' }, 7.25)
-    .to(S, { loop: 1, duration: 0.58, ease: 'power1.inOut' }, 7.42)
+    .to(S, { fan: 1, duration: 0.4, ease: 'power1.inOut' }, 6.3)
+    .to(S, { screens: 1, duration: 0.1 }, 6.7)
+    .to(S, { session: 0, duration: 0.1 }, 6.85)
+    // out of the bay and round the loop to the exit camera, given a full step so the follow camera can keep up
+    .to(S, { reverse: 1, duration: 0.17, ease: 'power1.inOut' }, 6.75)
+    .to(S, { loop: 1, duration: 1.03, ease: 'sine.inOut' }, 6.92)
     .to(S, { exitCone: 1, duration: 0.12 }, 7.95)
     .to(S, { count: ZONE_A.occupied, duration: 0.02 }, 8.2)
     .to(S, { receipt: 1, duration: 0.3, ease: 'power2.out' }, 8.2)

@@ -26,25 +26,41 @@ const vLook = new THREE.Vector3();
 const car = new THREE.Vector3();
 const poi = new THREE.Vector3();
 
-// A stop's pose. Follow stops sit in the car's frame (x right, y up, z forward) and can lean their gaze toward a point.
-// The car is parked at its path's ends when hidden, so follow stops stay anchored before and after the tour.
-function pose(s: CamStop, heading: number, pos: THREE.Vector3, look: THREE.Vector3) {
-  const f = s.follow;
-  if (!f) {
-    pos.set(...s.pos);
-    look.set(...s.look);
-    return;
-  }
+// Follow stops sit in the car's frame (x right, y up, z forward) and can lean their gaze toward a point. The car is
+// parked at its path's ends when hidden, so follow stops stay anchored before and after the tour.
+type Follow = NonNullable<CamStop['follow']>;
+function followPose(off: readonly [number, number, number], f: Follow, heading: number, pos: THREE.Vector3, look: THREE.Vector3) {
   car.set(demoCar.pos.x, 0, demoCar.pos.z);
   const c = Math.cos(heading);
   const sn = Math.sin(heading);
-  const [x, y, z] = f.off;
+  const [x, y, z] = off;
   // car frame: forward (sin h, cos h); right (-cos h, sin h) for a nose along +z
   pos.set(car.x - x * c + z * sn, y, car.z + x * sn + z * c);
   const ahead = f.ahead ?? 2;
   look.set(car.x + sn * ahead, 1.4, car.z + c * ahead);
   if (f.look) look.lerp(poi.set(...f.look), f.mix ?? 1);
 }
+function pose(s: CamStop, heading: number, pos: THREE.Vector3, look: THREE.Vector3) {
+  if (s.follow) followPose(s.follow.off, s.follow, heading, pos, look);
+  else {
+    pos.set(...s.pos);
+    look.set(...s.look);
+  }
+}
+// Two follow offsets blended as an orbit round the car (angle the short way, distance, height), so a move from a
+// front shot to a rear shot swings round the car instead of cutting through it.
+const polar = ([x, y, z]: readonly [number, number, number]) => [Math.atan2(x, z), Math.hypot(x, z), y] as const;
+function orbitOffset(a: Follow, b: Follow, e: number): [number, number, number] {
+  const [ta, ra, ya] = polar(a.off);
+  const [tb, rb, yb] = polar(b.off);
+  let dt = tb - ta;
+  dt = Math.atan2(Math.sin(dt), Math.cos(dt));
+  const t = ta + dt * e;
+  const r = ra + (rb - ra) * e;
+  return [Math.sin(t) * r, ya + (yb - ya) * e, Math.cos(t) * r];
+}
+// zero velocity at both ends of a segment: the camera settles on each step instead of turning a corner at it
+const ease = (f: number) => f * f * f * (f * (f * 6 - 15) + 10);
 
 export default function CameraRig({ path, reduced }: { path: string; reduced: boolean }) {
   const camera = useThree((s) => s.camera);
@@ -129,10 +145,14 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     dh = Math.atan2(Math.sin(dh), Math.cos(dh));
     heading.current += dh * (reduced ? 1 : 1 - Math.exp(-3 * dt));
 
+    // marketing segments are already hold-eased by the scroll mapping; follow segments ease here
+    const e = a.follow || b.follow ? ease(f) : f;
     pose(a, heading.current, vA, lA);
     pose(b, heading.current, vB, lB);
-    vPos.lerpVectors(vA, vB, f);
-    vLook.lerpVectors(lA, lB, f);
+    vLook.lerpVectors(lA, lB, e);
+    if (a.follow && b.follow) {
+      followPose(orbitOffset(a.follow, b.follow, e), a.follow, heading.current, vPos, vB);
+    } else vPos.lerpVectors(vA, vB, e);
     if (a.orbit && !reduced) {
       // slow orbit around the look target, fading out as we leave the stop
       const ang = state.clock.elapsedTime * 0.06 * (1 - f);
@@ -144,7 +164,7 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     const aspect = state.size.width / state.size.height;
     // Close follow shots pull back less, or the camera would back into the canopy and the buildings.
     const full = Math.min(2, Math.max(1, Math.sqrt(1.6 / aspect)));
-    const followW = (a.follow ? 1 - f : 0) + (b.follow ? f : 0);
+    const followW = (a.follow ? 1 - e : 0) + (b.follow ? e : 0);
     const pull = full - (full - 1) * 0.65 * followW;
     if (pull > 1) vPos.sub(vLook).multiplyScalar(pull).add(vLook);
 
@@ -156,7 +176,7 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
 
     // Board-side offset: on wide screens a positive shift slides the subject right (board on the left), a negative
     // one left; tall screens slide it up, above the board that sits at the bottom.
-    const shift = aspect > 1.2 || tall ? (a.shift ?? 0) + ((b.shift ?? 0) - (a.shift ?? 0)) * f : 0;
+    const shift = aspect > 1.2 || tall ? (a.shift ?? 0) + ((b.shift ?? 0) - (a.shift ?? 0)) * e : 0;
     const { width: w, height: h } = state.size;
     if (Math.abs(shift) > 1e-4) cam.setViewOffset(w, h, tall ? 0 : -shift * w, tall ? Math.abs(shift) * h : 0, w, h);
     else if (cam.view?.enabled) cam.clearViewOffset();
