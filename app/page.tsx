@@ -1,28 +1,30 @@
 import Link from 'next/link';
 import { ZONES, band, PIPELINE, PROBLEMS, MOBILE_STEPS, ADMIN_VERBS, ARCHITECTURE, EMAIL, GITHUB_URL } from '@/lib/content';
 import Tally from '@/components/Tally';
-import { DriveIn, DriveSetup } from '@/components/DriveIn';
+import { DriveIn, DriveSetup, PassFields } from '@/components/DriveIn';
 
 export default function Home() {
   return (
     <>
       <section className="chapter hero" data-cam="hero" aria-labelledby="hero-title">
         <div className="board">
+          <div className="pass-band">
+            <span className="brand-mark" aria-hidden="true">P</span>
+            Smart parking pass
+            <span className="slot" aria-hidden="true" />
+            <span className="num">LPU-B</span>
+          </div>
           <h1 id="hero-title" className="wordmark">PARADA</h1>
           <p className="headline">Smart parking, designed for smarter campuses.</p>
           <p>
             Cameras at the zone gates read your plate, and every zone keeps its own live count, so you know where
             there&rsquo;s room before you reach the gate.
           </p>
+          <PassFields />
           <div className="actions">
             <DriveIn />
             <a className="btn" href="#how">Watch the trip</a>
           </div>
-          <ol className="chain route-line" aria-label="The route">
-            <li>Entry</li>
-            <li>Zone A · B · C</li>
-            <li>Exit</li>
-          </ol>
           <Tally />
           <p className="fine">Demo figures · a BSIT capstone project, Lyceum of the Philippines University — Batangas</p>
         </div>
@@ -96,7 +98,7 @@ export default function Home() {
       </section>
 
       <section id="guest" className="chapter right" data-cam="guest" aria-labelledby="guest-title">
-        <div className="board red">
+        <div className="board gold">
           <h2 id="guest-title">Guest admission is a policy decision, not a default.</h2>
           <p>
             Guest admission is controlled by establishment-defined policies rather than treating every unidentified
@@ -109,9 +111,9 @@ export default function Home() {
         <div className="board">
           <h2 id="play-title">Now you drive.</h2>
           <p className="needs-webgl">
-            Each zone counts cars at its gate cameras, not at the bays. Pull up to a gate, let the camera read your
-            plate and watch that zone&rsquo;s count go up; leave through its exit camera to close the session. Try the
-            guest plate: under the primary-zone policy, only Zone C lets guests in.
+            Zone A counts cars at its gate cameras, not at the bays. Pull up under the entry canopy, let the camera read
+            your plate and watch the count go up; leave through the north gate&rsquo;s exit camera to close the session.
+            Try the guest plate: under the primary-zone policy guests may only use Zone C, so Zone A turns them away.
           </p>
           <p className="no-webgl">
             Drive mode needs WebGL, which this browser has turned off. The pipeline above walks through the same trip.

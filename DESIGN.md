@@ -1,250 +1,238 @@
 ---
 name: PARADA
-description: Smart zone-based campus parking, told as a hand-painted jeepney route board over a sunlit 3D campus.
+description: Smart zone-based campus parking, told as the vehicle pass, gate stamps and official receipt over an accurate daylight model of LPU-Batangas.
 colors:
-  board: "#1b3fb8"
-  board-deep: "#12297d"
-  jeep: "#c42525"
-  jeep-deep: "#921717"
-  cream: "#fff3d1"
-  cream-soft: "#eee3c3"
-  curb: "#f6c31c"
-  chrome: "#c9cfd6"
-  asphalt: "#24262b"
-  asphalt-2: "#33363d"
-  leaf-deep: "#1f6b3b"
-  ink: "#121418"
-  ink-soft: "#4a4f57"
-  paper: "#fff8e6"
-  sky: "#bfe3f5"
-  free: "#3ccf74"
-  busy: "#f6c31c"
-  full: "#ff4a3d"
+  mint: "#dfeee3"
+  mint-2: "#cfe4d6"
+  mint-3: "#b9d7c3"
+  guilloche: "#2f7a5b"
+  green-ink: "#1f5a43"
+  stamp: "#c8102e"
+  stamp-deep: "#960b22"
+  id: "#1d4e9e"
+  id-deep: "#143a78"
+  gold: "#e2b23c"
+  gold-deep: "#9a6f0e"
+  visitor: "#f3dc97"
+  ink: "#1a1a1a"
+  ink-soft: "#3d4a44"
+  paper: "#fbfaf5"
+  sky: "#cfe2ee"
+  free: "#2f9e5b"
+  busy: "#e2a312"
+  full: "#d8263a"
 typography:
   display:
-    fontFamily: "Bungee, system-ui, sans-serif"
-    fontSize: "clamp(3rem, 1.8rem + 5vw, 5.75rem)"
-    fontWeight: 400
-    lineHeight: 0.95
-    letterSpacing: "0.02em"
+    fontFamily: "Sofia Sans Extra Condensed, system-ui, sans-serif"
+    fontSize: "34cqi"
+    fontWeight: 900
+    lineHeight: 0.8
+    textTransform: uppercase
   headline:
-    fontFamily: "Bungee, system-ui, sans-serif"
-    fontSize: "clamp(1.5rem, 1.1rem + 1.5vw, 2.15rem)"
-    fontWeight: 400
-    lineHeight: 1.06
-    letterSpacing: "0.01em"
+    fontFamily: "Sofia Sans Extra Condensed, system-ui, sans-serif"
+    fontSize: "clamp(2rem, 1.4rem + 2.2vw, 3rem)"
+    fontWeight: 800
+    lineHeight: 0.95
+    textTransform: uppercase
   title:
-    fontFamily: "Bungee, system-ui, sans-serif"
-    fontSize: "1.2rem"
-    fontWeight: 400
-    lineHeight: 1.06
+    fontFamily: "Sofia Sans Extra Condensed, system-ui, sans-serif"
+    fontSize: "1.55rem"
+    fontWeight: 800
+    lineHeight: 1
+    textTransform: uppercase
   body:
-    fontFamily: "Barlow, system-ui, sans-serif"
+    fontFamily: "Sofia Sans, system-ui, sans-serif"
     fontSize: "1.0625rem"
     fontWeight: 400
     lineHeight: 1.55
   lead:
-    fontFamily: "Barlow, system-ui, sans-serif"
-    fontSize: "1.2rem"
+    fontFamily: "Sofia Sans, system-ui, sans-serif"
+    fontSize: "1.25rem"
     fontWeight: 700
     lineHeight: 1.3
   label:
-    fontFamily: "Bungee, system-ui, sans-serif"
-    fontSize: "0.85rem"
-    fontWeight: 400
-    lineHeight: 1
+    fontFamily: "Sofia Sans, system-ui, sans-serif"
+    fontSize: "0.72rem"
+    fontWeight: 700
+    letterSpacing: "0.1em"
+    textTransform: uppercase
   data:
     fontFamily: "JetBrains Mono, ui-monospace, monospace"
-    fontSize: "1.05rem"
+    fontSize: "1.1rem"
     fontWeight: 500
     fontFeature: "tnum"
 rounded:
-  chip: "6px"
-  control: "8px"
-  button: "9px"
-  board: "12px"
+  pass: "18px"
+  pass-hud: "14px"
+  button: "7px"
+  tick: "5px"
+  box: "4px"
   lamp: "50%"
 spacing:
   gutter: "clamp(1rem, 4vw, 3rem)"
-  board-pad: "clamp(1.5rem, 3vw, 2.2rem)"
-  stack: "0.75rem"
+  pass-pad: "clamp(1.4rem, 3vw, 2rem)"
+  field-gap: "0.9rem 1rem"
   section: "6rem"
 components:
   button-primary:
-    backgroundColor: "{colors.jeep}"
-    textColor: "{colors.cream}"
-    typography: "{typography.label}"
+    backgroundColor: "{colors.stamp}"
+    textColor: "#ffffff"
+    typography: "{typography.title}"
     rounded: "{rounded.button}"
-    padding: "0 1.3rem"
+    padding: "0 1.25rem"
     height: "48px"
   button-secondary:
-    backgroundColor: "{colors.cream}"
-    textColor: "{colors.ink}"
-    typography: "{typography.label}"
-    rounded: "{rounded.button}"
-    padding: "0 1.3rem"
-    height: "48px"
-  route-board:
-    backgroundColor: "{colors.board}"
-    textColor: "{colors.cream}"
-    rounded: "{rounded.board}"
-    padding: "{spacing.board-pad}"
-    width: "min(100%, 34rem)"
-  route-board-red:
-    backgroundColor: "{colors.jeep}"
-    textColor: "{colors.cream}"
-    rounded: "{rounded.board}"
-    padding: "{spacing.board-pad}"
-  tally-cell:
-    backgroundColor: "{colors.board-deep}"
-    textColor: "{colors.cream}"
-    typography: "{typography.data}"
-    rounded: "{rounded.control}"
-    padding: "0.55rem 0.75rem"
-  choice-chip:
-    backgroundColor: "{colors.board-deep}"
-    textColor: "{colors.cream}"
-    rounded: "{rounded.control}"
-    padding: "0.35rem 0.9rem"
-    height: "44px"
-  choice-chip-selected:
-    backgroundColor: "{colors.cream}"
-    textColor: "{colors.ink}"
-  nav-tab-current:
-    backgroundColor: "{colors.curb}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.control}"
-    height: "44px"
-  spec-sheet:
     backgroundColor: "{colors.paper}"
     textColor: "{colors.ink}"
-    rounded: "10px"
+    typography: "{typography.title}"
+    rounded: "{rounded.button}"
+    padding: "0 1.25rem"
+    height: "48px"
+  pass:
+    backgroundColor: "{colors.mint}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.pass}"
+    padding: "{spacing.pass-pad}"
+    width: "min(100%, 34rem)"
+  visitor-pass:
+    backgroundColor: "{colors.visitor}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.pass}"
+  field:
+    textColor: "{colors.ink}"
+    typography: "{typography.data}"
+  tick-box:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.tick}"
+    height: "44px"
+  nav-tab-current:
+    backgroundColor: "{colors.mint}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.button}"
+    height: "44px"
+  receipt:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.box}"
 ---
 
 # Design System: PARADA
 
 ## Overview
 
-**Creative North Star: "The Route Board"**
+**Creative North Star: "The Vehicle Pass"**
 
-Every piece of interface is a sign you would see on a Batangas jeepney or at a campus gate: a flat enamel board in ultramarine or jeep red, framed in polished chrome, with a thin yellow pinstripe set inside the frame and a rivet in each corner. Lettering is cream, painted in a chunky display face with a red drop shade, the way a sign painter shades block letters. The boards float over a real place, a sunlit 3D model of the LPU-Batangas parking loop at tropical noon, and the camera moves through it as you read.
+Every LPU-Batangas driver already carries the paperwork that explains PARADA: a vehicle sticker, a laminated gate pass, a stamp when the guard waves you in, a receipt when you leave. The site is built from those objects. Panels are laminated passes in security-print mint with guilloche linework generated from the plate on the pass; headings are condensed caps that fill the form; facts sit in ruled fields; the nine pipeline steps are stamp boxes that get stamped red, in order, and never come off; the exit prints an official receipt with the exit camera's stamp.
 
-The world is bright and specific, not dark-mode SaaS. Asphalt grey belongs to the road furniture (header, footer, lamp strip, touch pedals), curb yellow marks what is live or selected, and the green / yellow / red occupancy ramp appears only where a zone count actually changes. Numbers are tallies, set in mono. The technical tab keeps the same voice as a printed spec sheet laid over the dimmed campus.
+The passes float over the real campus in daylight: footprints traced from satellite imagery, painted-concrete buildings with sun-shade ledges and window bands, hipped metal roofs where the imagery shows them, the rain-tree canopy, electric poles wired along Tolentino Rd and Doña Aurelia St, plastered neighbourhood houses under corrugated roofs. Nothing is dark, neon or surveillance-toned, and nothing is a toy-kit block.
 
 **Key Characteristics:**
-- Enamel boards with chrome frame, inset yellow pinstripe and corner rivets
-- Cream Bungee lettering with a hard sign-painter drop shade
-- Sunlit low-poly campus (Kenney kits) as the permanent backdrop
-- Curb-paint stripes and a nine-lamp strip as the page chrome
-- Occupancy colour only on state that changes; mono for every count, plate and timer
+- Laminated mint pass cards, plate-seeded guilloche, an overlapping laminate sleeve for depth
+- Sofia Sans Extra Condensed caps for every heading; Sofia Sans for reading; JetBrains Mono for plates, counts, times
+- Ruled form fields whose line carries state; tick boxes for choices
+- Stamp red for the action and the stamps; ID blue for Registered and the lanyard header; pass gold for Guest
+- Occupancy colour only on numbers that can change
 
 ## Colors
 
-Two enamels, one cream, road furniture and a three-step occupancy ramp.
+Security-print mint carries the surfaces; three ink colours do jobs.
 
 ### Primary
-- **Route Board Ultramarine** (#1b3fb8): the default board, zone tags in the scene, chips on the spec sheet. Cream text on it clears 7:1.
-- **Deep Ultramarine** (#12297d): wells inside a board (tally cells, zone rows, unselected choices) and the drop shade on red boards.
+- **Security Mint** (#dfeee3): every pass, the zone tag, the HUD, the current tab. Ink text on it is above 14:1.
+- **Guilloche Green** (#2f7a5b): the guilloche linework (at 20–34% stroke opacity), dashed pending stamp boxes, the accelerator pedal.
+- **Green Ink** (#1f5a43): small-caps field labels and legends on mint (7:1).
 
 ### Secondary
-- **Jeep Red** (#c42525): primary action buttons, the red board variant (guest policy, 404, denied toast), step-stop badges. Cream text on it is above 4.5:1; never put cream-soft on red.
-- **Jeep Red Deep** (#921717): the drop shade under lettering on red buttons.
+- **Stamp Red** (#c8102e) / **Stamp Deep** (#960b22): the primary action (a red field with a white inner frame, like a rubber stamp), stamped boxes and step numbers, the receipt's EXITED stamp, the denied toast, tick marks.
+- **ID Blue** (#1d4e9e) / **ID Deep** (#143a78): the header strap and footer, the pass's issuer band, the Registered marker, links, focus rings on light grounds, the dim layer behind the technical tab.
 
 ### Tertiary
-- **Curb Yellow** (#f6c31c): pinstripes, the current nav tab, focus rings, selection, labels and legends on boards, the lit lamp. It is the "this is live / this is you" colour.
-- **Leaf Deep** (#1f6b3b): success toasts and the accelerator pedal.
+- **Pass Gold** (#e2b23c) / **Visitor** (#f3dc97): the Guest marker, the visitor-pass card (guest policy chapter), warning toasts, text selection, focus rings on blue.
 
 ### Neutral
-- **Sign Cream** (#fff3d1): all lettering and body text on enamel; secondary buttons.
-- **Faded Cream** (#eee3c3): secondary text on ultramarine only (6.9:1).
-- **Polished Chrome** (#c9cfd6): frames (as a gradient from #f6f8fa through #8d96a0), sign posts, kbd underline.
-- **Asphalt** (#24262b) / **Asphalt Lift** (#33363d): header, footer, lamp strip, pedals, hover on header links, the dim layer behind the technical tab.
-- **Ink** (#121418) / **Ink Soft** (#4a4f57): text on paper, plates and cream buttons.
-- **Spec Paper** (#fff8e6): the technical sheet and the receipt.
-- **Noon Sky** (#bfe3f5): page and stage ground before the canvas paints; the scene background.
+- **Form Ink** (#1a1a1a) / **Ink Soft** (#3d4a44): all text, field rules, button frames. Ink Soft is green-tinted, never plain grey.
+- **Official Paper** (#fbfaf5): buttons, tick boxes, the receipt, the technical form, chain boxes.
+- **Morning Sky** (#cfe2ee): page ground before the canvas paints, the scene's sky.
 
 ### Named Rules
-**The State Colour Rule.** Free (#3ccf74), busy (#f6c31c) and full (#ff4a3d) appear only as zone lamps, meters and scene pad tints, and only where an occupancy number can change. They are never decoration.
+**The State Colour Rule.** Free (#2f9e5b), busy (#e2a312) and full (#d8263a) appear only as zone lamps, meters and the scene's bay tint, and only where an occupancy number can change.
 
-**The Cream On Enamel Rule.** Text on a board is cream or faded cream; on red, cream only. Grey text never sits on a coloured board.
+**The Pass Colour Rule.** Blue means Registered, gold means Guest, red means stamped or act. A colour never borrows another's job.
 
 ## Typography
 
-**Display Font:** Bungee (with system-ui)
-**Body Font:** Barlow (with system-ui)
-**Data Font:** JetBrains Mono (with ui-monospace)
+**Display Font:** Sofia Sans Extra Condensed 800/900
+**Body Font:** Sofia Sans 400/600/700
+**Data Font:** JetBrains Mono 400/500/700
 
-**Character:** Bungee is a sign painter's block letter, all caps by design; Barlow is a plain, slightly narrow grotesk that reads well at length; JetBrains Mono gives plates, tallies and timers fixed-width figures.
+**Character:** institutional form lettering. The extra-condensed caps are the face printed across ID cards and registrar forms; Sofia Sans is the plain reading face of the same family; the mono is what a plate or a receipt is printed in.
 
 ### Hierarchy
-- **Display** (400, clamp(3rem → 5.75rem), 0.95): the PARADA wordmark in the hero board only.
-- **Headline** (400, clamp(1.5rem → 2.15rem), 1.06): chapter headings (h2), with a 0.06em jeep-red drop shade.
-- **Title** (400, 1.2rem): step and card headings (h3), 0.05em shade.
-- **Lead** (Barlow 700, 1.2rem, 1.3): the tagline line under a heading.
-- **Body** (Barlow 400, 1.0625rem, 1.55): paragraphs; boards cap the measure at 34rem (54rem wide).
-- **Label** (Bungee 400, 0.75–0.95rem): legends, gauge labels, `dt` in who-lists, in curb yellow on boards.
-- **Data** (JetBrains Mono 500/700, tabular): zone counts, plates, session timer, speed, receipt rows, email.
+- **Display** (900, 34cqi of the pass, 0.8): the PARADA wordmark, sized to fill the hero pass.
+- **Headline** (800, clamp(2rem → 3rem), 0.95, caps): chapter headings.
+- **Title** (800, 1.55rem, caps): step and card headings, toast titles, button lettering (1.15rem).
+- **Lead** (Sofia Sans 700, 1.25rem): the tagline under a heading.
+- **Body** (400, 1.0625rem, 1.55): paragraphs; passes cap the measure at 34rem (54rem wide).
+- **Label** (700, 0.72rem, 0.1em tracking, caps, green ink): field labels, legends, gauge labels.
+- **Data** (JetBrains Mono, tabular): plates, zone counts, session timer, speed, receipt rows, stamp-box numbers.
 
 ### Named Rules
-**The Mono Means Measured Rule.** Mono is only for counts, plates, durations and identifiers, never for a "technical" mood.
+**The Mono Means Measured Rule.** Mono only for plates, counts, durations and identifiers.
 
-**The Painted Shade Rule.** Bungee headings carry a hard drop shade (0.05–0.06em offset, no blur) in jeep red, or deep ultramarine on red boards. This is sign lettering, not a box shadow; boxes never get a hard offset shadow.
+**The Full Measure Rule.** Headings are condensed caps set large enough to run most of the pass's width; they never shrink to a polite subhead.
 
 ## Layout
 
-Each home chapter is one camera stop: a board pinned left or right (`.right`) over a full-viewport section (`min-height: 100svh`, 6rem block padding, `--gutter` sides), alternating sides through the nine pipeline steps (90svh each). The hero board (31rem) sits top-left while the camera's projection is shifted right (`shift: 0.2` of the viewport width) so the U and both gates stay clear of it. Below 768px boards drop to the bottom of their section, full width, with the scene above; the hero starts at 42svh, and tall screens use portrait camera poses with the projection shifted up instead of right. Drive mode hides the chapters (visibility, so scroll position survives), locks scroll, and lays the HUD over the canvas: objective board top-left with toasts stacked under it (above the pedals on phones), trip meter top-right, pedals on coarse pointers.
+Each home chapter is one camera stop: a pass pinned left or right (`.right`) over a full-viewport section (`min-height: 100svh`, 6rem block padding, `--gutter` sides), alternating sides through the nine pipeline steps (90svh each). The hero pass (32rem) sits top-left and the camera's projection shifts away from it. Below 768px passes drop to the bottom of their section, full width, with the scene above (hero from 38svh, 36svh on small phones). Drive mode hides the chapters (visibility, so scroll survives), locks scroll and lays the HUD over the canvas: objective pass top-left with toasts under it (above the pedals on phones), trip meter top-right (19rem), pedals on coarse pointers.
 
 ## Elevation & Depth
 
-Depth is physical: boards hang in front of a 3D world. Each board carries a long soft drop shadow plus a tight contact shadow; buttons sit slightly proud with an inner bottom lip. No zero-offset glows, no glass.
-
-### Shadow Vocabulary
-- **Board hang** (`0 24px 44px -20px rgb(18 20 24 / 0.6), 0 3px 8px -2px rgb(18 20 24 / 0.3)`): every route board.
-- **Button proud** (`0 8px 16px -8px rgb(18 20 24 / 0.65), inset 0 -3px 0 rgb(18 20 24 / 0.14)`), lifting to `0 12px 20px -10px` on hover and pressing to `0 4px 8px -6px` with an inset top lip.
-- **Pinstripe** (`inset 0 0 0 9px <board>, inset 0 0 0 11px #f6c31c`): the yellow line inside every frame (6/7.5px in the HUD, 7/8.5px on phones).
+Depth comes from overlap, never from glow. Each pass sits in a laminate sleeve: a `::before` layer 7px larger on three sides and 11px at the bottom, translucent mint with a 2px backdrop blur, a white hairline and a 1px contact line. The card itself carries a laminate edge (`inset 0 1px 0 white, inset 0 0 0 1px rgb(31 90 67 / 0.28)`). Paper objects (receipt, technical form, 3D receipt) take a 1px contact line plus one long soft drop.
 
 ## Shapes
 
-Soft-cornered sign plates: boards 12px, buttons 9px, controls 8px, chips 6px, lamps and stop badges round. Frames are a 3px chrome gradient applied as a border-box background behind a padding-box enamel fill. Corner rivets are radial-gradient dots in a `::before` overlay. Header and footer are edged with a dashed curb stripe (`repeating-linear-gradient(90deg, #f6c31c 0 34px, #24262b 34px 46px)`, 5px).
+ID-card corners on passes (18px, 14px in the HUD and on phones); buttons 7px; tick boxes 5px; chain boxes, receipt and form cells 4px; lamps round; stamps are circles or squares rotated −7° to −9°.
 
 ## Components
 
+### Pass (signature)
+Mint card with guilloche, laminate edge and sleeve. The hero pass adds an ID-blue issuer band across its top (brand mark, "Smart parking pass", a punched lanyard slot, LPU-B) and its own fields: plate, type, route. The visitor pass is the same card in Visitor gold.
+
+### Fields
+Small-caps green-ink label over a 2px ruled value. State is the line: solid when done, dashed when pending, struck through when void. Zone counts use the same anatomy with a state lamp before the number.
+
 ### Buttons
-- **Shape:** sign plate (9px), 2px chrome-gradient frame, 48px tall (44px small).
-- **Primary:** jeep red with cream Bungee lettering and a deep-red letter shade; used for DRIVE IN, Drive again, GitHub.
-- **Secondary:** cream plate with ink lettering (Watch the trip, Email); on the receipt it becomes an ultramarine plate.
-- **Hover / Focus:** lifts 2px with a deeper shadow (160ms, `cubic-bezier(0.16, 1, 0.3, 1)`); presses 1px; focus is a 3px curb-yellow ring offset 3px.
+Primary: stamp red with a white inner frame, white condensed caps (DRIVE IN, Keep driving). Secondary: paper with a 2px ink frame. Hover lifts 1px; press scales to 0.985; focus is a 3px ID-blue ring (gold on blue grounds).
 
-### Route Board (signature)
-Enamel panel (ultramarine or red) with chrome frame, inset yellow pinstripe, four rivets and the board-hang shadow. Holds a Bungee heading, Barlow body, and optional tally strip, who-list, route list or chain.
-
-### Tally Strip
-Three deep-ultramarine cells, each a state lamp (10px, band colour), the zone letter in Bungee and `occupied/capacity` in mono. Server-rendered from `lib/content.ts`, updated live by drive mode; the player's zone gets a curb inset ring in the HUD.
-
-### Choice Chips (plate and guest policy)
-Radio inputs styled as deep-ultramarine chips (44px min) with a mono hint line; selected flips to cream with ink text and a curb inset ring; keyboard focus draws the curb ring on the chip.
+### Tick Boxes (plate and guest policy)
+Radio inputs drawn as paper boxes with an ink frame and a square tick box; checked fills the box stamp red with a white tick and thickens the frame; mono hint line under the label.
 
 ### Navigation
-Asphalt header with the brand (red enamel P badge with chrome and yellow rings + Bungee wordmark), tabs as 44px text links in faded cream, current tab as a curb-yellow plate with ink text. A nine-lamp strip hangs under the header centre: dim lamps, amber for passed pipeline steps, the current step lit yellow and scaled 1.3; in the hero it runs one slow chase (off under reduced motion).
+ID-blue lanyard header with a fine woven texture, the red P stamp mark and the wordmark in condensed caps; tabs as 44px links, the current tab a mint chip. Nine stamp boxes hang from the strap's centre on a mint tag: dashed green until the tour reaches the step, then stamped red and tilted, the current one filled; it stamps in once (off under reduced motion).
 
 ### Drive HUD
-Smaller boards (6/7.5px pinstripe) over the canvas: plate (white plate, ink mono) and objective; trip meter with tally, session timer and km/h gauges and Leave; toasts that take the board colour of their tone (info ultramarine, ok leaf, warn curb with ink text, bad red); 72px chrome-ringed asphalt pedals on touch; a paper receipt with a dashed rule on completion.
+Smaller passes: plate (white plate, ink mono) and objective; trip meter with zone fields, session and km/h gauges, Leave; toasts tinted by tone (mint info, green ok, visitor-gold warn, stamp-red bad with white text); mint pedals on touch; the official receipt with a guilloche band and the EXITED stamp naming the exit camera.
 
-### Spec Sheet (technical tab)
-Paper panel over the dimmed campus; ultramarine TOC plates, white cards with a warm hairline, red numbered nodes for the architecture flow, mono step numbers in the journey grid.
+### Technical Form
+Official paper with a guilloche band across the top, 2px ink rules between sections, a TOC as a strip of form cells, cards and journey as ruled grids, architecture nodes numbered with red stamp circles.
+
+## The Campus Model
+
+Accurate first: footprints traced from satellite imagery (the tracing board lives locally in `research/`, not in git, because it contains Esri imagery), OSM for the campus edge and the houses, the Zone A loop with its entry canopy and north exit gate where they really are. Only Zone A is modelled. Surfaces get world-space weathering noise (`components/scene/materials.ts`) instead of texture downloads; light is a warm mid-morning sun from the east-south-east with soft 4K shadows on desktop, a hazy hemisphere fill and a one-off procedural environment for glass and paint reflections. Phones drop shadows and use lighter tree crowns.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** put every new panel on a route board (ultramarine by default, red for a warning or policy statement) with the chrome frame, pinstripe and rivets.
-- **Do** keep lettering cream on enamel and ink on paper, cream or white plates.
-- **Do** use curb yellow (#f6c31c) for focus, selection, the current tab and live highlights.
-- **Do** set every count, plate and duration in JetBrains Mono with tabular figures, sourced from `lib/content.ts` or live drive state.
-- **Do** leave the 3D campus visible: boards are 31–34rem (54rem wide) and alternate sides.
+- **Do** put new panels on a pass (mint) or on paper (receipts, forms).
+- **Do** carry state in line style and stamps, with colour as the second signal.
+- **Do** keep blue for Registered, gold for Guest, red for stamped or act.
+- **Do** set every count, plate and duration in JetBrains Mono from `lib/content.ts` or live drive state.
+- **Do** keep the campus accurate to the traced map; stylise detail, never position.
 
 ### Don't:
-- **Don't** add eyebrow or kicker labels above headings; the heading carries itself.
-- **Don't** put a hard offset `box-shadow` on a box; the hard shade belongs only to Bungee lettering.
-- **Don't** use the free/busy/full colours anywhere a number can't change.
-- **Don't** put faded cream on red boards or grey text on any enamel.
+- **Don't** add eyebrow or kicker labels above headings.
+- **Don't** use soft glows, glass for its own sake, or hard offset block shadows; depth is the laminate sleeve.
+- **Don't** use the free/busy/full colours where a number can't change.
+- **Don't** reintroduce kit buildings or toy blocks into the campus.
 - **Don't** use emoji or Unicode glyphs as icons; icons are inline SVG at a 2.2–2.4 stroke.

@@ -8,3 +8,6 @@ next-env.d.ts
 
 # impeccable review captures (local evidence)
 .impeccable/review/
+
+# tracing board: contains Esri satellite imagery, not for redistribution
+research/

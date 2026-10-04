@@ -1,26 +1,14 @@
-// Kenney models (CC0), each kit baked into one meshopt-compressed GLB (public/models/CREDITS.txt):
-// cars from the Car Kit; street tiles, paving, buildings, trees, lampposts and the fountain from the City Builder kit.
-// Each model is flattened to a single float geometry so repeats render as one InstancedMesh per model.
+// Kenney Car Kit (CC0), baked into one meshopt-compressed GLB (public/models/CREDITS.txt). Each car is flattened
+// to a single float geometry so repeats render as one InstancedMesh per model.
 import { useEffect, useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 export const CARS_URL = '/models/cars.glb';
-export const CITY_URL = '/models/city.glb';
 export const PLAYER_MODEL = 'hatchback-sports';
 export const PARKED_MODELS = ['sedan', 'suv', 'taxi', 'van', 'sedan-sports', 'suv-luxury', 'delivery'] as const;
-export const CITY_MODELS = [
-  'building-small-a', 'building-small-b', 'building-small-c', 'building-small-d', 'building-garage',
-  'grass-trees', 'grass-trees-tall', 'pavement-fountain', 'road-straight-lightposts',
-  'road-straight', 'road-corner', 'road-split', 'pavement',
-] as const;
-export type CityModel = (typeof CITY_MODELS)[number];
 export const CAR_LENGTH = 4.3; // metres, nose along +z
-export const TILE = 10; // metres per City Builder tile (models are 1 unit square)
-
-// City tiles carry their own grass/road slab (top at y≈0.06); the campus draws its own ground.
-const SLAB_CUT: Partial<Record<CityModel, number>> = { 'grass-trees': 0.065, 'grass-trees-tall': 0.065, 'road-straight-lightposts': 0.06 };
 
 // Quantized attributes can't hold transformed values, so copy to Float32 first.
 const toFloat = (g: THREE.BufferGeometry) => {
@@ -34,9 +22,8 @@ const toFloat = (g: THREE.BufferGeometry) => {
   return g;
 };
 
-// Merge a model's meshes into one geometry in the model's own units. `cut` drops every triangle
-// lying entirely at or below that height (the ground slab of a city tile).
-const flatten = (root: THREE.Object3D, cut = -Infinity) => {
+// Merge a model's meshes into one geometry in the model's own units.
+const flatten = (root: THREE.Object3D) => {
   root.updateMatrixWorld(true);
   const inv = root.matrixWorld.clone().invert();
   const parts: THREE.BufferGeometry[] = [];
@@ -51,15 +38,6 @@ const flatten = (root: THREE.Object3D, cut = -Infinity) => {
   });
   const merged = mergeGeometries(parts)!;
   parts.forEach((p) => p.dispose());
-  if (cut > -Infinity) {
-    const y = merged.getAttribute('position');
-    const idx = merged.index!.array;
-    const keep: number[] = [];
-    for (let i = 0; i < idx.length; i += 3) {
-      if (Math.max(y.getY(idx[i]), y.getY(idx[i + 1]), y.getY(idx[i + 2])) > cut) keep.push(idx[i], idx[i + 1], idx[i + 2]);
-    }
-    merged.setIndex(keep);
-  }
   merged.computeBoundingBox();
   merged.computeBoundingSphere();
   return merged;
@@ -99,17 +77,4 @@ export function useCars() {
   return out;
 }
 
-// City pieces in tile units (1 = TILE metres when instanced at scale TILE).
-export function useCity() {
-  const gltf = useGLTF(CITY_URL, false);
-  const out = useMemo(() => {
-    const material = kitMaterial(gltf.scene);
-    const geos = Object.fromEntries(CITY_MODELS.map((n) => [n, flatten(gltf.scene.getObjectByName(n)!, SLAB_CUT[n])])) as Record<CityModel, THREE.BufferGeometry>;
-    return { material, geos };
-  }, [gltf]);
-  useEffect(() => () => Object.values(out.geos).forEach((g) => g.dispose()), [out]);
-  return out;
-}
-
 useGLTF.preload(CARS_URL, false);
-useGLTF.preload(CITY_URL, false);

@@ -12,14 +12,13 @@ const KEYS: Record<string, keyof typeof input> = {
 };
 
 // What to do next, from the state the gate cameras left behind.
-const EXIT_VIA = ['the north gate on Doña Aurelia St', 'its gate on Gamboa Rd', 'its gate off P. Herrera St'];
 const objective = (g: ReturnType<typeof game.get>) =>
   g.denied ??
   (g.session
-    ? `Counted into ${ZONES[g.session.zone].name}. Park anywhere, or leave through ${EXIT_VIA[g.session.zone]}.`
+    ? `Counted into ${ZONES[g.session.zone].name}. Park in any bay, then leave through the north gate on Doña Aurelia St.`
     : g.receipt
-      ? 'Session closed. Drive into another zone, or leave.'
-      : 'Pull up at a zone’s gate camera. Zone A’s entry is the canopy at the corner ahead.');
+      ? 'Session closed. Go round again, or leave.'
+      : 'Drive north to the curved canopy at the corner ahead: Zone A’s entry camera.');
 
 const leave = () => {
   game.stop();
@@ -196,6 +195,10 @@ export default function DriveHUD() {
         <div className="hud-done">
           <section className="receipt" aria-labelledby="receipt-title">
             <h2 id="receipt-title">Session closed</h2>
+            <span className="stamped" aria-hidden="true">
+              Exited
+              <small>{r.camera}</small>
+            </span>
             <dl>
               <dt>Plate</dt>
               <dd>{r.plate}</dd>

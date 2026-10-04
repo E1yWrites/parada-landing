@@ -1,6 +1,5 @@
-// The four PARADA gate cameras. Zone A (the Main Loop): the main gate under the corner canopy (photo 1) is its
-// entry camera; the north gate on Doña Aurelia St (photo 8: steel pergola) is its exit camera. Zones B and C: a
-// gantry over each lot's mouth, one camera both ways.
+// Zone A's two gate cameras: the main gate under the corner canopy (photo 1) is its entry camera; the north gate
+// on Doña Aurelia St (photo 8: steel pergola) is its exit camera.
 // Each gate is built in a local frame where a car drives INTO the zone along +z, then turned to `inward`.
 // Moving parts read `gates` every frame; the scroll tour or drive mode writes it.
 import { useEffect, useMemo, useRef } from 'react';
@@ -17,7 +16,7 @@ export function gateFrame(g: Gate) {
   const c = Math.cos(g.inward);
   const s = Math.sin(g.inward);
   const at = (lx: number, ly: number, lz: number) => new THREE.Vector3(g.x + lx * c + lz * s, ly, g.z - lx * s + lz * c);
-  const camLocal: [number, number, number] = g.style === 'gantry' ? [0, 5.4, 0] : g.style === 'canopy' ? [ROAD_W / 2 + 0.2, 5.1, 0.6] : [-(ROAD_W / 2 + 1.2), 4.2, 0.8];
+  const camLocal: [number, number, number] = g.style === 'canopy' ? [ROAD_W / 2 + 0.2, 5.1, 0.6] : [-(ROAD_W / 2 + 1.2), 4.2, 0.8];
   return {
     at,
     cam: at(...camLocal),
@@ -228,32 +227,6 @@ function NorthGate({ g, shadows }: { g: Gate; shadows: boolean }) {
   );
 }
 
-function Gantry({ g, shadows }: { g: Gate; shadows: boolean }) {
-  const f = useMemo(() => gateFrame(g), [g]);
-  const code = ['A', 'B', 'C'][g.zone];
-  return (
-    <group position={[g.x, 0, g.z]} rotation-y={g.inward}>
-      {[-1, 1].map((sx) => (
-        <mesh key={sx} position={[sx * (ROAD_W / 2 + 0.7), 2.9, 0]} castShadow={shadows}>
-          <boxGeometry args={[0.36, 5.8, 0.36]} />
-          <Mat c="#a0a8c9" m={0.4} r={0.45} />
-        </mesh>
-      ))}
-      <mesh position={[0, 5.9, 0]} castShadow={shadows}>
-        <boxGeometry args={[ROAD_W + 1.8, 0.45, 0.45]} />
-        <Mat c="#a0a8c9" m={0.4} r={0.45} />
-      </mesh>
-      <Sign lines={[`ZONE ${code}`, 'GATE CAMERA']} at={[0, 7.4, -0.24]} rot={Math.PI} w={5} h={2.5} />
-      <Sign lines={[`ZONE ${code}`, 'GATE CAMERA']} at={[0, 7.4, 0.24]} rot={0} w={5} h={2.5} />
-      <Boom id={g.id} z={0.6} shadows={shadows} />
-      <mesh position={f.camLocal}>
-        <boxGeometry args={[0.5, 0.42, 0.5]} />
-        <Mat c="#f2f2ee" r={0.4} />
-      </mesh>
-    </group>
-  );
-}
-
 export default function Gates({ shadows }: { shadows: boolean }) {
   return (
     <group>
@@ -261,7 +234,6 @@ export default function Gates({ shadows }: { shadows: boolean }) {
         <group key={g.id}>
           {g.style === 'canopy' && <MainGate g={g} shadows={shadows} />}
           {g.style === 'pergola' && <NorthGate g={g} shadows={shadows} />}
-          {g.style === 'gantry' && <Gantry g={g} shadows={shadows} />}
           <Cones g={g} />
         </group>
       ))}

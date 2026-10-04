@@ -12,9 +12,9 @@ Official site for **PARADA**, a smart parking management system built as a BSIT 
 ## Where things live
 - `lib/content.ts` holds every fact on the site. Change numbers there only; `lib/content.test.ts` guards them.
 - `components/scene/cameraPath.ts` holds the camera stops. Each `data-cam="<key>"` element in the page is one stop; pipeline stops follow the tour car.
-- `components/scene/layout.ts` is the campus: zones, gates, the loop driveway, buildings (traced from satellite imagery), walkways, trees and street tiles. Zone counts change only at gate cameras, as in the PARADA backend.
+- `components/scene/layout.ts` is the campus: zones, gates, the loop driveway, buildings (polygons traced from satellite imagery), walkways, trees, houses and streets. Only Zone A is modelled. Zone counts change only at gate cameras, as in the PARADA backend.
 - `components/scene/campusData.ts` is generated from OpenStreetMap by `node scripts/campus-data.mjs` (campus edge and the houses around it). Map data © OpenStreetMap contributors (ODbL).
-- `public/models/` holds the Kenney Car Kit and City Builder models (CC0); see `CREDITS.txt`.
+- `public/models/` holds the Kenney Car Kit cars (CC0); see `CREDITS.txt`. Buildings, trees, houses and streets are generated in code (`Buildings.tsx`, `Trees.tsx`, `Campus.tsx`).
 
 ## Run
 ```bash

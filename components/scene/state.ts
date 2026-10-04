@@ -20,8 +20,6 @@ export const near = (key: string, radius = 0.75) => {
 export const gates: Record<GateId, { boom: number; cone: number; coneOut: number }> = {
   main: { boom: 0, cone: 0, coneOut: 0 },
   north: { boom: 0, cone: 0, coneOut: 0 },
-  b: { boom: 0, cone: 0, coneOut: 0 },
-  c: { boom: 0, cone: 0, coneOut: 0 },
 };
 export const resetGates = () => Object.values(gates).forEach((g) => Object.assign(g, { boom: 0, cone: 0, coneOut: 0 }));
 

@@ -6,17 +6,16 @@
 // PARADA logic, as in the app (E1yWrites/parada) and the landing's demo data: every zone is enclosed and its
 // count changes only at its gate cameras; bays are layout only. Zone A is the Main Loop round the JPL
 // Building: entry camera at the main gate (the curved canopy on the north-west corner, photo 1), exit camera
-// at the north gate on Doña Aurelia St (photo 8). Zones B and C are the landing's other demo zones, fenced lots
-// with one camera each, both directions. Zone C sits on the campus's real south parking area.
+// at the north gate on Doña Aurelia St (photo 8). Only Zone A is modelled; Zones B and C live in the page and HUD
+// as numbers.
 import * as THREE from 'three';
 import { ZONES } from '@/lib/content';
-import type { CityModel } from './kit';
 import { CAMPUS_EDGE, HOUSES } from './campusData';
 
 export const SLOT_W = 2.7;
 export const SLOT_D = 5.2;
 export const ROAD_W = 7; // campus driveway
-export const STREET_T = 10; // one Kenney street tile, metres
+export const STREET_T = 10; // street corridor width, metres
 export const FLOOR_H = 3.6;
 
 // Headings: the direction a car's nose points (0 = +z south, π/2 = +x east, π = north, -π/2 = west).
@@ -32,7 +31,7 @@ const v = (x: number, z: number) => new THREE.Vector3(x, 0, z);
 const curve = (pts: THREE.Vector3[]) => new THREE.CatmullRomCurve3(pts, false, 'centripetal');
 const inRect = ([x0, x1, z0, z1]: Rect, x: number, z: number, pad = 0) => x > x0 - pad && x < x1 + pad && z > z0 - pad && z < z1 + pad;
 
-// ---------- public streets (Kenney tiles) ----------
+// ---------- public streets ----------
 export const WEST_ST = -88; // Tolentino Rd → P. Herrera St
 export const NORTH_ST = -76; // Doña Aurelia St (one-way, westbound)
 export const EAST_ST = 84; // Gamboa Rd
@@ -44,7 +43,7 @@ export const CANOPY = { x: -76.7, z: -68.3, r: 17.5, w: 5, opening: 4.6 / 17.5 }
 const MID = Math.PI / 4;
 export const LOOP_X = { west: -61, east: 3.5 };
 
-export type GateId = 'main' | 'north' | 'b' | 'c';
+export type GateId = 'main' | 'north';
 export type Gate = {
   id: GateId;
   zone: number; // index into ZONES
@@ -52,14 +51,12 @@ export type Gate = {
   x: number;
   z: number;
   inward: number; // heading of a car driving INTO the zone through this gate
-  style: 'canopy' | 'pergola' | 'gantry';
+  style: 'canopy' | 'pergola';
   cam: string; // camera identifier, as in the landing's admin data
 };
 export const GATES: Record<GateId, Gate> = {
   main: { id: 'main', zone: 0, kind: 'entry', x: CANOPY.x + CANOPY.r * Math.sin(MID), z: CANOPY.z + CANOPY.r * Math.cos(MID), inward: MID, style: 'canopy', cam: 'cam-a-entry' },
   north: { id: 'north', zone: 0, kind: 'exit', x: LOOP_X.east, z: -64.5, inward: S, style: 'pergola', cam: 'cam-a-exit' },
-  b: { id: 'b', zone: 1, kind: 'both', x: 79, z: -27, inward: W, style: 'gantry', cam: 'cam-b-entry' },
-  c: { id: 'c', zone: 2, kind: 'both', x: -55.5, z: 125.7, inward: E, style: 'gantry', cam: 'cam-c-entry' },
 };
 export const GATE_LIST = Object.values(GATES);
 export const GATE_STOP = 5.5; // a car waits this far from a gate line, outside or inside
@@ -135,49 +132,32 @@ export const ARROWS: [number, number, number][] = [0.13, 0.22, 0.31, 0.42, 0.55,
 // The forecourt under the canopy: a paved disc that also aprons onto both streets.
 export const FORECOURT = { x: CANOPY.x, z: CANOPY.z, r: CANOPY.r - CANOPY.w / 2 + 1 };
 
-// ---------- zones (bays are layout only; capacity is the authority) ----------
+const segDist = (x: number, z: number, [ax, az]: XZ, [bx, bz]: XZ) => {
+  const vx = bx - ax;
+  const vz = bz - az;
+  const t = Math.max(0, Math.min(1, ((x - ax) * vx + (z - az) * vz) / (vx * vx + vz * vz || 1)));
+  return Math.hypot(x - ax - vx * t, z - az - vz * t);
+};
+
+// ---------- Zone A's bays (layout only; capacity is the authority) ----------
 export type Slot = { x: number; z: number; rot: number };
-// Rows along z start at z0 (edge) and sit at x0 (centre); rows along x start at x0 (edge) and sit at z0 (centre).
+// Rows along z start at z0 (edge) and sit at x0 (centre).
 type Row = { x0: number; z0: number; dx: number; dz: number; count: number; rot: number };
 const offA = ROAD_W / 2 + SLOT_D / 2;
-const ROWS: Record<'A' | 'B' | 'C', Row[]> = {
-  // Zone A: nose-in bays under the avenue trees (photos 2–4) and along the east leg (photo 6)
-  A: [
-    { x0: LOOP_X.west - offA, z0: -34, dx: 0, dz: SLOT_W, count: 18, rot: W },
-    { x0: LOOP_X.east + offA, z0: -12, dx: 0, dz: SLOT_W, count: 14, rot: E },
-  ],
-  // Zone B, the east lot: four rows off two aisles, a cross-aisle from the gate; carport over the west pair
-  B: [
-    { x0: 46.1, z0: -41.5, dx: 0, dz: SLOT_W, count: 11, rot: W },
-    { x0: 57.3, z0: -41.5, dx: 0, dz: SLOT_W, count: 4, rot: E },
-    { x0: 57.3, z0: -23.3, dx: 0, dz: SLOT_W, count: 5, rot: E },
-    { x0: 62.5, z0: -41.5, dx: 0, dz: SLOT_W, count: 4, rot: W },
-    { x0: 62.5, z0: -23.3, dx: 0, dz: SLOT_W, count: 5, rot: W },
-    { x0: 73.7, z0: -41.5, dx: 0, dz: SLOT_W, count: 4, rot: E },
-    { x0: 73.7, z0: -23.3, dx: 0, dz: SLOT_W, count: 5, rot: E },
-  ],
-  // Zone C, the south lot (OSM way 920639453): two rows of twenty either side of one aisle
-  C: [
-    { x0: -51.5, z0: 120.1, dx: SLOT_W, dz: 0, count: 20, rot: N },
-    { x0: -51.5, z0: 131.3, dx: SLOT_W, dz: 0, count: 20, rot: S },
-  ],
+// nose-in bays under the avenue trees (photos 2–4) and along the east leg (photo 6)
+const ROWS_A: Row[] = [
+  { x0: LOOP_X.west - offA, z0: -34, dx: 0, dz: SLOT_W, count: 18, rot: W },
+  { x0: LOOP_X.east + offA, z0: -12, dx: 0, dz: SLOT_W, count: 14, rot: E },
+];
+const ZA = ZONES[0];
+export const ZONE_A = {
+  ...ZA,
+  rows: ROWS_A,
+  slots: ROWS_A.flatMap((r) => Array.from({ length: r.count }, (_, i): Slot => ({ x: r.x0 + r.dx * (i + 0.5), z: r.z0 + r.dz * (i + 0.5), rot: r.rot }))),
+  tag: new THREE.Vector3(-50, 0, -16), // floats over the avenue's JPL side
 };
-export const LOTS: Record<'B' | 'C', Rect> = {
-  B: [43, 79, -42, -9],
-  C: [-55.5, 3, 117, 139],
-};
-export const CARPORT: Rect = [43.5, 59.9, -41.7, -9.6]; // over Zone B's west rows (the white roof in the imagery)
-const TAG_AT: Record<'A' | 'B' | 'C', [number, number]> = { A: [-50, -16], B: [61, -26], C: [-26, 128] }; // A floats over the avenue's JPL side
 
-export const zoneLayout = ZONES.map((z) => {
-  const rows = ROWS[z.code];
-  const slots: Slot[] = rows.flatMap((r) => Array.from({ length: r.count }, (_, i) => ({ x: r.x0 + r.dx * (i + 0.5), z: r.z0 + r.dz * (i + 0.5), rot: r.rot })));
-  const [tx, tz] = TAG_AT[z.code];
-  return { ...z, slots, rows, tag: new THREE.Vector3(tx, 0, tz) };
-});
-export type ZoneLayout = (typeof zoneLayout)[number];
-
-// Deterministic "which bays are taken", in proportion to each zone's count so the lots read like the numbers.
+// Deterministic "which bays are taken", in proportion to the zone's count so the avenue reads like the number.
 export const takenSlots = (count: number, taken: number, seed: number) => {
   let s = seed;
   const rand = () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
@@ -188,78 +168,11 @@ export const takenSlots = (count: number, taken: number, seed: number) => {
   }
   return idx.slice(0, taken);
 };
-export const TAKEN = zoneLayout.map((z, i) => new Set(takenSlots(z.slots.length, Math.round((z.slots.length * z.occupied) / z.capacity), 11 + i)));
+export const TAKEN = new Set(takenSlots(ZONE_A.slots.length, Math.round((ZONE_A.slots.length * ZA.occupied) / ZA.capacity), 11));
 
 // The tour car takes a free avenue bay part-way down the west leg (any free bay would do).
-const zoneA = zoneLayout[0];
-export const DEMO_SLOT = zoneA.slots[zoneA.slots.findIndex((s, i) => s.rot === W && s.z > -24 && !TAKEN[0].has(i))];
+export const DEMO_SLOT = ZONE_A.slots[ZONE_A.slots.findIndex((s, i) => s.rot === W && s.z > -24 && !TAKEN.has(i))];
 
-// ---------- enclosure: hedges round Zones B and C (their gates are the only way in) ----------
-const HEDGE = 0.6; // hedge line sits this far outside a lot edge
-const GAP = ROAD_W / 2 + 0.7; // half-width of a gate opening
-export const HEDGES: [number, number, number, number][] = (() => {
-  const [bx0, bx1, bz0, bz1] = LOTS.B;
-  const [cx0, cx1, cz0, cz1] = LOTS.C;
-  const b = GATES.b;
-  const c = GATES.c;
-  return [
-    [bx0 - HEDGE, bz0 - HEDGE, bx1, bz0 - HEDGE],
-    [bx1, bz0 - HEDGE, bx1, b.z - GAP],
-    [bx1, b.z + GAP, bx1, bz1 + HEDGE],
-    [bx1, bz1 + HEDGE, bx0 - HEDGE, bz1 + HEDGE],
-    [bx0 - HEDGE, bz1 + HEDGE, bx0 - HEDGE, bz0 - HEDGE],
-    [cx0, cz0 - HEDGE, cx1 + HEDGE, cz0 - HEDGE],
-    [cx1 + HEDGE, cz0 - HEDGE, cx1 + HEDGE, cz1 + HEDGE],
-    [cx1 + HEDGE, cz1 + HEDGE, cx0, cz1 + HEDGE],
-    [cx0, cz1 + HEDGE, cx0, c.z + GAP],
-    [cx0, c.z - GAP, cx0, cz0 - HEDGE],
-    // Zone C's driveway runs from the street across the campus edge to its gate, hedged both sides
-    [-70.5, c.z - GAP, cx0, c.z - GAP],
-    [-69.5, c.z + GAP, cx0, c.z + GAP],
-  ];
-})();
-
-// ---------- paved driveways outside the loop ----------
-// [centerX, centerZ, sizeX, sizeZ]
-export const DRIVES: [number, number, number, number][] = [
-  [(WEST_ST + HALF_T + LOTS.C[0]) / 2, GATES.c.z, LOTS.C[0] - (WEST_ST + HALF_T) + 0.5, ROAD_W], // to Zone C
-];
-
-// ---------- street tiles ----------
-export type StreetTile = { model: 'road-straight' | 'road-corner' | 'road-split'; x: number; z: number; rot: number; stretch?: number };
-const tiles: StreetTile[] = [];
-// straight run between two junction centres (exclusive), tiles stretched along the road to fit exactly
-const run = (x0: number, z0: number, x1: number, z1: number) => {
-  const len = Math.hypot(x1 - x0, z1 - z0);
-  const L = len - STREET_T;
-  const n = Math.max(1, Math.round(L / STREET_T));
-  const ux = (x1 - x0) / len;
-  const uz = (z1 - z0) / len;
-  for (let i = 0; i < n; i++) {
-    const d = HALF_T + (L / n) * (i + 0.5);
-    tiles.push({ model: 'road-straight', x: x0 + ux * d, z: z0 + uz * d, rot: Math.abs(ux) > 0.5 ? E : 0, stretch: L / n / STREET_T });
-  }
-};
-const J = {
-  w1: [WEST_ST, NORTH_ST], w3: [WEST_ST, GATES.c.z],
-  n2: [LOOP_X.east, NORTH_ST], ne: [EAST_ST, NORTH_ST], e2: [EAST_ST, GATES.b.z],
-} as const;
-// Kit junctions: road-split is open at -x, +x, +z; road-corner joins -x and +z.
-tiles.push(
-  { model: 'road-split', x: J.w1[0], z: J.w1[1], rot: E },
-  { model: 'road-split', x: J.w3[0], z: J.w3[1], rot: E },
-  { model: 'road-split', x: J.n2[0], z: J.n2[1], rot: 0 },
-  { model: 'road-corner', x: J.ne[0], z: J.ne[1], rot: 0 },
-  { model: 'road-split', x: J.e2[0], z: J.e2[1], rot: W },
-);
-run(WEST_ST, -186, ...J.w1);
-run(...J.w1, ...J.w3);
-run(...J.w3, WEST_ST, 236);
-run(...J.w1, ...J.n2);
-run(...J.n2, ...J.ne);
-run(...J.ne, ...J.e2);
-run(...J.e2, EAST_ST, 236);
-export const STREET_TILES = tiles;
 // Street corridors [centerX, centerZ, sizeX, sizeZ], for driving and placement tests
 export const STREETS: [number, number, number, number][] = [
   [WEST_ST, 25, STREET_T, 422],
@@ -268,51 +181,69 @@ export const STREETS: [number, number, number, number][] = [
 ];
 const STREET_RECTS: Rect[] = STREETS.map(([x, z, w, d]) => [x - w / 2, x + w / 2, z - d / 2, z + d / 2]);
 
-// ---------- buildings (footprints traced from satellite imagery) ----------
+// ---------- buildings: footprints traced off satellite imagery (tracing board kept locally in research/) ----------
 export type Block = {
   name: string;
-  x0: number;
-  x1: number;
-  z0: number;
-  z1: number;
+  pts: XZ[]; // footprint, any winding
   floors: number;
   wall: string;
-  rails?: string; // balcony rails on one long face (the JPL west wing faces the avenue)
-  railsSide?: 'w' | 'e';
-  skylights?: boolean;
+  roof: 'flat' | 'hip' | 'skylights';
+  roofColor?: string;
+  rails?: { a: XZ; b: XZ; out: XZ; color: string }; // balcony slabs + rails along one facade run
+  sign?: string; // name board over the facade facing Doña Aurelia St
 };
+const rect = (x0: number, z0: number, x1: number, z1: number): XZ[] => [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
 export const BLOCKS: Block[] = [
-  { name: 'JPL Building, west wing', x0: -55.5, x1: -42.5, z0: -62, z1: 23.3, floors: 4, wall: '#f6f1e6', rails: '#3f9a62', railsSide: 'w' },
-  { name: 'JPL Building, link', x0: -42.5, x1: -33, z0: -6.7, z1: 8.3, floors: 3, wall: '#f6f1e6' },
-  { name: 'JPL Building, hall', x0: -32.5, x1: -2, z0: -61, z1: 19, floors: 3, wall: '#f6f1e6', skylights: true },
-  { name: 'JPL Building, south annex', x0: -34, x1: -5, z0: 19, z1: 23.5, floors: 1, wall: '#efe8da' },
-  { name: 'College of Dentistry', x0: 9, x1: 75, z0: -67, z1: -44, floors: 3, wall: '#ffffff' },
-  { name: 'Main academic building', x0: 16, x1: 41, z0: -26, z1: 60, floors: 5, wall: '#fde4c7' },
-  { name: 'South building, west bar', x0: -3, x1: 32, z0: 75, z1: 84, floors: 4, wall: '#fdf1e0' },
-  { name: 'South building, link', x0: 18, x1: 32, z0: 60, z1: 75, floors: 4, wall: '#fdf1e0' },
-  { name: 'South building, north wing', x0: 32, x1: 55, z0: 59, z1: 87, floors: 5, wall: '#fdf1e0' },
-  { name: 'South building, east wing', x0: 38, x1: 55, z0: 87, z1: 116, floors: 5, wall: '#fdf1e0' },
-  { name: 'South building, south wing', x0: 33, x1: 56, z0: 116, z1: 137, floors: 5, wall: '#fdf1e0' },
-  { name: 'Annex by the loop', x0: -56, x1: -43, z0: 49, z1: 56, floors: 1, wall: '#ffffff' },
+  { name: 'JPL Building, west wing', pts: [[-53.3, -61.5], [-42.6, -61.5], [-42.6, -6.7], [-34.2, -6.7], [-34.2, 23.3], [-55, 23.3], [-55, 12], [-53.3, 12]], floors: 4, wall: '#f3eee2', roof: 'flat', rails: { a: [-53.3, -60], b: [-53.3, 10], out: [-1, 0], color: '#3f8a5c' }, sign: 'JPL BUILDING' },
+  { name: 'JPL Building, hall', pts: rect(-32.7, -60.3, -1.8, 16.7), floors: 3, wall: '#f3eee2', roof: 'skylights', roofColor: '#e9ebec' },
+  { name: 'JPL Building, south annex', pts: rect(-34.2, 16.7, 0, 23.3), floors: 1, wall: '#ece5d6', roof: 'flat' },
+  { name: 'College of Dentistry', pts: [[8.3, -66.7], [74.2, -66.7], [74.2, -43.3], [33, -43.3], [33, -47.5], [8.3, -47.5]], floors: 3, wall: '#f7f5f0', roof: 'flat', sign: 'COLLEGE OF DENTISTRY' },
+  { name: 'North-east building', pts: [[44.5, -36.7], [50, -36.7], [50, -32.2], [60, -32.2], [60, -11.1], [50, -11.1], [50, -23.3], [44.5, -30]], floors: 2, wall: '#f1ede4', roof: 'flat' },
+  { name: 'Red-roof block', pts: rect(61, -42, 75.5, -25.5), floors: 2, wall: '#efe6d4', roof: 'hip', roofColor: '#a9483a' },
+  { name: 'Library', pts: rect(15.8, -22.5, 40, 60), floors: 5, wall: '#e9e1d2', roof: 'hip', roofColor: '#7c8188' },
+  { name: 'Library link', pts: rect(16.7, 64, 30.8, 86.7), floors: 3, wall: '#f1ebdf', roof: 'flat' },
+  { name: 'South building', pts: [[30.8, 58.3], [45, 58.3], [45, 72.5], [55, 72.5], [55, 136.7], [32.5, 136.7], [32.5, 125], [40, 113], [40, 86.7], [30.8, 86.7]], floors: 5, wall: '#f4ecdd', roof: 'flat' },
+  { name: 'Courtyard, west arm', pts: rect(-48.5, 66, -42.5, 105), floors: 2, wall: '#f4efe6', roof: 'flat' },
+  { name: 'Courtyard, south arm', pts: rect(-48.5, 105, 3.3, 113.3), floors: 2, wall: '#f4efe6', roof: 'flat' },
+  { name: 'Courtyard, east arm', pts: [[-5.5, 105], [10, 81], [16.7, 77], [16.7, 87.5], [13.5, 88.5], [3.3, 105]], floors: 2, wall: '#f4efe6', roof: 'flat' },
+  { name: 'Annex by the loop', pts: rect(-57.5, 49, -43, 56), floors: 1, wall: '#f7f5f0', roof: 'flat' },
 ];
+/** Even-odd point-in-polygon. */
+export const inPoly = (pts: XZ[], x: number, z: number) => {
+  let inside = false;
+  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    const [xi, zi] = pts[i];
+    const [xj, zj] = pts[j];
+    if (zi > z !== zj > z && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) inside = !inside;
+  }
+  return inside;
+};
+const polyEdgeDist = (pts: XZ[], x: number, z: number) => Math.min(...pts.map((p, i) => segDist(x, z, pts[(i + pts.length - 1) % pts.length], p)));
+/** Inside the polygon or within `pad` of it (negative pad: at least -pad inside). */
+const polyHit = (pts: XZ[], x: number, z: number, pad: number) => {
+  const ins = inPoly(pts, x, z);
+  if (pad >= 0) return ins || polyEdgeDist(pts, x, z) < pad;
+  return ins && polyEdgeDist(pts, x, z) > -pad;
+};
+export const inBlock = (x: number, z: number, pad = 0) => BLOCKS.some((b) => polyHit(b.pts, x, z, pad));
+
 // Covered walkways (the white ribbons in the imagery): centre polyline and width. Cars pass under them.
 export const WALKWAYS: { pts: XZ[]; w: number }[] = [
-  { pts: [[-58, -64.5], [-21, -64.5]], w: 5 },
-  { pts: [[-19.5, 21], [-19.5, 63], [-9, 73], [-3, 77]], w: 4 },
-  { pts: [[-1, 84], [-3.5, 96], [-7, 106], [-13, 111], [-44, 111]], w: 5 },
-  { pts: [[-49.5, 56], [-45, 72], [-42, 87], [-44, 100], [-44, 111]], w: 4 },
+  { pts: [[-58, -66.3], [-45.5, -66.3]], w: 3.9 },
+  { pts: [[-41, -65], [-29, -65]], w: 4 },
+  { pts: [[-19.5, 23.3], [-19.5, 63], [-9, 73], [-3, 77]], w: 4 },
+  { pts: [[-49.5, 56], [-46.5, 66]], w: 4 },
 ];
 export const WALKWAY_H = 3.2;
-// Walkway posts every ~4 m along both edges, kept off the driveway and out of buildings.
-export const WALKWAY_POSTS: XZ[] = [];
-// (filled below, once the loop centreline exists)
 // White-roofed pavilion inside the loop, and the rotonda island south of JPL (from the app's site notes).
 export const PAVILION = { x: -31, z: 30.75, w: 15.75, d: 13.5 };
 export const ROTONDA = { x: -7.5, z: 33, r: 4.5 };
-// Main academic building entrance on the east leg: canopy, flags, yellow-kerbed lawn island (photo 6).
+// Library entrance on the east leg: canopy, flags, yellow-kerbed lawn island (photo 6).
 export const ENTRANCE = { x: 14.2, z: 35, w: 3.6, d: 7 };
 export const ISLAND: Rect = [8.2, 12, 28.5, 41];
 
+// Walkway posts every ~4 m along both edges, kept off the driveway and out of buildings.
+export const WALKWAY_POSTS: XZ[] = [];
 for (const { pts, w } of WALKWAYS)
   for (let i = 1; i < pts.length; i++) {
     const [ax, az] = pts[i - 1];
@@ -325,7 +256,7 @@ for (const { pts, w } of WALKWAYS)
         const ox = side * (w / 2 - 0.3);
         const x = ax + ((bx - ax) * k) / n + Math.cos(ang) * ox;
         const z = az + ((bz - az) * k) / n - Math.sin(ang) * ox;
-        if (nearestLoop(x, z).d < ROAD_W / 2 + 0.6 || BLOCKS.some((b) => x > b.x0 && x < b.x1 && z > b.z0 && z < b.z1)) continue;
+        if (nearestLoop(x, z).d < ROAD_W / 2 + 0.6 || inBlock(x, z, 0.2)) continue;
         WALKWAY_POSTS.push([x, z]);
       }
   }
@@ -334,26 +265,13 @@ export const PAVILION_POSTS: XZ[] = Array.from({ length: 10 }, (_, i) => [
   PAVILION.x - PAVILION.w / 2 + 0.6 + ((i % 5) * (PAVILION.w - 1.2)) / 4,
   PAVILION.z + (i < 5 ? -1 : 1) * (PAVILION.d / 2 - 0.6),
 ]);
-// Carport posts down both long edges.
-export const CARPORT_POSTS: XZ[] = [CARPORT[0] + 0.3, CARPORT[1] - 0.3].flatMap((x) => Array.from({ length: 7 }, (_, k): XZ => [x, CARPORT[2] + 0.3 + (k * (CARPORT[3] - CARPORT[2] - 0.6)) / 6]));
 
 // ---------- placement helpers ----------
-const segDist = (x: number, z: number, [ax, az]: XZ, [bx, bz]: XZ) => {
-  const vx = bx - ax;
-  const vz = bz - az;
-  const t = Math.max(0, Math.min(1, ((x - ax) * vx + (z - az) * vz) / (vx * vx + vz * vz || 1)));
-  return Math.hypot(x - ax - vx * t, z - az - vz * t);
-};
-const BLOCK_RECTS: Rect[] = BLOCKS.map((b) => [b.x0, b.x1, b.z0, b.z1]);
-const DRIVE_RECTS: Rect[] = DRIVES.map(([x, z, w, d]) => [x - w / 2, x + w / 2, z - d / 2, z + d / 2]);
-const LOT_RECTS: Rect[] = Object.values(LOTS);
-const HEDGE_PAD = 1.2;
-/** True when a disc of radius r at (x, z) would sit on a building, road, lot, walkway, gate or island. */
+const inRectPad = (r: Rect, x: number, z: number, pad: number) => inRect(r, x, z, pad);
+/** True when a disc of radius r at (x, z) would sit on a building, road, walkway, gate or island. */
 export const occupied = (x: number, z: number, r: number) =>
-  BLOCK_RECTS.some((b) => inRect(b, x, z, r)) ||
-  LOT_RECTS.some((b) => inRect(b, x, z, r + HEDGE_PAD)) ||
-  DRIVE_RECTS.some((b) => inRect(b, x, z, r + 1)) ||
-  STREET_RECTS.some((b) => inRect(b, x, z, r)) ||
+  inBlock(x, z, r) ||
+  STREET_RECTS.some((b) => inRectPad(b, x, z, r + 1.5)) ||
   nearestLoop(x, z).d < ROAD_W / 2 + SLOT_D + r ||
   WALKWAYS.some(({ pts, w }) => pts.some((p, i) => i > 0 && segDist(x, z, pts[i - 1], p) < w / 2 + r)) ||
   Math.hypot(x - FORECOURT.x, z - FORECOURT.z) < CANOPY.r + CANOPY.w / 2 + r ||
@@ -362,71 +280,64 @@ export const occupied = (x: number, z: number, r: number) =>
   inRect(ISLAND, x, z, r) ||
   GATE_LIST.some((g) => Math.hypot(x - g.x, z - g.z) < 7 + r);
 
-// ---------- houses round the campus (OSM footprints, Kenney buildings) ----------
-const KIT_HOUSES: CityModel[] = ['building-small-a', 'building-small-d', 'building-garage', 'building-small-b', 'building-small-a', 'building-small-c'];
+// ---------- houses round the campus (OpenStreetMap footprints) ----------
+// Plastered walls under hipped corrugated roofs, the way the neighbourhood reads from above.
 const hash = (x: number, z: number) => Math.abs(Math.sin(x * 12.9898 + z * 78.233) * 43758.5453) % 1;
-export type House = { model: CityModel; x: number; z: number; s: number; rot: number };
-export const HOUSE_PROPS: House[] = [];
-export const BIG_NEIGHBOURS: Block[] = [];
-for (const [x, z, w, d, yaw, levels] of HOUSES) {
-  if (Math.max(w, d) > 24) {
-    const r: Rect = [x - w / 2, x + w / 2, z - d / 2, z + d / 2];
-    if (BLOCK_RECTS.some((b) => b[0] < r[1] && b[1] > r[0] && b[2] < r[3] && b[3] > r[2]) || STREET_RECTS.some((b) => b[0] < r[1] && b[1] > r[0] && b[2] < r[3] && b[3] > r[2])) continue;
-    BIG_NEIGHBOURS.push({ name: 'neighbour', x0: r[0], x1: r[1], z0: r[2], z1: r[3], floors: Math.max(2, Math.min(4, levels || 2)), wall: '#efe9df' });
-    continue;
-  }
-  const s = Math.min(13, Math.max(7, Math.sqrt(w * d) * 1.05));
-  if (occupied(x, z, s * 0.45)) continue;
-  const h = hash(x, z);
-  const model = levels >= 4 ? 'building-small-c' : levels === 3 ? 'building-small-b' : KIT_HOUSES[Math.floor(h * KIT_HOUSES.length)];
-  HOUSE_PROPS.push({ model, x, z, s, rot: yaw + Math.floor(h * 4) * E });
+const WALLS = ['#efe7d8', '#f3eee4', '#e9dcc4', '#dfe5e3', '#efe2d6', '#e6e1d3'];
+const ROOFS = ['#a4473a', '#b5553f', '#8e3f36', '#5f7d97', '#7a7f86', '#9b5a3c', '#a4473a', '#6f8c7a'];
+export type House = { x: number; z: number; w: number; d: number; h: number; yaw: number; wall: string; roof: string };
+export const HOUSE_LIST: House[] = [];
+for (const [x, z, w0, d0, yaw, levels] of HOUSES) {
+  const w = Math.min(26, Math.max(4.5, w0));
+  const d = Math.min(26, Math.max(4.5, d0));
+  if (inBlock(x, z, Math.min(w, d) / 2) || STREET_RECTS.some((b) => inRect(b, x, z, Math.min(w, d) / 2 + 1)) || occupied(x, z, Math.min(w, d) * 0.35)) continue;
+  const k = hash(x, z);
+  HOUSE_LIST.push({ x, z, w, d, h: Math.max(1, Math.min(4, levels || (k > 0.6 ? 2 : 1))) * 3, yaw, wall: WALLS[Math.floor(k * WALLS.length)], roof: ROOFS[Math.floor(hash(z, x) * ROOFS.length)] });
 }
 
-// ---------- trees, lamps, the fountain ----------
-// Kenney props: [model, x, z, scale (metres per tile), heading]
-export type Prop = [CityModel, number, number, number, number];
+// ---------- trees ----------
+// [x, z, canopy diameter (m), kind]; kind 1 is the flame tree in the south courtyard
+export type Tree = [number, number, number, number];
 const rng = (i: number) => ((i * 9301 + 49297) % 233280) / 233280;
-// groves filled on a jittered grid: [x0, x1, z0, z1, spacing, tree scale]
+// groves filled on a jittered grid: [x0, x1, z0, z1, spacing, canopy]
 const GROVES: [number, number, number, number, number, number][] = [
-  [-83, -72, -44, 116, 7.5, 9], // the rain-tree belt along the avenue and the west wall
+  [-82, -71, -44, 116, 8, 11], // the rain-tree belt along the avenue and the west wall
   [-40.5, -35.5, -54, -9, 7, 7], // JPL courtyard, north of the link
-  [-40.5, -35.5, 11, 16, 7, 7], // JPL courtyard, south of the link
-  [-38, -24, 58, 107, 9, 10], // the south grove between the walkways
-  [-14, 28, 88, 106, 9, 10], // south grove, east part
-  [-34, 14, 52, 72, 8.5, 8.5], // between the loop base and the south building
-  [22, 40, -43, -29, 7, 8], // between Dentistry, the main building and the east lot
-  [-58, 50, 142, 156, 9, 9.5], // south edge
-  [7, 30, 117, 140, 9, 10], // east of the south lot
-  [-28, 70, -99, -87, 10, 9], // across Doña Aurelia
-  [-114, -100, -170, 200, 12, 10], // across Tolentino
+  [-50, 30, 58, 103, 9, 12], // the courtyard groves between the arms
+  [-14, 28, 114, 146, 9, 12], // south of the courtyard
+  [-34, 14, 50, 60, 8, 9], // between the loop base and the courtyard
+  [12, 44, -42, -27, 7, 9], // between Dentistry and the library
+  [-58, 75, 140, 160, 9, 11], // south edge
+  [-28, 70, -99, -86, 10, 10], // across Doña Aurelia
+  [-118, -98, -170, 200, 12, 11], // across Tolentino
+  [57, 76, 0, 60, 9, 9], // the east yard
 ];
-export const PROPS: Prop[] = [];
+export const TREES: Tree[] = [[-12, 128, 18, 1]];
 let ti = 0;
 for (const [x0, x1, z0, z1, sp, sc] of GROVES) {
   for (let z = z0; z <= z1; z += sp)
     for (let x = x0; x <= x1; x += sp) {
-      const jx = x + (rng(ti) - 0.5) * sp * 0.45;
-      const jz = z + (rng(ti + 11) - 0.5) * sp * 0.45;
+      const jx = x + (rng(ti) - 0.5) * sp * 0.5;
+      const jz = z + (rng(ti + 11) - 0.5) * sp * 0.5;
       ti++;
-      if (occupied(jx, jz, sc * 0.3)) continue;
-      PROPS.push([rng(ti) > 0.45 ? 'grass-trees-tall' : 'grass-trees', jx, jz, sc * (0.9 + rng(ti + 7) * 0.25), Math.floor(rng(ti + 3) * 4) * E]);
+      const s = sc * (0.75 + rng(ti + 7) * 0.5);
+      if (occupied(jx, jz, s * 0.3) || HOUSE_LIST.some((h) => Math.hypot(h.x - jx, h.z - jz) < Math.max(h.w, h.d) / 2 + 1) || TREES.some(([tx, tz, ts]) => Math.hypot(tx - jx, tz - jz) < (ts + s) * 0.32)) continue;
+      TREES.push([jx, jz, s, 0]);
     }
 }
-PROPS.push(['pavement-fountain', ROTONDA.x, ROTONDA.z, 6, 0]);
-// street lamps along the kerbs, clear of junctions
-const nearAny = (a: number, list: number[]) => list.some((b) => Math.abs(a - b) < 11);
-for (let z = -140; z <= 200; z += 24) if (!nearAny(z, [NORTH_ST, GATES.c.z])) PROPS.push(['road-straight-lightposts', WEST_ST, z, STREET_T, 0]);
-for (let x = -64; x <= 72; x += 24) if (!nearAny(x, [LOOP_X.east])) PROPS.push(['road-straight-lightposts', x, NORTH_ST, STREET_T, E]);
-for (let z = -52; z <= 200; z += 24) if (!nearAny(z, [GATES.b.z])) PROPS.push(['road-straight-lightposts', EAST_ST, z, STREET_T, 0]);
-
 // Palms on the entrance island and along the east leg: [x, z, scale]
 export const PALMS: [number, number, number][] = [
   [10.1, 30.5, 1], [10.1, 39, 1.1], [13.6, 44.5, 0.95], [10.8, -15.5, 1.05], [13.4, 27.6, 0.9],
 ];
+// Concrete electric poles along the streets, wired pole to pole: runs of [x, z]
+export const POLE_RUNS: XZ[][] = [
+  Array.from({ length: 13 }, (_, i): XZ => [WEST_ST - STREET_T / 2 - 0.8, -150 + i * 30]).filter(([, z]) => Math.abs(z - NORTH_ST) > 8),
+  Array.from({ length: 6 }, (_, i): XZ => [-52 + i * 26, NORTH_ST - STREET_T / 2 - 0.8]),
+];
 
 // ---------- campus wall ----------
-// The OSM campus edge, its north-west corner replaced by the gate canopy, opened at the north gate and Zone C's
-// driveway; where a lot, building or the east street takes the edge, the hedge or building closes it instead.
+// The OSM campus edge, its north-west corner replaced by the gate canopy, opened at the north gate; buildings
+// on the edge close it themselves.
 export const WALL_SEGMENTS: [number, number, number, number][] = [];
 {
   const chamfer = ([x, z]: XZ) => x < -58 && z < -50;
@@ -440,12 +351,7 @@ export const WALL_SEGMENTS: [number, number, number, number][] = [];
     path.push(p);
   }
   path.push([CANOPY.x, CANOPY.z + CANOPY.r]);
-  const open = (x: number, z: number) =>
-    (Math.abs(x - GATES.north.x) < ROAD_W / 2 + 2 && z < -60) ||
-    (Math.abs(z - GATES.c.z) < GAP && x < -60) ||
-    x > EAST_ST - HALF_T ||
-    LOT_RECTS.some((b) => inRect(b, x, z, HEDGE + 0.5)) ||
-    BLOCK_RECTS.some((b) => inRect(b, x, z, -0.3));
+  const open = (x: number, z: number) => (Math.abs(x - GATES.north.x) < ROAD_W / 2 + 2 && z < -60) || x > EAST_ST - HALF_T || inBlock(x, z, -0.3);
   for (let i = 1; i < path.length; i++) {
     const [ax, az] = path[i - 1];
     const [bx, bz] = path[i];

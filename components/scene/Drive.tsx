@@ -1,5 +1,5 @@
 // Drive mode: the visitor drives one car under PARADA's real rules. Zone A (the Main Loop) changes its count
-// only at its gate cameras, main gate in and north gate out; Zones B and C each have one camera both ways.
+// only at its gate cameras, main gate in and north gate out. Zones B and C exist only as numbers.
 // Pull up at a camera: plate read → admission decided (registered, or guest under the policy) → on entry the
 // count rises and a session opens; on exit the session closes, the count falls and a receipt prints.
 // Arcade physics with two-circle collisions against the campus.
@@ -10,8 +10,8 @@ import { ZONES } from '@/lib/content';
 import { sound } from '@/lib/sfx';
 import { game, live, input, plateText, fmtDuration, useGame, admit } from '@/lib/game';
 import {
-  zoneLayout, TAKEN, BLOCKS, BIG_NEIGHBOURS, ROTONDA, ISLAND, PROPS, PALMS, HOUSE_PROPS, WALL_SEGMENTS, HEDGES, DRIVES, STREETS,
-  LOTS, FORECOURT, CANOPY_PILLARS, CANOPY_PLANTERS, CANOPY_BOOTH, WALKWAY_POSTS, PAVILION_POSTS, CARPORT_POSTS, GATE_LIST,
+  ZONE_A, TAKEN, BLOCKS, ROTONDA, ISLAND, TREES, PALMS, HOUSE_LIST, WALL_SEGMENTS, STREETS, POLE_RUNS,
+  FORECOURT, CANOPY_PILLARS, CANOPY_PLANTERS, CANOPY_BOOTH, WALKWAY_POSTS, PAVILION_POSTS, GATE_LIST,
   GATE_STOP, ROAD_W, SLOT_W, SLOT_D, WEST_ST, NORTH_ST, STREET_T, N, BOUNDS, nearestLoop, type Gate, type GateId,
 } from './layout';
 import { gates, resetGates } from './state';
@@ -25,7 +25,7 @@ const OFFROAD_V = 5;
 const START = { x: WEST_ST + 1.7, z: 34, h: N };
 const CAR_R = 1.05; // two circles, ±1.15 m along the car
 const CAR_OFF = 1.15;
-const BOOM_Z: Record<Gate['style'], number> = { canopy: -1.2, pergola: 1.2, gantry: 0.6 };
+const BOOM_Z: Record<Gate['style'], number> = { canopy: -1.2, pergola: 1.2 };
 
 type Box = { x0: number; x1: number; z0: number; z1: number };
 type Circle = { x: number; z: number; r: number };
@@ -52,25 +52,23 @@ const BOOMS = Object.fromEntries(GATE_LIST.map((g) => [g.id, boomSeg(g)])) as Re
 const solid = (() => {
   const boxes: Box[] = [];
   const circles: Circle[] = [];
-  const segs: Seg[] = [...WALL_SEGMENTS, ...HEDGES].map(([ax, az, bx, bz]) => ({ ax, az, bx, bz }));
-  for (const b of [...BLOCKS, ...BIG_NEIGHBOURS]) boxes.push({ x0: b.x0, x1: b.x1, z0: b.z0, z1: b.z1 });
+  const segs: Seg[] = WALL_SEGMENTS.map(([ax, az, bx, bz]) => ({ ax, az, bx, bz }));
+  // building footprints: every facade edge is a wall
+  for (const b of BLOCKS) b.pts.forEach(([ax, az], i) => {
+    const [bx, bz] = b.pts[(i + 1) % b.pts.length];
+    segs.push({ ax, az, bx, bz });
+  });
   boxes.push({ x0: ISLAND[0], x1: ISLAND[1], z0: ISLAND[2], z1: ISLAND[3] });
   circles.push({ x: ROTONDA.x, z: ROTONDA.z, r: ROTONDA.r });
-  for (const h of HOUSE_PROPS) circles.push({ x: h.x, z: h.z, r: h.s * 0.42 });
-  zoneLayout.forEach((z, zi) =>
-    z.slots.forEach((s, i) => {
-      if (!TAKEN[zi].has(i)) return;
-      const along = Math.abs(Math.sin(s.rot)) > 0.5;
-      boxes.push(box(s.x, s.z, along ? 2.1 : 0.95, along ? 0.95 : 2.1));
-    }),
-  );
-  for (const [m, x, z, s, h] of PROPS) {
-    if (m.startsWith('grass-trees')) circles.push({ x, z, r: s * 0.28 });
-    else if (m === 'pavement-fountain') circles.push({ x, z, r: s * 0.4 });
-    else if (m === 'road-straight-lightposts') for (const d of [-0.42, 0.42]) circles.push({ x: x + Math.cos(h) * d * s, z: z - Math.sin(h) * d * s, r: 0.3 });
-  }
+  // houses as their footprint's inscribed circle (good enough at driving speed)
+  for (const h of HOUSE_LIST) circles.push({ x: h.x, z: h.z, r: Math.min(h.w, h.d) / 2 });
+  ZONE_A.slots.forEach((s, i) => {
+    if (TAKEN.has(i)) boxes.push(box(s.x, s.z, 2.1, 0.95));
+  });
+  for (const [x, z, s] of TREES) circles.push({ x, z, r: Math.max(0.35, s * 0.035) });
   for (const [x, z] of PALMS) circles.push({ x, z, r: 0.45 });
-  for (const [x, z] of [...WALKWAY_POSTS, ...CARPORT_POSTS]) circles.push({ x, z, r: 0.18 });
+  for (const run of POLE_RUNS) for (const [x, z] of run) circles.push({ x, z, r: 0.3 });
+  for (const [x, z] of WALKWAY_POSTS) circles.push({ x, z, r: 0.18 });
   for (const [x, z] of PAVILION_POSTS) circles.push({ x, z, r: 0.25 });
   for (const p of CANOPY_PILLARS) circles.push({ x: p.x, z: p.z, r: 1.15 });
   for (const p of CANOPY_PLANTERS) circles.push({ x: p.x, z: p.z, r: 1.0 });
@@ -79,8 +77,7 @@ const solid = (() => {
     const at = FRAMES[g.id].at;
     const pts: [number, number, number][] =
       g.style === 'canopy' ? [[ROAD_W / 2 + 0.3, -1.2, 0.35]]
-      : g.style === 'pergola' ? [[-5, -3.5, 0.3], [5, -3.5, 0.3], [-5, 3.5, 0.3], [5, 3.5, 0.3], [ROAD_W / 2 + 0.3, 1.2, 0.35]]
-      : [[-(ROAD_W / 2 + 0.7), 0, 0.3], [ROAD_W / 2 + 0.7, 0, 0.3], [ROAD_W / 2 + 0.3, 0.6, 0.35]];
+      : [[-5, -3.5, 0.3], [5, -3.5, 0.3], [-5, 3.5, 0.3], [5, 3.5, 0.3], [ROAD_W / 2 + 0.3, 1.2, 0.35]];
     for (const [lx, lz, r] of pts) {
       const p = at(lx, 0, lz);
       circles.push({ x: p.x, z: p.z, r });
@@ -91,9 +88,8 @@ const solid = (() => {
 
 // Paved surfaces (full speed); everything else is lawn (slow).
 const paved: Box[] = [
-  ...[...DRIVES, ...STREETS].map(([x, z, w, d]) => box(x, z, w / 2 + 0.5, d / 2 + 0.5)),
-  ...Object.values(LOTS).map(([x0, x1, z0, z1]) => ({ x0, x1, z0, z1 })),
-  ...zoneLayout[0].rows.map((r) => box(r.x0, r.z0 + (r.count * SLOT_W) / 2, SLOT_D / 2 + 0.2, (r.count * SLOT_W) / 2)),
+  ...STREETS.map(([x, z, w, d]) => box(x, z, w / 2 + 0.5, d / 2 + 0.5)),
+  ...ZONE_A.rows.map((r) => box(r.x0, r.z0 + (r.count * SLOT_W) / 2, SLOT_D / 2 + 0.2, (r.count * SLOT_W) / 2)),
 ];
 const onPavement = (x: number, z: number) =>
   paved.some((b) => inBox(b, x, z)) ||
@@ -160,8 +156,8 @@ export default function Drive({ reduced }: { reduced: boolean }) {
   const st = useRef({ x: START.x, z: START.z, h: START.h, v: 0, steer: 0, bump: 0 });
   const fresh = () => ({
     scan: null as null | { gate: Gate; dir: 'in' | 'out'; t0: number; stage: number },
-    armed: { main: true, north: true, b: true, c: true } as Record<GateId, boolean>,
-    open: { main: false, north: false, b: false, c: false } as Record<GateId, boolean>,
+    armed: { main: true, north: true } as Record<GateId, boolean>,
+    open: { main: false, north: false } as Record<GateId, boolean>,
     deniedAt: null as GateId | null,
     rule: '',
     warnAt: 0,
@@ -335,8 +331,8 @@ export default function Drive({ reduced }: { reduced: boolean }) {
             sound.play('deny');
             tr.deniedAt = sc.gate.id;
             const why = d.reason === 'full'
-              ? `${name} is full, so the camera's ENTRY is refused. Try another zone.`
-              : `Guest candidate turned away: guests park in Zone C, the primary guest zone. Drive there, or switch the policy.`;
+              ? `${name} is full, so the camera's ENTRY is refused.`
+              : `Guest candidate turned away: under this policy guests may only use Zone C, the primary guest zone. Switch the policy to "Any zone with space" to come in here.`;
             game.set({ denied: why, toast: { title: d.reason === 'full' ? `${name} is full` : 'Guest candidate · denied', body: 'Occupancy unchanged; recorded for the admin as a guest-admission issue.', tone: 'bad' } });
           }
         } else {

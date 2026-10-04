@@ -12,19 +12,13 @@ Mode: Persuade (the game section is Experience inside it).
 Audience/job: LPU-Batangas drivers, admins, stakeholders; capstone panel secondarily. Understand zone-gate plate reading in one trip.
 Action: DRIVE IN (play the trip yourself) — primary; "Watch the trip" (scroll tour) — secondary.
 Proof: the trip itself, counts from lib/content.ts, receipt.
-Constraints: PRODUCT.md. Real campus geometry (OSM + imagery). Zones change counts only at their gate cameras: Zone A loop with one entry (main-gate canopy) and one exit (north gate); B and C fenced lots, one camera each.
-Unresolved: real app screenshots (absent).
+Constraints: PRODUCT.md. Campus traced from satellite imagery and OSM; custom-modelled buildings, no kit blocks; daylight only, nothing dark or surveillance-toned. Only Zone A (the one-way loop round JPL: entry camera at the main-gate canopy, exit camera at the north gate) exists in 3D; Zones B and C are numbers in the page and HUD. Keep the synthesized sound.
+Unresolved: real app screenshots (absent); car models are still Kenney Car Kit.
 
 ## Direction contract
-
-THESIS: The campus trip is the explanation: one car, entry gate to exit gate, told in the language of a hand-painted jeepney route board. Refuses the dark SaaS hero with a 3D toy floating over a gradient.
-
-OWN-WORLD: Tropical noon daylight campus. Signboard panels: flat enamel ultramarine (#1d3fbf-ish) or jeep red boards with cream hand-lettered display type, thin chrome/gold pinstripe inset border, hard offset drop-shadow lettering. Asphalt grey, curb yellow, leaf green from the photos. Occupancy ramp free/busy/full only where state changes. Numbers in mono tally style. Chrome rivets/brackets on board corners.
-
-STORY: Visitor sees the real campus in daylight, reads the route board (ENTRY → ZONE → EXIT), hits DRIVE IN or scrolls; watches/plays the plate read, the zone count tick, the receipt at the exit; then reads apps, architecture, contact.
-
-FIRST VIEWPORT: Full-bleed sunlit U-lot from a high 3/4 angle, entry and exit gates visible at the street edge. Left: a painted route board (≈ 34rem) — PARADA wordmark, headline, one-line offer, DRIVE IN (primary, red enamel button) + Watch the trip. Top: 9-lamp light bar (raise from drum-machine step row: chase light marks "now"). Tally strip A/B/C counts in mono (raise from cloud quarry: tally boards). Colour reserved for changing state (raise from iridescent cloud edge).
-
-FORM: Jeepney sign-painting livery, candidate 4 of 7 on the grounded list; seed key fcf5153a.
-
+THESIS: The trip is told in the paperwork an LPU driver already carries: vehicle sticker, laminated gate pass, the stamp at each gate, the official receipt at the exit, laid over the real campus in daylight. Refuses the dark smart-city dashboard and the toy-town diorama.
+OWN-WORLD: Security-print mint paper with plate-seeded guilloche linework in guilloche green; laminated cards with a gloss edge and punched lanyard slot; stamp red for stamps and the primary action; ID blue marks Registered, pass gold marks Guest; form black lettering, condensed caps that fill the form width, small-caps field labels over ruled fields whose state is line style (solid done, dashed pending, struck void). Textured daylight campus: concrete, metal roofs, dense real canopy.
+STORY: The visitor sees the real loop round JPL, reads a pass (ABC 1234, Registered, Zone A 18/30), presses DRIVE IN or scrolls; each of the nine steps stamps the pass in order; at the exit the official receipt prints.
+FIRST VIEWPORT: Full-bleed daylight campus from a high three-quarter view over the loop, entry canopy and north gate in frame. Left, a laminated vehicle pass (~32rem): PARADA as issuer, headline, plate field, Registered/Guest, Zone counts as form fields, DRIVE IN as the stamp-red action, Watch the trip beside it. Header as the lanyard strip carrying the nine stamp boxes.
+FORM: Campus vehicle pass and registrar paperwork, candidate 5 of 7 (re-roll round 1); raises from Darkroom (irreversible ordered stamps), Emission-line rail (state by line style), Hatch Show (full-measure condensed headings), Generative identity (plate-seeded guilloche), Łowicz (depth by overlap only), Tensegrity (leader-line callouts on 3D points); seed key 12025fe6.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance

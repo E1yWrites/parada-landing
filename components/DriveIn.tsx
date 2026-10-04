@@ -61,10 +61,33 @@ export function DriveSetup({ compact = false }: { compact?: boolean }) {
         value={policy}
         onPick={(p) => game.set({ policy: p })}
         options={[
-          ['primary', 'Primary zone only', 'guests: Zone C'],
+          ['primary', 'Primary zone only', 'guests: Zone C only'],
           ['space', 'Any zone with space'],
         ]}
       />
     </div>
+  );
+}
+
+// The pass's own fields: the plate it was issued to, its type, and where the trip runs. Follows the plate picker.
+export function PassFields() {
+  const { plate } = useGame();
+  return (
+    <dl className="fields">
+      <div className="field">
+        <dt>Plate</dt>
+        <dd className="num">{plateText(plate)}</dd>
+      </div>
+      <div className="field">
+        <dt>Type</dt>
+        <dd>
+          <span className="type" data-kind={plate}>{plate === 'registered' ? 'Registered' : 'Guest'}</span>
+        </dd>
+      </div>
+      <div className="field">
+        <dt>Route</dt>
+        <dd>Entry › A › Exit</dd>
+      </div>
+    </dl>
   );
 }
