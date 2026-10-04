@@ -290,7 +290,12 @@ export const HOUSE_LIST: House[] = [];
 for (const [x, z, w0, d0, yaw, levels] of HOUSES) {
   const w = Math.min(26, Math.max(4.5, w0));
   const d = Math.min(26, Math.max(4.5, d0));
-  if (inBlock(x, z, Math.min(w, d) / 2) || STREET_RECTS.some((b) => inRect(b, x, z, Math.min(w, d) / 2 + 1)) || occupied(x, z, Math.min(w, d) * 0.35)) continue;
+  // sample the whole turned footprint, so long houses can't poke into a street, a building or the loop
+  const c = Math.cos(yaw);
+  const sn = Math.sin(yaw);
+  let clash = false;
+  for (let u = -w / 2; u <= w / 2 && !clash; u += 1) for (let v = -d / 2; v <= d / 2 && !clash; v += 1) clash = occupied(x + u * c + v * sn, z - u * sn + v * c, 0.5);
+  if (clash) continue;
   const k = hash(x, z);
   HOUSE_LIST.push({ x, z, w, d, h: Math.max(1, Math.min(4, levels || (k > 0.6 ? 2 : 1))) * 3, yaw, wall: WALLS[Math.floor(k * WALLS.length)], roof: ROOFS[Math.floor(hash(z, x) * ROOFS.length)] });
 }
@@ -321,7 +326,7 @@ for (const [x0, x1, z0, z1, sp, sc] of GROVES) {
       const jz = z + (rng(ti + 11) - 0.5) * sp * 0.5;
       ti++;
       const s = sc * (0.75 + rng(ti + 7) * 0.5);
-      if (occupied(jx, jz, s * 0.3) || HOUSE_LIST.some((h) => Math.hypot(h.x - jx, h.z - jz) < Math.max(h.w, h.d) / 2 + 1) || TREES.some(([tx, tz, ts]) => Math.hypot(tx - jx, tz - jz) < (ts + s) * 0.32)) continue;
+      if (occupied(jx, jz, s * 0.3) || inBlock(jx, jz, s * 0.45) || HOUSE_LIST.some((h) => Math.hypot(h.x - jx, h.z - jz) < Math.max(h.w, h.d) / 2 + 1) || TREES.some(([tx, tz, ts]) => Math.hypot(tx - jx, tz - jz) < (ts + s) * 0.32)) continue;
       TREES.push([jx, jz, s, 0]);
     }
 }
@@ -351,7 +356,7 @@ export const WALL_SEGMENTS: [number, number, number, number][] = [];
     path.push(p);
   }
   path.push([CANOPY.x, CANOPY.z + CANOPY.r]);
-  const open = (x: number, z: number) => (Math.abs(x - GATES.north.x) < ROAD_W / 2 + 2 && z < -60) || x > EAST_ST - HALF_T || inBlock(x, z, -0.3);
+  const open = (x: number, z: number) => (Math.abs(x - GATES.north.x) < ROAD_W / 2 + 2 && z < -60) || x > EAST_ST - HALF_T - 0.6 || inBlock(x, z, -0.3);
   for (let i = 1; i < path.length; i++) {
     const [ax, az] = path[i - 1];
     const [bx, bz] = path[i];

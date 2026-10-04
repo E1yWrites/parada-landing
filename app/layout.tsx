@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Nav from '@/components/Nav';
 import SoundToggle from '@/components/SoundToggle';
 import Experience from '@/components/Experience';
-import LightBar from '@/components/LightBar';
 import DriveHUD from '@/components/DriveHUD';
 import Guilloche from '@/components/Guilloche';
 import { DESCRIPTION, EMAIL, GITHUB_URL, SITE_URL } from '@/lib/content';
@@ -54,7 +53,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Nav />
           <SoundToggle />
           <a className="header-link" href={GITHUB_URL} rel="noopener">GitHub</a>
-          <LightBar />
         </header>
         <DriveHUD />
         <main id="content">{children}</main>

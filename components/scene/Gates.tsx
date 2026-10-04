@@ -10,6 +10,8 @@ import { gates } from './state';
 import { signTexture } from './signs';
 
 const BOOM_LEN = ROAD_W - 0.3;
+// north-gate posts stand just off the kerb: the College of Dentistry's west wall is under 5 m from the lane edge
+export const PERGOLA_X = ROAD_W / 2 + 0.9;
 
 /** World positions for a gate: camera head, and the front plate of a car waiting outside / inside. */
 export function gateFrame(g: Gate) {
@@ -199,7 +201,7 @@ function NorthGate({ g, shadows }: { g: Gate; shadows: boolean }) {
   return (
     <group position={[g.x, 0, g.z]} rotation-y={g.inward}>
       {[
-        [-5, -3.5], [5, -3.5], [-5, 3.5], [5, 3.5],
+        [-PERGOLA_X, -3.5], [PERGOLA_X, -3.5], [-PERGOLA_X, 3.5], [PERGOLA_X, 3.5],
       ].map(([x, z]) => (
         <mesh key={`${x},${z}`} position={[x, 2.4, z]} castShadow={shadows}>
           <boxGeometry args={[0.28, 4.8, 0.28]} />
@@ -209,11 +211,11 @@ function NorthGate({ g, shadows }: { g: Gate; shadows: boolean }) {
       {/* slatted steel pergola */}
       {Array.from({ length: 9 }, (_, i) => (
         <mesh key={i} position={[0, 4.95, -3.6 + i * 0.9]} castShadow={shadows}>
-          <boxGeometry args={[11.4, 0.22, 0.32]} />
+          <boxGeometry args={[PERGOLA_X * 2 + 0.6, 0.22, 0.32]} />
           <Mat c="#eef0f2" m={0.3} r={0.5} />
         </mesh>
       ))}
-      {[-5, 5].map((x) => (
+      {[-PERGOLA_X, PERGOLA_X].map((x) => (
         <mesh key={x} position={[x, 4.75, 0]}>
           <boxGeometry args={[0.3, 0.3, 8]} />
           <Mat c="#d9dde2" m={0.5} r={0.4} />

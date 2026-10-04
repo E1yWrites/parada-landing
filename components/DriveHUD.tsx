@@ -33,15 +33,28 @@ function Icon({ d }: { d: string }) {
   );
 }
 
-// Hold-to-press touch button bound to one input flag.
-function Pad({ k, label, d }: { k: keyof typeof input; label: string; d: string }) {
+// Hold-to-press handlers bound to one input flag, shared by the touch pedals and the on-screen keys.
+const hold = (k: keyof typeof input) => {
   const set = (v: boolean) => (e: React.PointerEvent) => {
     e.preventDefault();
     input[k] = v;
   };
+  return { onPointerDown: set(true), onPointerUp: set(false), onPointerCancel: set(false), onPointerLeave: set(false), onContextMenu: (e: React.MouseEvent) => e.preventDefault() };
+};
+
+function Pad({ k, label, d }: { k: keyof typeof input; label: string; d: string }) {
   return (
-    <button type="button" className={`pad pad-${k}`} aria-label={label} onPointerDown={set(true)} onPointerUp={set(false)} onPointerCancel={set(false)} onPointerLeave={set(false)} onContextMenu={(e) => e.preventDefault()}>
+    <button type="button" className={`pad pad-${k}`} aria-label={label} {...hold(k)}>
       <Icon d={d} />
+    </button>
+  );
+}
+
+// A key in the controls strip that also works as a button: hold it to drive, and it lights while its key is down.
+function Key({ k, label, children }: { k: keyof typeof input; label: string; children: string }) {
+  return (
+    <button type="button" data-key={k} aria-label={label} tabIndex={-1} {...hold(k)}>
+      {children}
     </button>
   );
 }
@@ -95,6 +108,8 @@ export default function DriveHUD() {
     const tick = () => {
       if (speed.current) speed.current.textContent = String(Math.round(live.speed)).padStart(2, '0');
       if (timer.current) timer.current.textContent = game.get().session ? fmtDuration(live.elapsed) : '--:--';
+      // light the on-screen keys for whatever is held, from the keyboard or the buttons themselves
+      document.querySelectorAll<HTMLElement>('.hud-keys [data-key]').forEach((b) => b.toggleAttribute('data-down', input[b.dataset.key as keyof typeof input]));
       raf = requestAnimationFrame(tick);
     };
     tick();
@@ -175,10 +190,12 @@ export default function DriveHUD() {
       </div>
 
       <p className="hud-keys">
-        <kbd>W</kbd>
-        <kbd>A</kbd>
-        <kbd>S</kbd>
-        <kbd>D</kbd> drive · <kbd>Space</kbd> handbrake · <kbd>H</kbd> horn · <kbd>R</kbd> restart
+        <Key k="up" label="Accelerate">W</Key>
+        <Key k="left" label="Steer left">A</Key>
+        <Key k="down" label="Brake / reverse">S</Key>
+        <Key k="right" label="Steer right">D</Key> drive · <Key k="brake" label="Handbrake">Space</Key> handbrake ·{' '}
+        <button type="button" tabIndex={-1} aria-label="Horn" onClick={() => sound.play('horn')}>H</button> horn ·{' '}
+        <button type="button" tabIndex={-1} aria-label="Restart" onClick={() => game.start()}>R</button> restart
       </p>
       <div className="hud-pads">
         <div>

@@ -450,64 +450,6 @@ html[data-webgl='on'] .no-webgl {
   outline-color: var(--gold);
 }
 
-/* nine stamp boxes hanging off the strap, one per pipeline step: dashed until the trip reaches the step, then
-   stamped red, and a stamp never comes off */
-.lightbar {
-  position: absolute;
-  left: 50%;
-  bottom: -19px;
-  display: flex;
-  gap: 5px;
-  padding: 5px 9px 6px;
-  border-radius: 0 0 9px 9px;
-  background: var(--mint);
-  box-shadow: var(--laminate);
-  transform: translateX(-50%);
-  counter-reset: stop;
-}
-.lightbar li {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 18px;
-  height: 18px;
-  border: 1.5px dashed var(--guilloche);
-  border-radius: 3px;
-  counter-increment: stop;
-}
-.lightbar li::after {
-  content: counter(stop);
-  font: 700 10px / 1 var(--font-mono), monospace;
-  color: var(--guilloche);
-}
-.lightbar li.is-past,
-.lightbar li.is-now {
-  border: 2px solid var(--stamp);
-  transform: rotate(-7deg);
-}
-.lightbar li.is-past::after,
-.lightbar li.is-now::after {
-  color: var(--stamp);
-}
-.lightbar li.is-now {
-  background: var(--stamp);
-  transform: rotate(-7deg) scale(1.2);
-}
-.lightbar li.is-now::after {
-  color: #fff;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .lightbar li.is-now {
-    animation: stamp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-}
-@keyframes stamp {
-  from {
-    transform: rotate(-16deg) scale(1.9);
-    opacity: 0;
-  }
-}
-
 .site-footer {
   position: relative;
   z-index: 1;
@@ -955,8 +897,7 @@ html.is-driving {
   overflow: hidden;
 }
 html.is-driving main,
-html.is-driving .site-footer,
-html.is-driving .lightbar {
+html.is-driving .site-footer {
   visibility: hidden;
 }
 .hud {
@@ -1067,6 +1008,30 @@ html.is-driving .lightbar {
     opacity: 0.3;
     transform: translateY(-10px) scale(0.98);
   }
+}
+.hud-keys button {
+  min-width: 2.1rem;
+  min-height: 2.1rem;
+  margin: 0 0.1rem;
+  padding: 0 0.45rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 5px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 600 0.8rem / 1 var(--font-mono), monospace;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.hud-keys button:hover {
+  background: #fff;
+}
+.hud-keys button:active,
+.hud-keys button[data-down] {
+  background: var(--stamp);
+  border-color: var(--stamp);
+  color: #fff;
 }
 .hud-keys {
   position: absolute;
@@ -1485,17 +1450,5 @@ html.is-driving .lightbar {
   }
   .fields {
     --cols: 2;
-  }
-  .lightbar {
-    gap: 3px;
-    bottom: -15px;
-    padding: 4px 6px 5px;
-  }
-  .lightbar li {
-    width: 13px;
-    height: 13px;
-  }
-  .lightbar li::after {
-    font-size: 8px;
   }
 }

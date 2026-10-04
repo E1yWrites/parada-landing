@@ -15,7 +15,7 @@ import {
   GATE_STOP, ROAD_W, SLOT_W, SLOT_D, WEST_ST, NORTH_ST, STREET_T, N, BOUNDS, nearestLoop, type Gate, type GateId,
 } from './layout';
 import { gates, resetGates } from './state';
-import { gateFrame } from './Gates';
+import { gateFrame, PERGOLA_X } from './Gates';
 import { PlayerCar } from './Pipeline';
 import { plateTexture } from './signs';
 
@@ -77,7 +77,7 @@ const solid = (() => {
     const at = FRAMES[g.id].at;
     const pts: [number, number, number][] =
       g.style === 'canopy' ? [[ROAD_W / 2 + 0.3, -1.2, 0.35]]
-      : [[-5, -3.5, 0.3], [5, -3.5, 0.3], [-5, 3.5, 0.3], [5, 3.5, 0.3], [ROAD_W / 2 + 0.3, 1.2, 0.35]];
+      : [[-PERGOLA_X, -3.5, 0.3], [PERGOLA_X, -3.5, 0.3], [-PERGOLA_X, 3.5, 0.3], [PERGOLA_X, 3.5, 0.3], [ROAD_W / 2 + 0.3, 1.2, 0.35]];
     for (const [lx, lz, r] of pts) {
       const p = at(lx, 0, lz);
       circles.push({ x: p.x, z: p.z, r });
