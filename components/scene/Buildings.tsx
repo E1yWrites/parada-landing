@@ -5,7 +5,7 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { BLOCKS, ENTRANCE, ISLAND, PAVILION, PAVILION_POSTS, WALKWAYS, WALKWAY_POSTS, WALKWAY_H, FLOOR_H, HOUSE_LIST, inBlock, inPoly, type Block } from './layout';
+import { BLOCKS, COURT, ENTRANCE, ISLAND, PAVILION, PAVILION_POSTS, WALKWAYS, WALKWAY_POSTS, WALKWAY_H, FLOOR_H, HOUSE_LIST, inBlock, inPoly, type Block } from './layout';
 import { signTexture } from './signs';
 import { weathered } from './materials';
 
@@ -86,9 +86,50 @@ const edges = (pts: XZ[]) =>
   });
 
 type Win = { x: number; y: number; z: number; rot: number; w: number; h: number };
+// The covered court: concrete floor, two painted courts with hoops, bleachers, columns, a deep-fascia roof.
+function courtParts(b: Block) {
+  const { x0, x1, z0, z1, columns, courts, bleachers, H } = COURT;
+  const parts: Part[] = [prism(b.pts, 0, 0.1, '#bdb7ab')];
+  const line = '#f4f2ea';
+  for (const [cx, cz] of courts) {
+    const [hw, hl] = [7.5, 14];
+    parts.push(box(cx - hw - 1, 0.1, cz - hl - 1, cx + hw + 1, 0.13, cz + hl + 1, '#4f8a64'));
+    for (const e of [-1, 1]) {
+      parts.push(box(cx - hw, 0.13, cz + e * hl - 0.05, cx + hw, 0.15, cz + e * hl + 0.05, line)); // end lines
+      parts.push(box(cx + e * hw - 0.05, 0.13, cz - hl, cx + e * hw + 0.05, 0.15, cz + hl, line)); // side lines
+      const kz = cz + e * hl;
+      parts.push(box(cx - 2.45, 0.13, Math.min(kz, kz - e * 5.8), cx + 2.45, 0.145, Math.max(kz, kz - e * 5.8), '#a9553a')); // key
+      // hoop: post behind the end line, backboard, rim
+      parts.push(box(cx - 0.12, 0, kz + e * 1.6 - 0.12, cx + 0.12, 3.3, kz + e * 1.6 + 0.12, '#3b4046'));
+      parts.push(box(cx - 0.9, 2.9, kz + e * 1.2 - 0.03, cx + 0.9, 3.95, kz + e * 1.2 + 0.03, '#f6f6f3'));
+      parts.push(box(cx - 0.25, 3.03, kz + e * 0.75 - 0.25, cx + 0.25, 3.07, kz + e * 0.75 + 0.25, '#e0702a'));
+    }
+    parts.push(box(cx - hw, 0.13, cz - 0.05, cx + hw, 0.15, cz + 0.05, line)); // centre line
+    parts.push({ g: new THREE.RingGeometry(1.75, 1.85, 40).rotateX(-Math.PI / 2).translate(cx, 0.15, cz), c: line });
+  }
+  for (const [bx0, bx1, bz0, bz1] of bleachers) {
+    const toCourt = bx0 > (x0 + x1) / 2 ? -1 : 1; // steps rise away from the courts
+    for (let k = 0; k < 4; k++) {
+      const w = (bx1 - bx0) / 4;
+      const sx = toCourt > 0 ? bx1 - (k + 1) * w : bx0 + k * w;
+      parts.push(box(sx, 0, bz0, sx + w, 0.5 + k * 0.45, bz1, '#cfcac0'));
+    }
+  }
+  for (const [cx, cz] of columns) parts.push(box(cx - 0.35, 0, cz - 0.35, cx + 0.35, H, cz + 0.35, C.parapet));
+  parts.push(prism(b.pts, H, H + 0.35, b.roofColor ?? C.roof));
+  for (const e of edges(b.pts)) parts.push(edgeSlab(e.a, e.b, e.n, 0.35, 0.25, H - 1.3, H + 0.75, '#f1f0ec', 0.35));
+  for (let z = z0 + 4; z < z1 - 3; z += 6.2)
+    for (const fx of [0.3, 0.7]) {
+      const x = x0 + (x1 - x0) * fx;
+      parts.push(box(x - 1.3, H + 0.35, z - 1.3, x + 1.3, H + 0.9, z + 1.3, C.glass));
+    }
+  return parts;
+}
+
 function blockParts(b: Block, seed: number) {
   const parts: Part[] = [];
   const wins: Win[] = [];
+  if (b.roof === 'court') return { parts: courtParts(b), wins };
   const H = b.floors * FLOOR_H;
   const xs = b.pts.map((p) => p[0]);
   const zs = b.pts.map((p) => p[1]);

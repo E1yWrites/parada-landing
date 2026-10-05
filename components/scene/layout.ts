@@ -187,7 +187,7 @@ export type Block = {
   pts: XZ[]; // footprint, any winding
   floors: number;
   wall: string;
-  roof: 'flat' | 'hip' | 'skylights';
+  roof: 'flat' | 'hip' | 'skylights' | 'court'; // court: open sides, a roof on columns over the floor
   roofColor?: string;
   rails?: { a: XZ; b: XZ; out: XZ; color: string }; // balcony slabs + rails along one facade run
   sign?: string; // name board over the facade facing Doña Aurelia St
@@ -195,7 +195,7 @@ export type Block = {
 const rect = (x0: number, z0: number, x1: number, z1: number): XZ[] => [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
 export const BLOCKS: Block[] = [
   { name: 'JPL Building, west wing', pts: [[-53.3, -61.5], [-42.6, -61.5], [-42.6, -6.7], [-34.2, -6.7], [-34.2, 23.3], [-55, 23.3], [-55, 12], [-53.3, 12]], floors: 4, wall: '#f3eee2', roof: 'flat', rails: { a: [-53.3, -60], b: [-53.3, 10], out: [-1, 0], color: '#3f8a5c' }, sign: 'JPL BUILDING' },
-  { name: 'JPL Building, hall', pts: rect(-32.7, -60.3, -1.8, 16.7), floors: 3, wall: '#f3eee2', roof: 'skylights', roofColor: '#e9ebec' },
+  { name: 'Covered court', pts: rect(-32.7, -60.3, -1.8, 16.7), floors: 3, wall: '#f3eee2', roof: 'court', roofColor: '#e9ebec' },
   { name: 'JPL Building, south annex', pts: rect(-34.2, 16.7, 0, 23.3), floors: 1, wall: '#ece5d6', roof: 'flat' },
   { name: 'College of Dentistry', pts: [[8.3, -66.7], [74.2, -66.7], [74.2, -43.3], [33, -43.3], [33, -47.5], [8.3, -47.5]], floors: 3, wall: '#f7f5f0', roof: 'flat', sign: 'COLLEGE OF DENTISTRY' },
   { name: 'North-east building', pts: [[44.5, -36.7], [50, -36.7], [50, -32.2], [60, -32.2], [60, -11.1], [50, -11.1], [50, -23.3], [44.5, -30]], floors: 2, wall: '#f1ede4', roof: 'flat' },
@@ -208,6 +208,22 @@ export const BLOCKS: Block[] = [
   { name: 'Courtyard, east arm', pts: [[-5.5, 105], [10, 81], [16.7, 77], [16.7, 87.5], [13.5, 88.5], [3.3, 105]], floors: 2, wall: '#f4efe6', roof: 'flat' },
   { name: 'Annex by the loop', pts: rect(-57.5, 49, -43, 56), floors: 1, wall: '#f7f5f0', roof: 'flat' },
 ];
+// The covered court (photo: a gymnasium with no walls): columns round the edge, two basketball courts on the floor,
+// stepped bleachers along both long sides.
+const COURT_BLOCK = BLOCKS.find((b) => b.roof === 'court')!;
+export const COURT = (() => {
+  const [[x0, z0], , [x1, z1]] = COURT_BLOCK.pts;
+  const columns: XZ[] = [];
+  for (const [ax, az, bx, bz] of [[x0, z0, x1, z0], [x1, z0, x1, z1], [x1, z1, x0, z1], [x0, z1, x0, z0]]) {
+    const n = Math.max(1, Math.round(Math.hypot(bx - ax, bz - az) / 6.5));
+    for (let k = 0; k < n; k++) columns.push([ax + ((bx - ax) * k) / n, az + ((bz - az) * k) / n]);
+  }
+  const cx = (x0 + x1) / 2;
+  const courts = [-36.5, -2.5].map((z): [number, number] => [cx, z]); // centres; 15 × 28 m each, long axis along z
+  const bleachers: Rect[] = [[x0 + 0.8, x0 + 4.4, z0 + 4, z1 - 4], [x1 - 4.4, x1 - 0.8, z0 + 4, z1 - 4]];
+  return { x0, x1, z0, z1, columns, courts, bleachers, H: COURT_BLOCK.floors * FLOOR_H };
+})();
+
 /** Even-odd point-in-polygon. */
 export const inPoly = (pts: XZ[], x: number, z: number) => {
   let inside = false;

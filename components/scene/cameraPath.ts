@@ -5,8 +5,6 @@ export type CamStop = {
   pos: V3; // static pose (also the fallback for follow stops)
   look: V3;
   dim?: number;
-  orbit?: boolean;
-  still?: boolean;
   // slide the subject away from the board: + right (board on the left), − left (board on the right); tall screens slide it up
   shift?: number;
   // pose used on tall screens (before the portrait pull-back)
@@ -26,9 +24,10 @@ export const POI = {
 };
 
 export const CAM: Record<string, CamStop> = {
-  hero: { pos: [-60, 150, -200], look: [-10, 0, 10], orbit: true, shift: 0.2, portrait: { pos: [-150, 70, -140], look: [-30, 0, -36] } },
+  intro: { pos: [-60, 150, -200], look: [-10, 0, 10], shift: 0.2, portrait: { pos: [-150, 70, -140], look: [-30, 0, -36] } }, // behind the intro panel
+  hero: { pos: [-60, 150, -200], look: [-10, 0, 10], shift: 0.2, portrait: { pos: [-150, 70, -140], look: [-30, 0, -36] } },
   about: { pos: [10, 250, 70], look: [4, 0, 36], shift: -0.2 },
-  problem: { pos: [150, 85, 140], look: [-6, 0, 20] },
+  how: { pos: [-118, 46, -112], look: [-62, 2, -54], shift: -0.18, portrait: { pos: [-112, 38, -96], look: [-64, 2, -52] } }, // the entry corner, before the tour begins
   // the pipeline: the camera rides with the car, from Tolentino Rd through both of Zone A's gates
   arrive: { pos: [-100, 14, -40], look: [-66, 2, -58], shift: 0.16, follow: { off: [-9, 15, -19], ahead: 12 } },
   camera: { pos: [-60, 5, -54], look: [-68, 2, -60], shift: -0.16, follow: { off: [0.6, 3, 8.6], ahead: 1 } },
@@ -43,6 +42,6 @@ export const CAM: Record<string, CamStop> = {
   play: { pos: [-150, 110, -150], look: [-18, 0, 0], shift: 0.2 },
   apps: { pos: [-86, 16, -30], look: POI.devices, shift: -0.2 },
   arch: { pos: [40, 180, 230], look: [0, 0, 20] },
-  contact: { pos: [0, 200, 250], look: [0, 0, 20], dim: 0.55, still: true },
-  tech: { pos: [0, 170, 230], look: [0, 0, 20], dim: 0.72, still: true },
+  contact: { pos: [0, 200, 250], look: [0, 0, 20], dim: 0.55 },
+  tech: { pos: [0, 170, 230], look: [0, 0, 20], dim: 0.72 },
 };

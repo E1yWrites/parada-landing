@@ -1,20 +1,52 @@
 import Link from 'next/link';
-import { ZONES, band, PIPELINE, PROBLEMS, MOBILE_STEPS, ADMIN_VERBS, ARCHITECTURE, EMAIL, GITHUB_URL } from '@/lib/content';
+import { ZONES, band, PIPELINE, PROBLEMS, MOBILE_STEPS, ADMIN_VERBS, ARCHITECTURE, EMAIL, GITHUB_URL, TAGLINE, DESCRIPTION } from '@/lib/content';
+import LoadStatus from '@/components/LoadStatus';
+import SnapPop from '@/components/SnapPop';
 import Tally from '@/components/Tally';
 import { DriveIn, DriveSetup, PassFields } from '@/components/DriveIn';
 
 export default function Home() {
   return (
     <>
-      <section className="chapter hero" data-cam="hero" aria-labelledby="hero-title">
+      <SnapPop />
+      {/* intro: what PARADA is, while the campus model loads behind it */}
+      <section className="intro" data-cam="intro" data-snap aria-labelledby="intro-title">
+        <div className="intro-mascot" aria-hidden="true">
+          <img src="/brand/mascot-calm.webp" alt="" width={320} height={313} />
+          <img src="/brand/mascot-blink.webp" alt="" width={320} height={313} className="blink" />
+        </div>
+        <div className="intro-copy">
+          <h1 id="intro-title" className="intro-logo">
+            <img src="/brand/logo.webp" alt="PARADA" width={900} height={119} />
+          </h1>
+          <p className="headline">{TAGLINE}</p>
+          <p>{DESCRIPTION}</p>
+          <dl className="who">
+            {PROBLEMS.map((p) => (
+              <div key={p.who}>
+                <dt>{p.who}</dt>
+                <dd>{p.text}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="lead-close">PARADA brings these activities together through one connected system.</p>
+          <LoadStatus />
+        </div>
+      </section>
+
+      <section id="start" className="chapter hero" data-cam="hero" data-snap aria-labelledby="hero-title">
         <div className="board">
           <div className="pass-band">
-            <span className="brand-mark" aria-hidden="true">P</span>
+            <span className="brand-mark" aria-hidden="true">
+              <img src="/brand/mark.webp" alt="" width={160} height={160} />
+            </span>
             Smart parking pass
             <span className="slot" aria-hidden="true" />
             <span className="num">LPU-B</span>
           </div>
-          <h1 id="hero-title" className="wordmark">PARADA</h1>
+          <h2 id="hero-title" className="wordmark">
+            <img src="/brand/logo.webp" alt="PARADA" width={900} height={119} />
+          </h2>
           <p className="headline">Smart parking, designed for smarter campuses.</p>
           <p>
             Cameras at the zone gates read your plate, and every zone keeps its own live count, so you know where
@@ -30,7 +62,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="about" className="chapter right" data-cam="about" aria-labelledby="about-title">
+      <section id="about" className="chapter right" data-cam="about" data-snap aria-labelledby="about-title">
         <div className="board">
           <h2 id="about-title">What is PARADA?</h2>
           <p>
@@ -60,23 +92,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="problem" className="chapter" data-cam="problem" aria-labelledby="problem-title">
-        <div className="board wide">
-          <h2 id="problem-title">Parking should be easier to understand.</h2>
-          <dl className="who">
-            {PROBLEMS.map((p) => (
-              <div key={p.who}>
-                <dt>{p.who}</dt>
-                <dd>{p.text}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="headline small">PARADA brings these activities together through one connected system.</p>
-        </div>
-      </section>
-
       <section id="how" aria-labelledby="how-title">
-        <div className="how-head">
+        <div className="how-head" data-cam="how" data-snap>
           <div className="board">
             <h2 id="how-title">From arrival to receipt, one pipeline.</h2>
             <p className="soft">Keep scrolling: one car rides the loop from the entry gate to the exit gate, and the system works at every stop.</p>
@@ -84,7 +101,7 @@ export default function Home() {
         </div>
         <ol className="steps">
           {PIPELINE.map((s, i) => (
-            <li key={s.id} className={i % 2 ? 'step right' : 'step'} data-cam={s.id}>
+            <li key={s.id} className={i % 2 ? 'step right' : 'step'} data-cam={s.id} data-snap>
               <div className="board">
                 <h3>
                   <span className="stop num" aria-label={`Step ${i + 1} of ${PIPELINE.length}:`}>{i + 1}</span>
@@ -97,7 +114,7 @@ export default function Home() {
         </ol>
       </section>
 
-      <section id="guest" className="chapter right" data-cam="guest" aria-labelledby="guest-title">
+      <section id="guest" className="chapter right" data-cam="guest" data-snap aria-labelledby="guest-title">
         <div className="board gold">
           <h2 id="guest-title">Guest admission is a policy decision, not a default.</h2>
           <p>
@@ -107,7 +124,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="play" className="chapter" data-cam="play" aria-labelledby="play-title">
+      <section id="play" className="chapter" data-cam="play" data-snap aria-labelledby="play-title">
         <div className="board">
           <h2 id="play-title">Now you drive.</h2>
           <p className="needs-webgl">
@@ -128,7 +145,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="apps" className="chapter right" data-cam="apps" aria-labelledby="apps-title">
+      <section id="apps" className="chapter right" data-cam="apps" data-snap aria-labelledby="apps-title">
         <div className="board wide">
           <h2 id="apps-title">Parking from the driver&rsquo;s perspective.</h2>
           <ol className="route">
@@ -158,7 +175,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="architecture" className="chapter" data-cam="arch" aria-labelledby="arch-title">
+      <section id="architecture" className="chapter" data-cam="arch" data-snap aria-labelledby="arch-title">
         <div className="board">
           <h2 id="arch-title">The same journey, seen technically.</h2>
           <p className="soft">
@@ -176,7 +193,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="contact" className="chapter" data-cam="contact" aria-labelledby="contact-title">
+      <section id="contact" className="chapter" data-cam="contact" data-snap aria-labelledby="contact-title">
         <div className="board">
           <h2 id="contact-title">Interested in PARADA?</h2>
           <p className="soft">

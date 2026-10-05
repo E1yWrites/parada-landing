@@ -43,7 +43,8 @@ The zone is the authoritative unit, not the individual slot. Cameras at zone gat
 
 - Copy and figures: `lib/content.ts`, `public/llms.txt`.
 - Campus reference photos (8, HEIC converted to JPG).
-- Absent: real app screenshots, testimonials, metrics, pricing. Do not fabricate them.
+- Brand assets from the app repo (E1yWrites/parada): the PARADA logo, P mark, guard-dog mascot and the app's tagline "Guiding every vehicle to its zone." (admin sign-in screen).
+- Absent: real app screenshots of the driver app or dashboard, testimonials, metrics, pricing. Do not fabricate them.
 
 ## Product Principles
 

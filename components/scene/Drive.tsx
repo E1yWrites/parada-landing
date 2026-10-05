@@ -10,7 +10,7 @@ import { ZONES } from '@/lib/content';
 import { sound } from '@/lib/sfx';
 import { game, live, input, plateText, fmtDuration, useGame, admit } from '@/lib/game';
 import {
-  ZONE_A, TAKEN, BLOCKS, ROTONDA, ISLAND, TREES, PALMS, HOUSE_LIST, WALL_SEGMENTS, STREETS, POLE_RUNS,
+  ZONE_A, TAKEN, BLOCKS, COURT, ROTONDA, ISLAND, TREES, PALMS, HOUSE_LIST, WALL_SEGMENTS, STREETS, POLE_RUNS,
   FORECOURT, CANOPY_PILLARS, CANOPY_PLANTERS, CANOPY_BOOTH, WALKWAY_POSTS, PAVILION_POSTS, GATE_LIST,
   GATE_STOP, ROAD_W, SLOT_W, SLOT_D, WEST_ST, NORTH_ST, STREET_T, N, BOUNDS, nearestLoop, type Gate, type GateId,
 } from './layout';
@@ -54,7 +54,10 @@ const solid = (() => {
   const circles: Circle[] = [];
   const segs: Seg[] = WALL_SEGMENTS.map(([ax, az, bx, bz]) => ({ ax, az, bx, bz }));
   // building footprints: every facade edge is a wall
-  for (const b of BLOCKS) b.pts.forEach(([ax, az], i) => {
+  // the covered court has no walls: its columns and bleachers are what you can hit
+  for (const [x, z] of COURT.columns) circles.push({ x, z, r: 0.5 });
+  for (const [x0, x1, z0, z1] of COURT.bleachers) boxes.push({ x0, x1, z0, z1 });
+  for (const b of BLOCKS) if (b.roof !== 'court') b.pts.forEach(([ax, az], i) => {
     const [bx, bz] = b.pts[(i + 1) % b.pts.length];
     segs.push({ ax, az, bx, bz });
   });

@@ -8,8 +8,8 @@
   --mint-3: #b9d7c3;
   --guilloche: #2f7a5b;
   --green-ink: #1f5a43;
-  --stamp: #c8102e;
-  --stamp-deep: #960b22;
+  --stamp: #c04028; /* the PARADA logo's red */
+  --stamp-deep: #8f2c1a;
   --id: #1d4e9e;
   --id-deep: #143a78;
   --gold: #e2b23c;
@@ -399,14 +399,15 @@ html[data-webgl='on'] .no-webgl {
 .brand-mark {
   display: grid;
   place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 6px;
-  background: var(--stamp);
-  box-shadow: inset 0 0 0 2px var(--stamp), inset 0 0 0 3.5px #fff;
-  color: #fff;
-  font: 800 1.15rem / 1 var(--font-display), sans-serif;
-  letter-spacing: 0;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgb(26 26 26 / 0.12);
+}
+.brand-mark img {
+  width: 78%;
+  height: auto;
 }
 .tabs {
   display: flex;
@@ -493,30 +494,165 @@ main {
   z-index: 1;
 }
 .chapter {
-  min-height: 100svh;
+  min-height: calc(100svh - var(--header));
   display: flex;
   align-items: center;
-  padding: 6rem var(--gutter);
+  padding: clamp(1.25rem, 4vh, 2.5rem) var(--gutter); /* one card per screen: the section is the snap page */
 }
 .right {
   justify-content: flex-end;
 }
 
 .hero {
-  min-height: calc(100svh - var(--header));
   align-items: flex-start;
   padding-block: 2.75rem;
+}
+
+/* ---------- intro: what PARADA is, over a plain pass-mint field while the campus loads ---------- */
+.intro {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 5rem);
+  min-height: calc(100svh - var(--header));
+  padding: 3rem max(var(--gutter), calc((100vw - 76rem) / 2));
+  /* at full-screen scale the guilloche needs a wash, or it reads as moiré */
+  background: linear-gradient(rgb(223 238 227 / 0.62), rgb(223 238 227 / 0.62)), var(--guilloche-bg) center / 260px auto, var(--mint);
+  border-bottom: 2px solid var(--rule);
+}
+.intro-mascot {
+  position: relative;
+  justify-self: center;
+  width: min(100%, 24rem);
+}
+.intro-mascot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.intro-mascot .blink {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .intro-mascot .blink {
+    animation: blink 4.8s steps(1, end) infinite;
+  }
+}
+@keyframes blink {
+  0%,
+  93% {
+    opacity: 0;
+  }
+  94%,
+  97% {
+    opacity: 1;
+  }
+}
+.intro-copy {
+  max-width: 40rem;
+}
+.intro-logo {
+  margin: 0 0 1rem;
+}
+.intro-logo img {
+  display: block;
+  width: min(100%, 30rem);
+  height: auto;
+}
+.intro .headline {
+  font-size: clamp(1.3rem, 1rem + 1vw, 1.75rem);
+}
+.intro .who {
+  margin-bottom: 1.25rem;
+}
+.lead-close {
+  font-weight: 700;
+}
+.load {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 2px dashed var(--guilloche);
+}
+.spinner {
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 3px solid var(--mint-3);
+  border-top-color: var(--stamp);
+  border-radius: 50%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .load:not([data-done]) .spinner {
+    animation: spin 0.9s linear infinite;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+.load[data-done] .spinner {
+  border-color: var(--free);
+  background: var(--free)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 80% no-repeat;
+}
+.load-text {
+  flex: 1 1 12rem;
+  font: 500 0.95rem / 1.3 var(--font-mono), monospace;
+}
+.load .btn[aria-disabled] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ---------- one section per scroll, each card popping in as it lands ---------- */
+html.snap {
+  scroll-snap-type: y mandatory;
+  scroll-padding-top: var(--header);
+}
+html.snap [data-snap] {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+html.snap .site-footer {
+  scroll-snap-align: end;
+}
+html.js-pop [data-snap] :is(.board, .intro-copy, .intro-mascot) {
+  opacity: 0;
+  transform: translateY(1.4rem) scale(0.98);
+  transition: opacity 0.4s ease, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+html.js-pop [data-snap].is-in :is(.board, .intro-copy, .intro-mascot) {
+  opacity: 1;
+  transform: none;
+}
+html.js-pop [data-snap].is-in .intro-copy {
+  transition-delay: 0.08s;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js-pop [data-snap] :is(.board, .intro-copy, .intro-mascot) {
+    transform: none;
+  }
 }
 .hero .board {
   width: min(100%, 32rem);
 }
 .wordmark {
-  font-size: 34cqi;
-  font-weight: 900;
-  line-height: 0.8;
-  letter-spacing: -0.01em;
-  margin: 0 0 0.12em;
-  color: var(--ink);
+  margin: 0.2rem 0 1rem;
+}
+.wordmark img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* zone counts as form fields, each with its state lamp */
@@ -634,10 +770,14 @@ main {
 
 /* pipeline: each step is a camera stop, numbered with its stamp */
 .how-head {
-  padding: 8rem var(--gutter) 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: calc(100svh - var(--header));
+  padding: 0 var(--gutter);
 }
 .step {
-  min-height: 90svh;
+  min-height: calc(100svh - var(--header));
   display: flex;
   align-items: center;
   padding: 0 var(--gutter);
@@ -1331,6 +1471,23 @@ html.is-driving .site-footer {
   }
   .hero {
     padding-top: 38svh;
+  }
+  .intro {
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: 1rem;
+    padding-block: 1.5rem 2rem;
+  }
+  .intro-mascot {
+    width: 9rem;
+  }
+  .intro .who {
+    display: none; /* the drive into the campus says the same; keep the intro to one screen */
+  }
+  .how-head {
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding-bottom: 2rem;
   }
   .header-link {
     display: none;

@@ -7,8 +7,8 @@ colors:
   mint-3: "#b9d7c3"
   guilloche: "#2f7a5b"
   green-ink: "#1f5a43"
-  stamp: "#c8102e"
-  stamp-deep: "#960b22"
+  stamp: "#c04028"
+  stamp-deep: "#8f2c1a"
   id: "#1d4e9e"
   id-deep: "#143a78"
   gold: "#e2b23c"
@@ -144,7 +144,7 @@ Security-print mint carries the surfaces; three ink colours do jobs.
 - **Green Ink** (#1f5a43): small-caps field labels and legends on mint (7:1).
 
 ### Secondary
-- **Stamp Red** (#c8102e) / **Stamp Deep** (#960b22): the primary action (a red field with a white inner frame, like a rubber stamp), stamped boxes and step numbers, the receipt's EXITED stamp, the denied toast, tick marks.
+- **Stamp Red** (#c04028, sampled from the PARADA logo) / **Stamp Deep** (#8f2c1a): the primary action (a red field with a white inner frame, like a rubber stamp), stamped boxes and step numbers, the receipt's EXITED stamp, the denied toast, tick marks.
 - **ID Blue** (#1d4e9e) / **ID Deep** (#143a78): the header strap and footer, the pass's issuer band, the Registered marker, links, focus rings on light grounds, the dim layer behind the technical tab.
 
 ### Tertiary
@@ -169,7 +169,7 @@ Security-print mint carries the surfaces; three ink colours do jobs.
 **Character:** institutional form lettering. The extra-condensed caps are the face printed across ID cards and registrar forms; Sofia Sans is the plain reading face of the same family; the mono is what a plate or a receipt is printed in.
 
 ### Hierarchy
-- **Display** (900, 34cqi of the pass, 0.8): the PARADA wordmark, sized to fill the hero pass.
+- **Display**: no typeset display line. The PARADA logotype (`public/brand/logo.webp`, from the app repo) is the wordmark on the intro and the pass; condensed caps start at the headline.
 - **Headline** (800, clamp(2rem → 3rem), 0.95, caps): chapter headings.
 - **Title** (800, 1.55rem, caps): step and card headings, toast titles, button lettering (1.15rem).
 - **Lead** (Sofia Sans 700, 1.25rem): the tagline under a heading.
@@ -184,7 +184,9 @@ Security-print mint carries the surfaces; three ink colours do jobs.
 
 ## Layout
 
-Each home chapter is one camera stop: a pass pinned left or right (`.right`) over a full-viewport section (`min-height: 100svh`, 6rem block padding, `--gutter` sides), alternating sides through the nine pipeline steps (90svh each). The hero pass (32rem) sits top-left and the camera's projection shifts away from it. Below 768px passes drop to the bottom of their section, full width, with the scene above (hero from 38svh, 36svh on small phones). Drive mode hides the chapters (visibility, so scroll survives), locks scroll and lays the HUD over the canvas: objective pass top-left with toasts under it (above the pedals on phones), trip meter top-right (19rem), pedals on coarse pointers.
+The home page is a deck of snap pages. Every section is exactly one screen under the sticky header (`min-height: calc(100svh - var(--header))`, `clamp(1.25rem, 4vh, 2.5rem)` block padding) and one camera stop; the stop is keyed to the section's top, so a snapped section is an exact stop and the 3D view stops rendering until the next scroll. CSS mandatory snap (`scroll-snap-stop: always`) handles touch, keys and the scrollbar; one mouse-wheel notch pages one section (`components/SnapPop.tsx`), and a section taller than the screen scrolls natively to its edge first. Each section's card pops in as it lands (opacity plus a 1.4rem rise, 0.55s expo; no rise under reduced motion).
+
+The page opens on the intro: a full-screen pass-mint field (guilloche under a 62% mint wash) that covers the campus while it loads, the mascot on the left (blinking every few seconds), the logo, the app's tagline, the one-line description, the three who-it's-for problems, and a loading line: spinner and percentage while the model downloads, then a green tick, "Campus ready." and START THE TRIP. Below it the passes sit left or right (`.right`) over the campus, alternating through the nine pipeline steps. The hero pass (32rem) sits top-left and the camera's projection shifts away from it. Below 768px passes drop to the bottom of their section, full width, with the scene above (hero from 38svh, 36svh on small phones); the intro stacks a smaller mascot over the copy and drops the who-list. Drive mode hides the chapters (visibility, so scroll survives), locks scroll and lays the HUD over the canvas: objective pass top-left with toasts under it (above the pedals on phones), trip meter top-right (19rem), pedals on coarse pointers.
 
 ## Elevation & Depth
 
@@ -195,6 +197,9 @@ Depth comes from overlap, never from glow. Each pass sits in a laminate sleeve: 
 ID-card corners on passes (18px, 14px in the HUD and on phones); buttons 7px; tick boxes 5px; chain boxes, receipt and form cells 4px; lamps round; stamps are circles or squares rotated −7° to −9°.
 
 ## Components
+
+### Brand
+The PARADA logo, P mark and mascot come from the app repo (`E1yWrites/parada`, `apps/*/brand`, `apps/mobile/assets/lottie`) and live in `public/brand/`. The mascot is the guard dog in the P cap; it appears only on the intro.
 
 ### Pass (signature)
 Mint card with guilloche, laminate edge and sleeve. The hero pass adds an ID-blue issuer band across its top (brand mark, "Smart parking pass", a punched lanyard slot, LPU-B) and its own fields: plate, type, route. The visitor pass is the same card in Visitor gold.
@@ -209,17 +214,17 @@ Primary: stamp red with a white inner frame, white condensed caps (DRIVE IN, Kee
 Radio inputs drawn as paper boxes with an ink frame and a square tick box; checked fills the box stamp red with a white tick and thickens the frame; mono hint line under the label.
 
 ### Navigation
-ID-blue lanyard header with a fine woven texture, the red P stamp mark and the wordmark in condensed caps; tabs as 44px links, the current tab a mint chip. Nine stamp boxes hang from the strap's centre on a mint tag: dashed green until the tour reaches the step, then stamped red and tilted, the current one filled; it stamps in once (off under reduced motion).
+ID-blue lanyard header with a fine woven texture, the PARADA P mark on a white tile and the name in condensed caps; tabs as 44px links, the current tab a mint chip. No step indicator: the snap pages and their numbered stamps carry the position.
 
 ### Drive HUD
-Smaller passes: plate (white plate, ink mono) and objective; trip meter with zone fields, session and km/h gauges, Leave; toasts tinted by tone (mint info, green ok, visitor-gold warn, stamp-red bad with white text); mint pedals on touch; the official receipt with a guilloche band and the EXITED stamp naming the exit camera.
+Smaller passes: plate (white plate, ink mono) and objective; trip meter with zone fields, session and km/h gauges, Leave; toasts tinted by tone (mint info, green ok, visitor-gold warn, stamp-red bad with white text); mint pedals on touch; the controls strip at the bottom is real buttons (hold W A S D / Space, tap H and R), each lighting while its key is held; the official receipt with a guilloche band and the EXITED stamp naming the exit camera.
 
 ### Technical Form
 Official paper with a guilloche band across the top, 2px ink rules between sections, a TOC as a strip of form cells, cards and journey as ruled grids, architecture nodes numbered with red stamp circles.
 
 ## The Campus Model
 
-Accurate first: footprints traced from satellite imagery (the tracing board lives locally in `research/`, not in git, because it contains Esri imagery), OSM for the campus edge and the houses, the Zone A loop with its entry canopy and north exit gate where they really are. Only Zone A is modelled. Surfaces get world-space weathering noise (`components/scene/materials.ts`) instead of texture downloads; light is a warm mid-morning sun from the east-south-east with soft 4K shadows on desktop, a hazy hemisphere fill and a one-off procedural environment for glass and paint reflections. Phones drop shadows and use lighter tree crowns.
+Accurate first: footprints traced from satellite imagery (the tracing board lives locally in `research/`, not in git, because it contains Esri imagery), OSM for the campus edge and the houses, the Zone A loop with its entry canopy and north exit gate where they really are. Only Zone A is modelled. The hall east of the JPL wing is the covered court: open sides on perimeter columns, a deep-fascia skylit roof, two painted basketball courts with hoops, stepped bleachers. Surfaces get world-space weathering noise (`components/scene/materials.ts`) instead of texture downloads; light is a warm mid-morning sun from the east-south-east with soft 4K shadows on desktop, a hazy hemisphere fill and a one-off procedural environment for glass and paint reflections. Phones drop shadows and use lighter tree crowns.
 
 ## Do's and Don'ts
 

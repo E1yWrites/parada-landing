@@ -2,13 +2,24 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
-import { Environment, Lightformer } from '@react-three/drei';
+import { Environment, Lightformer, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import Campus from './Campus';
 import Pipeline from './Pipeline';
 import Drive from './Drive';
 import CameraRig from './CameraRig';
 import { CAM } from './cameraPath';
+
+// Tell the intro how the campus download is going (and remember it for late listeners).
+function LoadSignal() {
+  const { progress, active } = useProgress();
+  useEffect(() => {
+    const detail = { progress, done: !active && progress >= 100 };
+    window.__paradaLoad = detail;
+    dispatchEvent(new CustomEvent('parada:load', { detail }));
+  }, [progress, active]);
+  return null;
+}
 
 const media = (q: string) => typeof window !== 'undefined' && window.matchMedia(q).matches;
 
@@ -64,6 +75,7 @@ export default function Scene() {
       {/* drei <Html> re-roots when the Canvas connects its events, so mount labelled parts after that */}
       {ready && <Campus shadows={!mobile} mobile={mobile} />}
       {ready && <Pipeline />}
+      <LoadSignal />
       <Drive reduced={reduced} />
       <CameraRig path={path} reduced={reduced} />
     </Canvas>

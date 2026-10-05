@@ -28,6 +28,8 @@ export const band = (z: Zone): 'free' | 'busy' | 'full' => {
 };
 
 export const DEMO_PLATE = 'ABC 1234';
+// The app's own line, from the PARADA admin sign-in screen (E1yWrites/parada, apps/admin).
+export const TAGLINE = 'Guiding every vehicle to its zone.';
 
 export const PIPELINE = [
   { id: 'arrive', title: 'Vehicle arrives', body: 'The vehicle reaches a zone gate or entry point.' },

@@ -239,7 +239,7 @@ export default function Campus({ shadows, mobile }: { shadows: boolean; mobile: 
   useLayoutEffect(() => () => pad.dispose(), [pad]);
   useFrame(() => {
     const g = game.get();
-    const heat = g.driving ? 0 : Math.max(near('about', 0.9), near('problem', 0.9), near('play', 0.8) * 0.6);
+    const heat = g.driving ? 0 : Math.max(near('about', 0.9), near('play', 0.8) * 0.6);
     const b = BAND[band({ ...ZONE_A, occupied: g.counts[0] })];
     pad.color.copy(PAD).lerp(b, heat * 0.65);
     pad.emissive.copy(b).multiplyScalar(heat * 0.15);

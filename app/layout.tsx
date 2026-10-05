@@ -48,7 +48,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Experience />
         <header className="site-header">
           <Link href="/" className="brand" aria-label="PARADA home">
-            <span className="brand-mark" aria-hidden="true">P</span>PARADA
+            <span className="brand-mark" aria-hidden="true">
+              <img src="/brand/mark.webp" alt="" width={160} height={160} />
+            </span>
+            PARADA
           </Link>
           <Nav />
           <SoundToggle />

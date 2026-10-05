@@ -1,4 +1,4 @@
-// Scroll owns the camera. Each [data-cam] element is a stop, reached when its centre crosses the reading line.
+// Scroll owns the camera. Each [data-cam] element is a stop, reached when its top reaches the sticky header.
 // Between marketing stops the camera holds, then eases across; through the pipeline it follows the demo car
 // at the scroll's own pace. A damped copy of the scroll value drives everything, so wheel steps glide.
 import { useEffect, useRef } from 'react';
@@ -9,7 +9,6 @@ import { game } from '@/lib/game';
 import { CAM, type CamStop } from './cameraPath';
 import { scroll, demoCar } from './state';
 
-const LINE = 0.55; // reading line, fraction of the viewport height
 const FOLLOW = new Set<string>(PIPELINE.map((s) => s.id));
 // hold around each marketing stop, ease across the middle half of the gap
 const holdEase = (f: number) => {
@@ -77,26 +76,26 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     const keys = els.map((el) => el.dataset.cam!);
     scroll.keys = keys;
     stops.current = keys.map((k) => CAM[k] ?? CAM.hero);
-    let centers: number[] = [];
+    let tops: number[] = [];
     const wake = () => {
       settled.current = 0;
       setFrameloop('always');
     };
+    // Stops are keyed to section tops: a snapped section always lands with its top under the sticky header, so
+    // every snap is an exact stop (and the scene can sleep there) however tall the section is.
     const measure = () => {
-      centers = els.map((el) => {
-        const r = el.getBoundingClientRect();
-        return r.top + scrollY + r.height / 2;
-      });
+      tops = els.map((el) => el.getBoundingClientRect().top + scrollY);
     };
     const update = () => {
-      const r = scrollY + innerHeight * LINE;
+      const hdr = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0;
+      const r = scrollY + hdr + 0.5; // half a pixel past the edge, so a snapped section counts as reached
       let t = 0;
-      if (centers.length > 1 && r > centers[0]) {
-        if (r >= centers[centers.length - 1]) t = centers.length - 1;
+      if (tops.length > 1 && r > tops[0]) {
+        if (r >= tops[tops.length - 1]) t = tops.length - 1;
         else {
           let i = 0;
-          while (r >= centers[i + 1]) i++;
-          const f = (r - centers[i]) / (centers[i + 1] - centers[i]);
+          while (r >= tops[i + 1]) i++;
+          const f = (r - tops[i]) / (tops[i + 1] - tops[i]);
           const linear = FOLLOW.has(keys[i]) || FOLLOW.has(keys[i + 1]);
           t = i + (reduced ? Math.round(f) : linear ? f : holdEase(f));
         }
@@ -153,13 +152,6 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     if (a.follow && b.follow) {
       followPose(orbitOffset(a.follow, b.follow, e), a.follow, heading.current, vPos, vB);
     } else vPos.lerpVectors(vA, vB, e);
-    if (a.orbit && !reduced) {
-      // slow orbit around the look target, fading out as we leave the stop
-      const ang = state.clock.elapsedTime * 0.06 * (1 - f);
-      vA.subVectors(vPos, vLook).applyAxisAngle(THREE.Object3D.DEFAULT_UP, Math.sin(ang) * 0.35);
-      vPos.addVectors(vLook, vA);
-    }
-
     // Portrait screens see a narrower slice; pull back so the frame still holds the subject.
     const aspect = state.size.width / state.size.height;
     // Close follow shots pull back less, or the camera would back into the canopy and the buildings.
@@ -185,10 +177,11 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     const el = document.getElementById('stage-dim');
     if (el) el.style.opacity = String(dim);
 
-    // Stop rendering once parked on a calm stop; any scroll wakes it again.
-    if (a.still && f === 0 && camera.position.distanceToSquared(vPos) < 1e-4) {
+    // Stop rendering once the camera has landed on a stop: the scene is static there (the tour is a function of the
+    // scroll), so nothing changes until the next scroll or resize wakes it.
+    if (Math.min(f, 1 - f) < 1e-3 && Math.abs(target.current - t) < 1e-4 && camera.position.distanceToSquared(vPos) < 1e-4 && look.current.distanceToSquared(vLook) < 1e-4) {
       if (++settled.current > 10) setFrameloop('never');
-    }
+    } else settled.current = 0;
   });
 
   return null;
