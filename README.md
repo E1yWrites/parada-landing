@@ -14,6 +14,7 @@ Official site for **PARADA**, a smart parking management system built as a BSIT 
 - `components/scene/cameraPath.ts` holds the camera stops. Each `data-cam="<key>"` element in the page is one stop; pipeline stops follow the tour car.
 - `components/scene/layout.ts` is the campus: zones, gates, the loop driveway, buildings (polygons traced from satellite imagery), walkways, trees, houses and streets. Only Zone A is modelled. Zone counts change only at gate cameras, as in the PARADA backend.
 - `components/scene/campusData.ts` is generated from OpenStreetMap by `node scripts/campus-data.mjs` (campus edge and the houses around it). Map data © OpenStreetMap contributors (ODbL).
+- Vercel Web Analytics (`@vercel/analytics`, cookieless, same-origin script) is mounted in `app/layout.tsx`; the privacy notice describes it.
 - `public/brand/` holds the PARADA logo, mark and mascot from the app repo.
 - `app/docs/` and `app/legal/` (terms, privacy, licences) summarise the PARADA repository; `components/AppScreens.tsx` draws the driver app and admin console at step 7 after the app's own design.
 - `public/models/` holds the Kenney Car Kit cars (CC0); see `CREDITS.txt`. Buildings, trees, houses and streets are generated in code (`Buildings.tsx`, `Trees.tsx`, `Campus.tsx`).

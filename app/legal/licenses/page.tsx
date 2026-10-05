@@ -82,6 +82,7 @@ const sections: Section[] = [
             ['Next.js, React, React DOM', 'MIT'],
             ['three.js, React Three Fiber, drei', 'MIT'],
             ['GSAP, @gsap/react', "GreenSock Standard 'No Charge' License"],
+            ['@vercel/analytics', 'MIT'],
           ].map(([k, v]) => (
             <tr key={k}>
               <th scope="row">{k}</th>

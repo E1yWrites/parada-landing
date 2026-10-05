@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const PAGES = [
   { href: '/legal/terms/', title: 'Terms of use', body: 'What this site is, what its demo content means, who owns what, and the limits of what we promise.' },
-  { href: '/legal/privacy/', title: 'Privacy notice', body: 'What this site keeps (almost nothing), and what the PARADA system processes when an establishment runs it.' },
+  { href: '/legal/privacy/', title: 'Privacy notice', body: 'What this site keeps (no cookies, anonymous visit counts), and what the PARADA system processes when an establishment runs it.' },
   { href: '/legal/licenses/', title: 'Licences and credits', body: 'Map data, 3D models, fonts and libraries used here, under their own licences.' },
 ];
 

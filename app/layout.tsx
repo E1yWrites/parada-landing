@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Sofia_Sans, Sofia_Sans_Extra_Condensed, JetBrains_Mono } from 'next/font/google';
 import Link from 'next/link';
+import { Analytics } from '@vercel/analytics/next';
 import Nav from '@/components/Nav';
 import SoundToggle from '@/components/SoundToggle';
 import Experience from '@/components/Experience';
@@ -85,6 +86,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
         </footer>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        {/* Vercel Web Analytics: cookieless page-view counts, served from the site's own domain (see /legal/privacy/) */}
+        <Analytics />
       </body>
     </html>
   );

@@ -16,16 +16,22 @@ const sections: Section[] = [
     body: (
       <>
         <p>
-          The site has no accounts, forms, analytics or advertising, sets no cookies, and makes no requests to other
-          servers: fonts, models and code are all served from the site itself. If you switch the sound on or off, that
-          choice is saved in your own browser&rsquo;s local storage; clear your site data to remove it. Drive mode runs
-          entirely in your browser and sends nothing anywhere.
+          The site has no accounts, forms or advertising, and sets no cookies. Fonts, models and code are all served from
+          the site itself. If you switch the sound on or off, that choice is saved in your own browser&rsquo;s local
+          storage; clear your site data to remove it. Drive mode runs entirely in your browser and sends nothing
+          anywhere.
+        </p>
+        <p>
+          The site counts visits with Vercel Web Analytics, served from the site&rsquo;s own address. It uses no cookies:
+          visitors are told apart by a hash of the request that Vercel discards after 24 hours, and each page view
+          records the page address, the page you came from, and your browser and its version. It is used only to see
+          which pages are read.
         </p>
         <p>
           Like any website, the host that serves these pages (Vercel) processes standard request data such as your IP
           address and browser details to deliver them, under its own privacy policy, and may do so outside the
-          Philippines. If you email the team, we see your email address and message and use them only to reply. Links to
-          GitHub take you to a site with its own terms.
+          Philippines. If you email the team, we see your email address and message and use them only to reply. Links
+          to GitHub take you to a site with its own terms.
         </p>
       </>
     ),
@@ -194,7 +200,7 @@ export default function Privacy() {
   return (
     <DocPage
       title="Privacy notice."
-      lead="This site keeps almost nothing. The PARADA system is built to process what a gate camera and a parking session need, and no more."
+      lead="This site keeps almost nothing: no cookies, only anonymous visit counts. The PARADA system is built to process what a gate camera and a parking session need, and no more."
       updated="5 October 2026"
       sections={sections}
     />
