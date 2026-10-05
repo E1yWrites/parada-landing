@@ -614,6 +614,407 @@ main {
   pointer-events: none;
 }
 
+/* ---------- step 7: the two PARADA clients, after the app's own design (E1yWrites/parada) ---------- */
+.step.with-apps {
+  justify-content: space-between;
+  gap: 2rem;
+}
+.step.with-apps .board {
+  width: min(100%, 24rem);
+}
+.app-ui {
+  position: relative;
+  flex: none;
+  width: 45em;
+  height: 38em;
+  font-size: clamp(8px, 0.35rem + 0.45vw, 11.5px);
+  font-family: var(--app-sans), system-ui, sans-serif;
+  line-height: 1.35;
+}
+.app-ui svg {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+}
+.app-ui .mono {
+  font-family: var(--font-mono), monospace;
+}
+/* admin console (dark register) */
+.adm {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40em;
+  overflow: hidden;
+  border: 1px solid rgb(51 54 63);
+  border-radius: 1em;
+  background: rgb(18 19 22);
+  color: rgb(245 244 242);
+  box-shadow: 0 2em 4em -1.5em rgb(0 0 0 / 0.6);
+}
+.adm-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0.6em 0.9em;
+  background: rgb(27 29 34);
+  border-bottom: 1px solid rgb(36 38 45);
+}
+.adm-bar i {
+  width: 0.65em;
+  height: 0.65em;
+  border-radius: 50%;
+  background: rgb(51 54 63);
+}
+.adm-bar span {
+  margin: 0 auto;
+  padding: 0.15em 3em;
+  border-radius: 0.4em;
+  background: rgb(18 19 22);
+  color: rgb(144 148 158);
+  font-size: 0.85em;
+}
+.adm-body {
+  display: grid;
+  grid-template-columns: 10.5em 1fr;
+}
+.adm-side {
+  display: grid;
+  align-content: start;
+  gap: 0.25em;
+  padding: 1em 0.7em;
+  border-right: 1px solid rgb(36 38 45);
+}
+.adm-logo {
+  width: 7.5em;
+  margin-bottom: 0.6em;
+  padding: 0.3em 0.45em;
+  border-radius: 0.35em;
+  background: #fff;
+}
+.adm-group {
+  margin-top: 0.7em;
+  color: rgb(144 148 158);
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.adm-link {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  padding: 0.45em 0.55em;
+  border-radius: 0.5em;
+  color: rgb(200 202 208);
+  font-size: 0.92em;
+}
+.adm-link.is-on {
+  background: rgb(42 32 21);
+  color: rgb(247 147 26);
+  font-weight: 600;
+}
+.adm-main {
+  padding: 0.9em 1.1em 1.1em;
+}
+.adm-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8em;
+  color: rgb(144 148 158);
+}
+.adm-live {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  color: rgb(245 244 242);
+  font-size: 0.9em;
+}
+.adm-live::before {
+  content: '';
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: rgb(61 220 132);
+  box-shadow: 0 0 0 0.2em rgb(61 220 132 / 0.2);
+}
+.adm h4 {
+  margin: 0;
+  font: 700 1.55em / 1.1 var(--app-display), sans-serif;
+  text-transform: none;
+}
+.adm-sub {
+  margin: 0.2em 0 0.8em;
+  color: rgb(144 148 158);
+  font-size: 0.9em;
+}
+.adm-metrics {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 0.55em;
+}
+.adm-card,
+.adm-alerts {
+  display: grid;
+  align-content: start;
+  gap: 0.2em;
+  padding: 0.7em 0.8em;
+  border: 1px solid rgb(36 38 45);
+  border-radius: 0.75em;
+  background: rgb(27 29 34);
+}
+.adm-card span,
+.adm-card-title {
+  color: rgb(200 202 208);
+  font-size: 0.82em;
+  font-weight: 600;
+}
+.adm-card strong {
+  font: 700 1.5em / 1.1 var(--app-display), sans-serif;
+}
+.adm-card small {
+  color: rgb(144 148 158);
+  font-size: 0.75em;
+}
+.adm-hero {
+  grid-row: span 2;
+}
+.adm-hero strong {
+  margin-top: auto;
+  font-size: 2.4em;
+}
+.adm-hero em {
+  color: rgb(144 148 158);
+  font-style: normal;
+}
+.adm-hero i {
+  height: 0.35em;
+  margin-top: 0.4em;
+  border-radius: 1em;
+  background: linear-gradient(90deg, rgb(247 147 26) var(--pct), rgb(44 47 54) var(--pct));
+}
+.adm-card:last-child {
+  grid-column: span 2;
+}
+.adm-alerts {
+  margin-top: 0.55em;
+}
+.adm-alerts p {
+  margin: 0;
+  padding: 0.35em 0 0.35em 1.2em;
+  border-top: 1px solid rgb(36 38 45);
+  background: radial-gradient(circle at 0.35em 50%, rgb(255 214 0) 0.25em, transparent 0.3em);
+  font-size: 0.82em;
+}
+.adm-alerts p.ok {
+  background-image: radial-gradient(circle at 0.35em 50%, rgb(61 220 132) 0.25em, transparent 0.3em);
+}
+.adm-table {
+  width: 100%;
+  margin-top: 0.55em;
+  border-collapse: collapse;
+  font-size: 0.8em;
+}
+.adm-table td {
+  padding: 0.35em 0.4em;
+  border-top: 1px solid rgb(36 38 45);
+  color: rgb(200 202 208);
+}
+/* driver app (dark register), in a phone */
+.drv {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+  width: 17em;
+  height: 35.5em;
+  padding: 0.9em 0.9em 0;
+  overflow: hidden;
+  border: 0.45em solid #0b0d12;
+  border-radius: 2.6em;
+  background: radial-gradient(120% 60% at 80% 0%, #33405c, transparent), #273248;
+  color: #ffebd2;
+  box-shadow: 0 2.5em 4em -1.5em rgb(0 0 0 / 0.65);
+}
+.drv-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.6em;
+  font-size: 0.8em;
+  font-weight: 600;
+}
+.drv-island {
+  width: 5.5em;
+  height: 1.5em;
+  border-radius: 1em;
+  background: #0b0d12;
+}
+.drv-bat {
+  width: 1.6em;
+  height: 0.75em;
+  border: 1.5px solid #ffebd2;
+  border-radius: 0.25em;
+}
+.drv-head {
+  display: grid;
+  gap: 0.15em;
+}
+.drv-head b {
+  font: 700 1.5em / 1 var(--app-display), sans-serif;
+}
+.drv-head span {
+  color: #c7bbae;
+  font-size: 0.75em;
+}
+.drv-card {
+  position: relative;
+  display: grid;
+  gap: 0.3em;
+  padding: 0.9em;
+  border: 1px solid rgb(255 235 210 / 0.09);
+  border-radius: 1.2em;
+  background: radial-gradient(70% 55% at 85% 0%, rgb(252 118 67 / 0.16), transparent), #2f3b54;
+}
+.drv-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.drv-badge {
+  padding: 0.15em 0.6em;
+  border-radius: 1em;
+  background: rgb(252 118 67 / 0.18);
+  color: #fdb69b;
+  font-size: 0.72em;
+  font-weight: 600;
+}
+.drv-code {
+  display: inline-grid;
+  place-items: center;
+  width: 1.7em;
+  height: 1.7em;
+  border-radius: 0.45em;
+  background: rgb(252 118 67 / 0.18);
+  color: #fdb69b;
+  font-size: 0.75em;
+  font-weight: 700;
+}
+.drv-mascot {
+  position: absolute;
+  top: 0.4em;
+  right: 0.5em;
+  width: 3.6em;
+}
+.drv-zone {
+  margin-top: 0.3em;
+  font: 700 1.4em / 1.1 var(--app-display), sans-serif;
+}
+.drv-plate {
+  font: 700 0.95em / 1 var(--font-mono), monospace;
+  letter-spacing: 0.12em;
+}
+.drv-label {
+  margin-top: 0.5em;
+  color: #c7bbae;
+  font-size: 0.65em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.drv-timer {
+  font: 700 1.9em / 1 var(--app-display), sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.drv-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45em;
+  margin-top: 0.6em;
+  padding: 0.65em;
+  border-radius: 0.8em;
+  background: #fc7643;
+  color: #15111c;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+.drv-zones {
+  display: grid;
+  gap: 0.35em;
+}
+.drv-zones div {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: baseline;
+  gap: 0.45em;
+  padding: 0.45em 0.6em;
+  border-radius: 0.7em;
+  background: #2f3b54;
+  font-size: 0.82em;
+}
+.drv-zones b {
+  color: #3ddc84;
+  font: 700 1.15em / 1 var(--app-display), sans-serif;
+}
+.drv-zones small {
+  color: #c7bbae;
+  font-size: 0.8em;
+}
+.drv-tabs {
+  display: flex;
+  justify-content: space-around;
+  margin: auto -0.2em 0.9em;
+  padding: 0.45em 0.3em;
+  border: 1px solid rgb(255 235 210 / 0.12);
+  border-radius: 1.4em;
+  background: #38455f;
+}
+.drv-tabs span {
+  display: grid;
+  justify-items: center;
+  gap: 0.15em;
+  color: #c7bbae;
+  font-size: 0.62em;
+  font-weight: 600;
+}
+.drv-tabs svg {
+  width: 1.6em;
+  height: 1.6em;
+}
+.drv-tabs .is-on {
+  color: #fc7643;
+}
+@media (max-width: 1100px) {
+  .app-ui {
+    width: 19em;
+    height: 37em;
+  }
+  .adm {
+    display: none;
+  }
+}
+@media (max-width: 768px) {
+  .step.with-apps {
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+  .step.with-apps .board {
+    width: 100%;
+  }
+  .app-ui {
+    order: -1; /* the phone above the card, the parked car above both */
+    font-size: 6.5px;
+    height: 36em;
+    width: 17em;
+  }
+}
+
 /* ---------- one section per scroll, each card popping in as it lands ---------- */
 html.snap {
   scroll-snap-type: y mandatory;
@@ -626,12 +1027,12 @@ html.snap [data-snap] {
 html.snap .site-footer {
   scroll-snap-align: end;
 }
-html.js-pop [data-snap] :is(.board, .intro-copy, .intro-mascot) {
+html.js-pop [data-snap] :is(.board, .intro-copy, .intro-mascot, .app-ui) {
   opacity: 0;
   transform: translateY(1.4rem) scale(0.98);
   transition: opacity 0.4s ease, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
-html.js-pop [data-snap].is-in :is(.board, .intro-copy, .intro-mascot) {
+html.js-pop [data-snap].is-in :is(.board, .intro-copy, .intro-mascot, .app-ui) {
   opacity: 1;
   transform: none;
 }
@@ -639,7 +1040,7 @@ html.js-pop [data-snap].is-in .intro-copy {
   transition-delay: 0.08s;
 }
 @media (prefers-reduced-motion: reduce) {
-  html.js-pop [data-snap] :is(.board, .intro-copy, .intro-mascot) {
+  html.js-pop [data-snap] :is(.board, .intro-copy, .intro-mascot, .app-ui) {
     transform: none;
   }
 }
@@ -1045,6 +1446,10 @@ html.is-driving .site-footer {
   inset: 0;
   z-index: 15;
   pointer-events: none;
+  /* a game overlay, not a document: no text cursor, no selection, nothing that looks typable */
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .hud-left > *,
 .hud-meter,
@@ -1356,6 +1761,88 @@ html.is-driving .site-footer {
   background: var(--mint);
   color: var(--ink);
 }
+.doc pre {
+  margin: 1rem 0;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: var(--mint);
+  font: 500 0.88rem / 1.6 var(--font-mono), monospace;
+  white-space: pre;
+}
+.doc code {
+  padding: 0.05em 0.3em;
+  border-radius: 3px;
+  background: var(--mint);
+  font: 500 0.9em var(--font-mono), monospace;
+}
+.doc pre code {
+  padding: 0;
+  background: none;
+}
+.spec {
+  width: 100%;
+  margin: 1rem 0 0;
+  border-collapse: collapse;
+  border-top: 1.5px solid var(--ink);
+}
+.spec th,
+.spec td {
+  padding: 0.65rem 0.75rem 0.65rem 0;
+  border-bottom: 1px solid #d9d4c6;
+  text-align: left;
+  vertical-align: top;
+}
+.spec thead th {
+  font: 700 0.72rem / 1.2 var(--font-sans), sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green-ink);
+}
+.spec tbody th {
+  width: 30%;
+  font-weight: 700;
+}
+.steps-list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.5rem 0 0;
+  padding-left: 1.4rem;
+  list-style: decimal;
+}
+.steps-list li::marker {
+  color: var(--stamp);
+  font: 700 0.95em var(--font-mono), monospace;
+}
+.sources {
+  margin: 1.25rem 0 0;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+.sources a {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.92em;
+}
+.card-link {
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.16s ease;
+}
+.card-link:hover {
+  background: var(--mint);
+  color: inherit;
+}
+.card-link h2 {
+  margin-bottom: 0.4rem;
+  font-size: 1.6rem;
+}
+.lost .intro-mascot {
+  width: min(100%, 18rem);
+}
+.lost h1 {
+  font-size: clamp(2.6rem, 2rem + 2.4vw, 4.25rem);
+}
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
@@ -1573,7 +2060,15 @@ html.is-driving .site-footer {
     height: 1.75rem;
   }
   .tabs a {
-    padding: 0 0.6rem;
+    padding: 0 0.45rem;
+    font-size: 0.8rem;
+  }
+  .site-header .brand {
+    font-size: 0; /* the P mark carries the brand; the word would push the tabs off a phone screen */
+    gap: 0;
+  }
+  .spec tbody th {
+    width: 38%;
   }
   .sound {
     padding: 0 0.6rem;

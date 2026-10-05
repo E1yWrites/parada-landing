@@ -7,9 +7,13 @@ import * as THREE from 'three';
 import { PIPELINE } from '@/lib/content';
 import { game } from '@/lib/game';
 import { CAM, type CamStop } from './cameraPath';
-import { scroll, demoCar } from './state';
+import { scroll, demoCar, stopIndex } from './state';
 
 const FOLLOW = new Set<string>(PIPELINE.map((s) => s.id));
+// tour playback, in timeline units (one per step) per second
+const STEP_PACE = 0.6;
+const ARRIVE_PACE = 0.35; // up Tolentino Rd to the canopy
+const LOOP_PACE = 0.17; // out of the bay, round the loop, up to the exit camera
 // hold around each marketing stop, ease across the middle half of the gap
 const holdEase = (f: number) => {
   const x = Math.min(1, Math.max(0, (f - 0.25) / 0.5));
@@ -75,7 +79,8 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     const els = [...document.querySelectorAll<HTMLElement>('[data-cam]')];
     const keys = els.map((el) => el.dataset.cam!);
     scroll.keys = keys;
-    stops.current = keys.map((k) => CAM[k] ?? CAM.hero);
+    // a page with no stops of its own (the 404) gets the dimmed overview, so the list is never empty
+    stops.current = keys.length ? keys.map((k) => CAM[k] ?? CAM.hero) : [CAM.tech];
     let tops: number[] = [];
     const wake = () => {
       settled.current = 0;
@@ -122,8 +127,16 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
   }, [path, reduced, setFrameloop]);
 
   useFrame((state, dt) => {
+    // Approach the scrolled-to stop. Inside the tour a one-step move plays at a set pace, so what happens between
+    // two stops (the car driving up, the loop to the exit) is seen rather than skipped; long jumps glide fast.
     const d = target.current - smooth.current;
-    smooth.current = reduced || Math.abs(d) < 1e-4 ? target.current : smooth.current + d * (1 - Math.exp(-7 * Math.min(dt, 0.1)));
+    const tourT = smooth.current - (stopIndex('arrive') - 1); // tour timeline position
+    const step = Math.min(dt, 0.1);
+    if (reduced || Math.abs(d) < 1e-4) smooth.current = target.current;
+    else if (Math.abs(d) <= 1.5 && tourT > -0.05 && tourT < PIPELINE.length + 0.05) {
+      const pace = tourT > 7 && tourT < 8 ? LOOP_PACE : tourT < 1 ? ARRIVE_PACE : STEP_PACE;
+      smooth.current += Math.sign(d) * Math.min(Math.abs(d), Math.min(pace, Math.abs(d) * 4) * step);
+    } else smooth.current += d * (1 - Math.exp(-7 * step));
     scroll.t = smooth.current;
     const cam = camera as THREE.PerspectiveCamera;
     if (game.get().driving) {
@@ -168,7 +181,8 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
 
     // Board-side offset: on wide screens a positive shift slides the subject right (board on the left), a negative
     // one left; tall screens slide it up, above the board that sits at the bottom.
-    const shift = aspect > 1.2 || tall ? (a.shift ?? 0) + ((b.shift ?? 0) - (a.shift ?? 0)) * e : 0;
+    const sh = (s: CamStop) => (tall && s.tallShift !== undefined ? s.tallShift : (s.shift ?? 0));
+    const shift = aspect > 1.2 || tall ? sh(a) + (sh(b) - sh(a)) * e : 0;
     const { width: w, height: h } = state.size;
     if (Math.abs(shift) > 1e-4) cam.setViewOffset(w, h, tall ? 0 : -shift * w, tall ? Math.abs(shift) * h : 0, w, h);
     else if (cam.view?.enabled) cam.clearViewOffset();

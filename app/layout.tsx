@@ -76,6 +76,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <nav aria-label="Footer">
             <Link href="/">Experience</Link>
             <Link href="/technical/">Technical</Link>
+            <Link href="/docs/">Docs</Link>
+            <Link href="/legal/terms/">Terms</Link>
+            <Link href="/legal/privacy/">Privacy</Link>
+            <Link href="/legal/licenses/">Licences</Link>
             <a href={GITHUB_URL} rel="noopener">GitHub</a>
             <a href={`mailto:${EMAIL}`}>Email</a>
           </nav>

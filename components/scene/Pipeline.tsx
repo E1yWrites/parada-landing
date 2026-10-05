@@ -13,29 +13,27 @@ import { DEMO_PLATE, RECEIPT, ZONES } from '@/lib/content';
 import { sound, type Sfx } from '@/lib/sfx';
 import { game } from '@/lib/game';
 import { PATHS, GATES } from './layout';
-import { scroll, stopIndex, near, gates, demoCar } from './state';
+import { scroll, stopIndex, gates, demoCar } from './state';
 import { gateFrame } from './Gates';
 import { POI } from './cameraPath';
 import { useCars } from './kit';
-import { plateTexture, screenTexture } from './signs';
+import { plateTexture } from './signs';
 
 const ZONE_A = ZONES[0];
 const ENTRY = gateFrame(GATES.main);
 const v = (p: readonly number[]) => new THREE.Vector3(p[0], p[1], p[2]);
 const API_POS = v(POI.api);
-const PHONE_POS = v(POI.phone);
-const LAPTOP_POS = v(POI.laptop);
 const PLATE_FLOAT = v(POI.plate);
 
 const S = {
   arrive: 0, cone: 0, plate: 0, scan: 0, ocr: 0, packet: 0, api: 0, branch: 0, registered: 0,
-  count: ZONE_A.occupied, session: 0, boom: 0, park: 0, fan: 0, screens: 0,
+  count: ZONE_A.occupied, session: 0, boom: 0, park: 0,
   reverse: 0, loop: 0, exitCone: 0, exitBoom: 0, out: 0, receipt: 0,
 };
 
 const CUES: [number, Sfx][] = [
   [1.05, 'scan'], [2.4, 'ocr'], [3.1, 'whoosh'], [4.45, 'decide'], [5.45, 'chime'],
-  [6.7, 'ping'], [7.95, 'scan'], [8.2, 'print'],
+  [7.95, 'scan'], [8.2, 'print'],
 ];
 
 const buildTimeline = () => {
@@ -61,13 +59,11 @@ const buildTimeline = () => {
     .to(S, { park: 1, duration: 0.85, ease: 'power1.inOut' }, 5.55)
     .to(S, { boom: 0, duration: 0.25 }, 6.0)
     .to(S, { branch: 0, registered: 0, duration: 0.2 }, 6.05)
-    // both clients read the new state
-    .to(S, { fan: 1, duration: 0.4, ease: 'power1.inOut' }, 6.3)
-    .to(S, { screens: 1, duration: 0.1 }, 6.7)
+    // step 7 (both clients read the new state) happens with the car parked in its bay
     .to(S, { session: 0, duration: 0.1 }, 6.85)
-    // out of the bay and round the loop to the exit camera, given a full step so the follow camera can keep up
-    .to(S, { reverse: 1, duration: 0.17, ease: 'power1.inOut' }, 6.75)
-    .to(S, { loop: 1, duration: 1.03, ease: 'sine.inOut' }, 6.92)
+    // then out of the bay and round the loop to the exit camera: nearly the whole step, played slowly (CameraRig)
+    .to(S, { reverse: 1, duration: 0.15, ease: 'power1.inOut' }, 7.03)
+    .to(S, { loop: 1, duration: 0.79, ease: 'sine.inOut' }, 7.18)
     .to(S, { exitCone: 1, duration: 0.12 }, 7.95)
     .to(S, { count: ZONE_A.occupied, duration: 0.02 }, 8.2)
     .to(S, { receipt: 1, duration: 0.3, ease: 'power2.out' }, 8.2)
@@ -75,7 +71,7 @@ const buildTimeline = () => {
     .to(S, { exitCone: 0, duration: 0.15 }, 8.3)
     .to(S, { out: 1, duration: 1.2, ease: 'power1.in' }, 8.4)
     .to(S, { exitBoom: 0, duration: 0.25 }, 8.85)
-    .to(S, { screens: 0, api: 0, duration: 0.2 }, 9.4)
+    .to(S, { api: 0, duration: 0.2 }, 9.4)
     .to(S, { receipt: 0, duration: 0.3 }, 9.5)
     .set(S, {}, 10);
   return tl;
@@ -114,8 +110,6 @@ export default function Pipeline() {
     () => ({
       plate: plateTexture(DEMO_PLATE),
       arc: new THREE.QuadraticBezierCurve3(ENTRY.cam, ENTRY.cam.clone().lerp(API_POS, 0.5).setY(API_POS.y + 7), API_POS),
-      toPhone: new THREE.QuadraticBezierCurve3(API_POS, API_POS.clone().lerp(PHONE_POS, 0.5).setY(API_POS.y + 3), PHONE_POS),
-      toLaptop: new THREE.QuadraticBezierCurve3(API_POS, API_POS.clone().lerp(LAPTOP_POS, 0.5).setY(API_POS.y + 3), LAPTOP_POS),
     }),
     [],
   );
@@ -133,13 +127,8 @@ export default function Pipeline() {
   const plate = useRef<THREE.Group>(null!);
   const scanLine = useRef<THREE.Mesh>(null!);
   const packet = useRef<THREE.Mesh>(null!);
-  const fanA = useRef<THREE.Mesh>(null!);
-  const fanB = useRef<THREE.Mesh>(null!);
   const api = useRef<THREE.Mesh>(null!);
   const apiGroup = useRef<THREE.Group>(null!);
-  const devices = useRef<THREE.Group>(null!);
-  const phoneScreen = useRef<THREE.MeshBasicMaterial>(null);
-  const laptopScreen = useRef<THREE.MeshBasicMaterial>(null);
   const ui = useRef<Record<string, HTMLElement | null>>({});
   const bind = (k: string) => (el: HTMLElement | null) => {
     ui.current[k] = el;
@@ -191,16 +180,12 @@ export default function Pipeline() {
 
     packet.current.visible = S.packet > 0.01 && S.packet < 0.99;
     res.arc.getPoint(S.packet, packet.current.position);
-    fanA.current.visible = fanB.current.visible = S.fan > 0.01 && S.fan < 0.99;
-    res.toPhone.getPoint(S.fan, fanA.current.position);
-    res.toLaptop.getPoint(S.fan, fanB.current.position);
-    // the API node and the clients only exist on screen while the pipeline (or the apps chapter) needs them
+    // the API node only exists on screen while the pipeline needs it
     const apiOn = time > 2.9 && time < 9.6;
-    const devOn = (time > 6.3 && time < 9.6) || near('apps', 1) > 0;
     apiGroup.current.visible = apiOn;
-    devices.current.visible = devOn;
-    show(ui.current.apiLabel, apiOn ? 1 : 0);
-    const screens = devOn ? Math.max(S.screens, near('apps', 1) > 0 ? 1 : 0) : 0;
+    // an Html label is projected even when its point is behind the camera; only show it in front
+    const apiInView = tmpV.copy(API_POS).applyMatrix4(state.camera.matrixWorldInverse).z < 0;
+    show(ui.current.apiLabel, apiOn && apiInView ? 1 : 0);
     (api.current.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.3 + S.api * 1.4;
     api.current.rotation.y += 0.005;
 
@@ -209,8 +194,6 @@ export default function Pipeline() {
     ui.current.registered?.classList.toggle('is-on', S.registered > 0.5);
     ui.current.guest?.classList.toggle('is-off', S.registered > 0.5);
     show(ui.current.session, S.session);
-    if (phoneScreen.current) phoneScreen.current.opacity = screens;
-    if (laptopScreen.current) laptopScreen.current.opacity = screens;
     show(ui.current.receipt, S.receipt);
 
     game.setCount(0, Math.round(S.count));
@@ -274,20 +257,6 @@ export default function Pipeline() {
         </div>
       </Html>
 
-      {/* state fans out to the clients */}
-      <mesh ref={fanA}>
-        <sphereGeometry args={[0.4, 10, 10]} />
-        <meshBasicMaterial color="#f6c31c" />
-      </mesh>
-      <mesh ref={fanB}>
-        <sphereGeometry args={[0.4, 10, 10]} />
-        <meshBasicMaterial color="#f6c31c" />
-      </mesh>
-      <group ref={devices}>
-        <Device kind="phone" at={PHONE_POS} screen={phoneScreen} />
-        <Device kind="laptop" at={LAPTOP_POS} screen={laptopScreen} />
-      </group>
-
       {/* receipt where the exit camera closed the session */}
       <Html position={POI.receipt} center zIndexRange={[1, 0]}>
         <div ref={bind('receipt')} className="receipt3d">
@@ -306,48 +275,6 @@ export default function Pipeline() {
           </dl>
         </div>
       </Html>
-    </group>
-  );
-}
-
-function Device({ kind, at, screen }: { kind: 'phone' | 'laptop'; at: THREE.Vector3; screen: React.RefObject<THREE.MeshBasicMaterial | null> }) {
-  const phone = kind === 'phone';
-  const tex = useMemo(
-    () =>
-      screenTexture({
-        w: phone ? 400 : 960,
-        h: phone ? 820 : 580,
-        label: phone ? 'PARADA · DRIVER' : 'PARADA OPERATIONS',
-        title: ZONE_A.name,
-        count: `${ZONE_A.occupied + 1} / ${ZONE_A.capacity}`,
-        line: `Session open · ${DEMO_PLATE}`,
-      }),
-    [phone],
-  );
-  useEffect(() => () => tex.dispose(), [tex]);
-  return (
-    <group position={at} rotation-y={phone ? -1.3 : -1.85}>
-      {phone ? (
-        <mesh>
-          <boxGeometry args={[2.2, 4.4, 0.25]} />
-          <meshStandardMaterial color="#15171b" roughness={0.4} />
-        </mesh>
-      ) : (
-        <>
-          <mesh position={[0, 1.6, -1.6]} rotation-x={-0.2}>
-            <boxGeometry args={[6, 3.8, 0.2]} />
-            <meshStandardMaterial color="#15171b" roughness={0.4} />
-          </mesh>
-          <mesh position={[0, -0.25, 0]}>
-            <boxGeometry args={[6, 0.2, 3.6]} />
-            <meshStandardMaterial color="#c9cfd6" roughness={0.4} metalness={0.5} />
-          </mesh>
-        </>
-      )}
-      <mesh position={phone ? [0, 0, 0.13] : [0, 1.62, -1.49]} rotation-x={phone ? 0 : -0.2}>
-        <planeGeometry args={phone ? [1.95, 4.0] : [5.6, 3.4]} />
-        <meshBasicMaterial ref={screen} map={tex} transparent opacity={0} toneMapped={false} />
-      </mesh>
     </group>
   );
 }

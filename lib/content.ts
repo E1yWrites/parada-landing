@@ -3,6 +3,8 @@
 
 export const SITE_URL = 'https://parada-landing.vercel.app';
 export const GITHUB_URL = 'https://github.com/E1yWrites/parada';
+/** A file in the PARADA repository, for "Source:" links on the docs and legal pages. */
+export const repoFile = (path: string) => `${GITHUB_URL}/blob/main/${path}`;
 export const EMAIL = 'lorenzlanzmalabanan@lpubatangas.edu.ph';
 export const DESCRIPTION =
   'PARADA is a mobile and web-based smart parking management system using computer vision, license-plate recognition, and zone-based occupancy monitoring.';

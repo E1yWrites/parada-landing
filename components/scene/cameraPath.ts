@@ -7,6 +7,7 @@ export type CamStop = {
   dim?: number;
   // slide the subject away from the board: + right (board on the left), − left (board on the right); tall screens slide it up
   shift?: number;
+  tallShift?: number; // tall screens' upward slide, when it must differ from |shift|
   // pose used on tall screens (before the portrait pull-back)
   portrait?: { pos: V3; look: V3 };
   // follow the demo car: off is in the car's frame (x right, y up, z forward); the gaze can lean toward `look`
@@ -17,9 +18,6 @@ export type CamStop = {
 export const POI = {
   plate: [-65.6, 3.3, -57.2] as V3, // the lifted plate, in front of the car waiting under the canopy
   api: [-46, 22, -47] as V3, // above the JPL Building's west wing
-  phone: [-62.5, 12.5, -31] as V3, // the clients hover over the avenue, beside the parked car
-  laptop: [-58.5, 12, -25] as V3,
-  devices: [-60.5, 12.2, -28] as V3,
   receipt: [-4, 10.5, -60] as V3, // over the north gate, where the exit camera closed the session
 };
 
@@ -35,12 +33,13 @@ export const CAM: Record<string, CamStop> = {
   api: { pos: [-74, 20, -80], look: POI.api, shift: -0.16, follow: { off: [-14, 20, -24], look: POI.api, mix: 0.6 } },
   resolve: { pos: [-71, 21, -71], look: POI.api, shift: 0.16, follow: { off: [-4, 26, -14], look: POI.api, mix: 0.9 } },
   occupancy: { pos: [-58, 7, -62], look: [-61, 2, -40], shift: -0.16, follow: { off: [0, 4.2, -11.5], ahead: 10 } },
-  clients: { pos: [-83, 11, -26], look: POI.devices, shift: 0.16, follow: { off: [4, 14, 20], look: POI.devices, mix: 0.85 } },
+  // the car parked nose-in under the avenue trees, seen from the driveway; the app screens are in the page beside it
+  clients: { pos: [-56, 8, -18], look: [-67, 1, -22], shift: -0.07, tallShift: 0.3, follow: { off: [5, 10, -17], ahead: 0 } },
   exit: { pos: [7.5, 6.5, -47], look: [3.5, 2, -64], shift: -0.16, follow: { off: [0, 6, -12.5], ahead: 6 } },
   fee: { pos: [-26, 13, -84], look: [-1, 6, -65], shift: 0.16, portrait: { pos: [-6, 13, -90], look: [-4, 7, -62] } },
   guest: { pos: [-104, 20, -46], look: [-66, 3, -58], shift: -0.2, portrait: { pos: [-92, 14, -62], look: [-66, 3, -58] } },
   play: { pos: [-150, 110, -150], look: [-18, 0, 0], shift: 0.2 },
-  apps: { pos: [-86, 16, -30], look: POI.devices, shift: -0.2 },
+  apps: { pos: [-112, 34, -6], look: [-60, 2, -28], shift: -0.2 },
   arch: { pos: [40, 180, 230], look: [0, 0, 20] },
   contact: { pos: [0, 200, 250], look: [0, 0, 20], dim: 0.55 },
   tech: { pos: [0, 170, 230], look: [0, 0, 20], dim: 0.72 },

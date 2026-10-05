@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ZONES, band, PIPELINE, PROBLEMS, MOBILE_STEPS, ADMIN_VERBS, ARCHITECTURE, EMAIL, GITHUB_URL, TAGLINE, DESCRIPTION } from '@/lib/content';
 import LoadStatus from '@/components/LoadStatus';
 import SnapPop from '@/components/SnapPop';
+import AppScreens from '@/components/AppScreens';
 import Tally from '@/components/Tally';
 import { DriveIn, DriveSetup, PassFields } from '@/components/DriveIn';
 
@@ -101,7 +102,7 @@ export default function Home() {
         </div>
         <ol className="steps">
           {PIPELINE.map((s, i) => (
-            <li key={s.id} className={i % 2 ? 'step right' : 'step'} data-cam={s.id} data-snap>
+            <li key={s.id} className={`${i % 2 ? 'step right' : 'step'}${s.id === 'clients' ? ' with-apps' : ''}`} data-cam={s.id} data-snap>
               <div className="board">
                 <h3>
                   <span className="stop num" aria-label={`Step ${i + 1} of ${PIPELINE.length}:`}>{i + 1}</span>
@@ -109,6 +110,7 @@ export default function Home() {
                 </h3>
                 <p className="soft">{s.body}</p>
               </div>
+              {s.id === 'clients' && <AppScreens />}
             </li>
           ))}
         </ol>
