@@ -5,13 +5,11 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { GATE_LIST, GATE_STOP, ROAD_W, CANOPY, CANOPY_PILLARS, CANOPY_PLANTERS, CANOPY_BOOTH, type Gate } from './layout';
+import { GATE_LIST, GATE_STOP, ROAD_W, CANOPY, CANOPY_PILLARS, CANOPY_PLANTERS, CANOPY_BOOTH, PERGOLA_X, type Gate } from './layout';
 import { gates } from './state';
 import { signTexture } from './signs';
 
 const BOOM_LEN = ROAD_W - 0.3;
-// north-gate posts stand just off the kerb: the College of Dentistry's west wall is under 5 m from the lane edge
-export const PERGOLA_X = ROAD_W / 2 + 0.9;
 
 /** World positions for a gate: camera head, and the front plate of a car waiting outside / inside. */
 export function gateFrame(g: Gate) {

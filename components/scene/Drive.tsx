@@ -12,10 +12,10 @@ import { game, live, input, plateText, fmtDuration, useGame, admit } from '@/lib
 import {
   ZONE_A, TAKEN, BLOCKS, COURT, ROTONDA, ISLAND, TREES, PALMS, HOUSE_LIST, WALL_SEGMENTS, STREETS, POLE_RUNS,
   FORECOURT, CANOPY_PILLARS, CANOPY_PLANTERS, CANOPY_BOOTH, WALKWAY_POSTS, PAVILION_POSTS, GATE_LIST,
-  GATE_STOP, ROAD_W, SLOT_W, SLOT_D, WEST_ST, NORTH_ST, STREET_T, N, BOUNDS, nearestLoop, type Gate, type GateId,
+  GATE_STOP, PERGOLA_X, ROAD_W, SLOT_W, SLOT_D, WEST_ST, NORTH_ST, STREET_T, N, BOUNDS, nearestLoop, outsideSolids, type Gate, type GateId,
 } from './layout';
 import { gates, resetGates } from './state';
-import { gateFrame, PERGOLA_X } from './Gates';
+import { gateFrame } from './Gates';
 import { PlayerCar } from './Pipeline';
 import { plateTexture } from './signs';
 
@@ -243,6 +243,9 @@ export default function Drive({ reduced }: { reduced: boolean }) {
     camera.position.lerp(tmp.set(s.x - Math.sin(s.h) * back, 4.6 * pull, s.z - Math.cos(s.h) * back), k);
     const ahead = 4 + (pull - 1) * 9;
     look.current.lerp(tmp.set(s.x + Math.sin(s.h) * ahead, 1.2, s.z + Math.cos(s.h) * ahead), k);
+    // backing up against a building would put the chase camera inside it: step it out toward the car
+    const clear = outsideSolids(look.current, camera.position);
+    if (clear < 1) camera.position.lerpVectors(look.current, camera.position, clear);
     camera.lookAt(look.current);
 
     const slow = Math.abs(s.v) < 1.5;

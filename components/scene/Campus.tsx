@@ -2,7 +2,7 @@
 // Zone A's bays, parked cars, trees, wall, buildings, gates. Bays are layout only; the count changes at the gate
 // cameras.
 import { Suspense, useLayoutEffect, useMemo, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -118,7 +118,19 @@ const kerbItems = (): T[] => {
   return out;
 };
 
+// Shadows are baked, not re-rendered every frame (Scene turns shadowMap.autoUpdate off): static scenery asks for
+// one shadow pass when it mounts, and wakes a sleeping render loop so the pass happens.
+function useBakeShadows() {
+  const gl = useThree((s) => s.gl);
+  const get = useThree((s) => s.get);
+  useLayoutEffect(() => {
+    gl.shadowMap.needsUpdate = true;
+    if (get().frameloop === 'never') get().setFrameloop('always');
+  }, [gl, get]);
+}
+
 function ParkedCars({ shadows }: { shadows: boolean }) {
+  useBakeShadows(); // the cars arrive after the rest of the campus (their model loads)
   const { geos, material } = useCars();
   const byModel = useMemo(() => {
     const out = Object.fromEntries(PARKED_MODELS.map((m) => [m, [] as T[]])) as Record<(typeof PARKED_MODELS)[number], T[]>;
@@ -194,6 +206,7 @@ function Poles({ shadows }: { shadows: boolean }) {
 }
 
 export default function Campus({ shadows, mobile }: { shadows: boolean; mobile: boolean }) {
+  useBakeShadows();
   const geos = useMemo(
     () => ({
       line: new THREE.BoxGeometry(0.12, 0.02, SLOT_D),
@@ -248,8 +261,9 @@ export default function Campus({ shadows, mobile }: { shadows: boolean; mobile: 
   return (
     <group>
       {/* ground: verge outside, the campus lawn cut to its OSM outline */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, -0.06, 20]} receiveShadow={shadows} material={mats.verge}>
-        <planeGeometry args={[520, 460]} />
+      {/* reaches well past the faded edge (fogFade.ts), so no rim of the world is ever seen */}
+      <mesh rotation-x={-Math.PI / 2} position={[0, -0.06, 25]} receiveShadow={shadows} material={mats.verge}>
+        <planeGeometry args={[720, 720]} />
       </mesh>
       <mesh geometry={geos.campus} position={[0, -0.04, 0]} receiveShadow={shadows} material={mats.lawn} />
       {/* streets */}

@@ -2,8 +2,9 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
-import { Environment, Lightformer, useProgress } from '@react-three/drei';
+import { AdaptiveDpr, Environment, Lightformer, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
+import './fogFade';
 import Campus from './Campus';
 import Pipeline from './Pipeline';
 import Drive from './Drive';
@@ -44,11 +45,17 @@ export default function Scene() {
       shadows={mobile ? false : 'soft'}
       gl={{ antialias: !mobile, powerPreference: 'high-performance' }}
       camera={{ fov: 40, near: 0.5, far: 700, position: CAM.hero.pos }}
-      onCreated={() => setReady(true)}
+      performance={{ min: 0.55, debounce: 300 }}
+      onCreated={({ gl }) => {
+        gl.shadowMap.autoUpdate = false; // the scenery is static: shadows are baked when it mounts (bakeShadows)
+        setReady(true);
+      }}
     >
       {/* Batangas mid-morning: warm sun from the east-south-east, hazy sky fill, long soft shadows */}
+      {/* fog colour is the sky's, so the world's faded edge (fogFade.ts) dissolves into it */}
       <color attach="background" args={['#cfe2ee']} />
-      <fog attach="fog" args={['#d7e6ee', 260, 620]} />
+      <fog attach="fog" args={['#cfe2ee', 260, 620]} />
+      <AdaptiveDpr />
       <hemisphereLight args={['#dceaf5', '#7d7458', 0.85]} />
       {/* a soft studio-free sky for reflections on glass and paint, rendered once */}
       <Environment resolution={64} frames={1}>

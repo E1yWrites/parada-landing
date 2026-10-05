@@ -59,6 +59,8 @@ export const GATES: Record<GateId, Gate> = {
   north: { id: 'north', zone: 0, kind: 'exit', x: LOOP_X.east, z: -64.5, inward: S, style: 'pergola', cam: 'cam-a-exit' },
 };
 export const GATE_LIST = Object.values(GATES);
+// north-gate pergola posts stand just off the kerb: the College of Dentistry's west wall is under 5 m from the lane edge
+export const PERGOLA_X = ROAD_W / 2 + 0.9;
 export const GATE_STOP = 5.5; // a car waits this far from a gate line, outside or inside
 export const gateStop = (g: Gate, side: 'out' | 'in') => {
   const k = side === 'out' ? -GATE_STOP : GATE_STOP;
@@ -314,6 +316,76 @@ for (const [x, z, w0, d0, yaw, levels] of HOUSES) {
   if (clash) continue;
   const k = hash(x, z);
   HOUSE_LIST.push({ x, z, w, d, h: Math.max(1, Math.min(4, levels || (k > 0.6 ? 2 : 1))) * 3, yaw, wall: WALLS[Math.floor(k * WALLS.length)], roof: ROOFS[Math.floor(hash(z, x) * ROOFS.length)] });
+}
+
+// ---------- camera sightline ----------
+// Solid volumes a camera must not sit in: buildings to their roof, the covered court's roof band, houses, the gate
+// canopy and the north-gate pergola. CameraRig and the drive chase camera use outsideSolids() to step out of them
+// toward what they are looking at, instead of clipping through walls and roofs.
+type Solid = { cx: number; cz: number; r: number; y0: number; y1: number; hit: (x: number, z: number, pad: number) => boolean };
+const SOLIDS: Solid[] = [];
+for (const b of BLOCKS) {
+  const xs = b.pts.map((p) => p[0]);
+  const zs = b.pts.map((p) => p[1]);
+  const [x0, x1, z0, z1] = [Math.min(...xs), Math.max(...xs), Math.min(...zs), Math.max(...zs)];
+  const H = b.floors * FLOOR_H;
+  const top = b.roof === 'hip' ? H + Math.min(x1 - x0, z1 - z0) * 0.22 + 0.7 : H + 1;
+  SOLIDS.push({
+    cx: (x0 + x1) / 2,
+    cz: (z0 + z1) / 2,
+    r: Math.hypot(x1 - x0, z1 - z0) / 2,
+    y0: b.roof === 'court' ? H - 1.6 : 0, // the court is open underneath; only its roof band is solid
+    y1: top,
+    hit: (x, z, pad) => polyHit(b.pts, x, z, pad),
+  });
+}
+for (const h of HOUSE_LIST) {
+  const c = Math.cos(h.yaw);
+  const sn = Math.sin(h.yaw);
+  SOLIDS.push({
+    cx: h.x,
+    cz: h.z,
+    r: Math.hypot(h.w, h.d) / 2,
+    y0: 0,
+    y1: h.h + Math.min(h.w, h.d) * 0.3,
+    hit: (x, z, pad) => {
+      const dx = x - h.x;
+      const dz = z - h.z;
+      return Math.abs(dx * c - dz * sn) < h.w / 2 + pad && Math.abs(dx * sn + dz * c) < h.d / 2 + pad;
+    },
+  });
+}
+SOLIDS.push({
+  cx: CANOPY.x,
+  cz: CANOPY.z,
+  r: CANOPY.r + CANOPY.w,
+  y0: 5.2,
+  y1: 6.6,
+  hit: (x, z, pad) => {
+    const dx = x - CANOPY.x;
+    const dz = z - CANOPY.z;
+    return dx > -pad && dz > -pad && Math.abs(Math.hypot(dx, dz) - CANOPY.r) < CANOPY.w / 2 + pad;
+  },
+});
+{
+  const g = GATES.north;
+  SOLIDS.push({ cx: g.x, cz: g.z, r: 7, y0: 4.3, y1: 7.6, hit: (x, z, pad) => Math.abs(x - g.x) < PERGOLA_X + 0.4 + pad && Math.abs(z - g.z) < 3.8 + pad });
+}
+const blockedAt = (x: number, y: number, z: number, pad: number) =>
+  SOLIDS.some((s) => y > s.y0 - pad && y < s.y1 + pad && Math.abs(x - s.cx) < s.r + pad && Math.abs(z - s.cz) < s.r + pad && s.hit(x, z, pad));
+/**
+ * Keep a camera out of solids: if `cam` sits inside one (within `pad`), the fraction of the look→camera line to
+ * move it back to, the first clear point stepping from the camera toward the look target. 1 means leave it.
+ * Only the camera's own position counts: looking down at a roof, or past a wall, is a view, not a clip.
+ */
+export function outsideSolids(look: THREE.Vector3, cam: THREE.Vector3, pad = 1.2) {
+  if (!blockedAt(cam.x, cam.y, cam.z, pad)) return 1;
+  const n = Math.min(64, Math.max(8, Math.ceil(look.distanceTo(cam) * 2)));
+  for (let i = 1; i < n; i++) {
+    const t = 1 - i / n;
+    if (!blockedAt(look.x + (cam.x - look.x) * t, look.y + (cam.y - look.y) * t, look.z + (cam.z - look.z) * t, pad)) return t;
+  }
+  return 1; // nowhere clear on the way in: leave the camera be
 }
 
 // ---------- trees ----------

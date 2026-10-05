@@ -91,7 +91,12 @@ export function PlayerCar({ plate }: { plate: THREE.Texture }) {
   const { player, material } = useCars();
   return (
     <>
-      <mesh geometry={player} material={material} castShadow />
+      <mesh geometry={player} material={material} />
+      {/* a soft blob under the car: shadows are baked once, so a moving car can't cast a live one */}
+      <mesh rotation-x={-Math.PI / 2} position-y={0.03} renderOrder={1}>
+        <planeGeometry args={[2.9, 5.6]} />
+        <meshBasicMaterial map={blobTexture()} color="#000" transparent opacity={0.55} depthWrite={false} />
+      </mesh>
       <mesh position={[0, 0.62, 2.17]}>
         <planeGeometry args={[0.62, 0.2]} />
         <meshBasicMaterial map={plate} />
@@ -103,6 +108,21 @@ export function PlayerCar({ plate }: { plate: THREE.Texture }) {
     </>
   );
 }
+
+let blob: THREE.Texture | null = null;
+const blobTexture = () => {
+  if (blob) return blob;
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const g = c.getContext('2d')!;
+  const r = g.createRadialGradient(32, 32, 4, 32, 32, 32);
+  r.addColorStop(0, 'rgba(255,255,255,1)');
+  r.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = r;
+  g.fillRect(0, 0, 64, 64);
+  blob = new THREE.CanvasTexture(c); // white alpha mask; the material tints it black
+  return blob;
+};
 
 export default function Pipeline() {
   const tl = useMemo(buildTimeline, []);

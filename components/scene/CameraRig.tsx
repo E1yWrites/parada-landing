@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { PIPELINE } from '@/lib/content';
 import { game } from '@/lib/game';
 import { CAM, type CamStop } from './cameraPath';
+import { outsideSolids } from './layout';
 import { scroll, demoCar, stopIndex } from './state';
 
 const FOLLOW = new Set<string>(PIPELINE.map((s) => s.id));
@@ -74,6 +75,8 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
   const smooth = useRef(0);
   const heading = useRef(0);
   const settled = useRef(0);
+  const lastDim = useRef('');
+  const get = useThree((s) => s.get);
 
   useEffect(() => {
     const els = [...document.querySelectorAll<HTMLElement>('[data-cam]')];
@@ -84,15 +87,16 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     let tops: number[] = [];
     const wake = () => {
       settled.current = 0;
-      setFrameloop('always');
+      if (get().frameloop !== 'always') setFrameloop('always');
     };
+    let hdr = 0;
     // Stops are keyed to section tops: a snapped section always lands with its top under the sticky header, so
     // every snap is an exact stop (and the scene can sleep there) however tall the section is.
     const measure = () => {
       tops = els.map((el) => el.getBoundingClientRect().top + scrollY);
+      hdr = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0; // read here, not on every scroll event
     };
     const update = () => {
-      const hdr = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0;
       const r = scrollY + hdr + 0.5; // half a pixel past the edge, so a snapped section counts as reached
       let t = 0;
       if (tops.length > 1 && r > tops[0]) {
@@ -124,7 +128,7 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
       removeEventListener('resize', refresh);
       ro.disconnect();
     };
-  }, [path, reduced, setFrameloop]);
+  }, [path, reduced, setFrameloop, get]);
 
   useFrame((state, dt) => {
     // Approach the scrolled-to stop. Inside the tour a one-step move plays at a set pace, so what happens between
@@ -172,12 +176,21 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     const followW = (a.follow ? 1 - e : 0) + (b.follow ? e : 0);
     const pull = full - (full - 1) * 0.65 * followW;
     if (pull > 1) vPos.sub(vLook).multiplyScalar(pull).add(vLook);
+    // never place the camera inside a building, roof or canopy: step it out toward what it looks at
+    const clear = outsideSolids(vLook, vPos);
+    if (clear < 1) vPos.lerpVectors(vLook, vPos, clear);
 
     const following = !!(a.follow || b.follow);
     const k = reduced ? 1 : 1 - Math.exp(-(following ? 6 : 4) * dt);
     camera.position.lerp(vPos, k);
     look.current.lerp(vLook, k);
+    // the smoothed path between two clear poses can still cut a corner through a roof: check the pose we draw too
+    const drawn = outsideSolids(look.current, camera.position);
+    if (drawn < 1) camera.position.lerpVectors(look.current, camera.position, drawn);
     camera.lookAt(look.current);
+    // render at reduced resolution while the camera travels (AdaptiveDpr), full resolution once it lands
+    const moving = Math.abs(target.current - t) > 1e-4 || camera.position.distanceToSquared(vPos) > 1e-4;
+    if (moving && !reduced) state.performance.regress();
 
     // Board-side offset: on wide screens a positive shift slides the subject right (board on the left), a negative
     // one left; tall screens slide it up, above the board that sits at the bottom.
@@ -187,13 +200,16 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     if (Math.abs(shift) > 1e-4) cam.setViewOffset(w, h, tall ? 0 : -shift * w, tall ? Math.abs(shift) * h : 0, w, h);
     else if (cam.view?.enabled) cam.clearViewOffset();
 
-    const dim = (a.dim ?? 0) + ((b.dim ?? 0) - (a.dim ?? 0)) * f;
-    const el = document.getElementById('stage-dim');
-    if (el) el.style.opacity = String(dim);
+    const dim = ((a.dim ?? 0) + ((b.dim ?? 0) - (a.dim ?? 0)) * f).toFixed(3);
+    if (dim !== lastDim.current) {
+      lastDim.current = dim;
+      const el = document.getElementById('stage-dim');
+      if (el) el.style.opacity = dim;
+    }
 
     // Stop rendering once the camera has landed on a stop: the scene is static there (the tour is a function of the
     // scroll), so nothing changes until the next scroll or resize wakes it.
-    if (Math.min(f, 1 - f) < 1e-3 && Math.abs(target.current - t) < 1e-4 && camera.position.distanceToSquared(vPos) < 1e-4 && look.current.distanceToSquared(vLook) < 1e-4) {
+    if (!moving && Math.min(f, 1 - f) < 1e-3 && look.current.distanceToSquared(vLook) < 1e-4 && state.performance.current === 1) {
       if (++settled.current > 10) setFrameloop('never');
     } else settled.current = 0;
   });
