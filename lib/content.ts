@@ -1,7 +1,7 @@
 // Single source of truth for every fact on the site. HTML and the 3D scene both read from here.
-// Source: parada-landing.vercel.app (Oct 2026). Do not add claims that are not on that site.
+// Source: parada.lorenzmalabanan.com (Oct 2026). Do not add claims that are not on that site.
 
-export const SITE_URL = 'https://parada-landing.vercel.app';
+export const SITE_URL = 'https://parada.lorenzmalabanan.com';
 export const GITHUB_URL = 'https://github.com/E1yWrites/parada';
 /** A file in the PARADA repository, for "Source:" links on the docs and legal pages. */
 export const repoFile = (path: string) => `${GITHUB_URL}/blob/main/${path}`;

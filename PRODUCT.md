@@ -22,7 +22,7 @@ The zone is the authoritative unit, not the individual slot. Cameras at zone gat
 ## Operating Context
 
 - The real campus is the setting: LPU-Batangas main campus (13.7638 N, 121.0653 E). Building footprints are traced from satellite imagery and checked against the team's marked-up map; the campus edge and the neighbourhood houses come from OpenStreetMap. Every building is custom-modelled (no kit blocks). Zone logic follows the PARADA app: a zone's count changes only at its gate cameras (bays are layout only). Only Zone A is modelled in 3D: the one-way Main Loop round the JPL Building, entry camera at the curved main-gate canopy on the north-west corner, exit camera at the north gate on Doña Aurelia St. Zones B and C appear as numbers in the page and the HUD. Reference photos m1–m8: main gate canopy with stone pillars, tree avenue with perpendicular parking, carports, yellow kerbs, the north-gate road between buildings.
-- The site replaces parada-landing.vercel.app and must work as a real website: crawlable HTML for every fact, usable on phones and without WebGL.
+- The site replaces parada.lorenzmalabanan.com and must work as a real website: crawlable HTML for every fact, usable on phones and without WebGL.
 - Docs and Legal (terms, privacy, licences) are summarised from the PARADA repository's README and `docs/`, each section naming its source file. PARADA is not deployed, so the privacy notice describes this site plus what the system is built to process; the establishment that deploys it is the controller and owes drivers its own notice. Do not add legal commitments the repository doesn't support.
 
 ## Capabilities and Constraints
