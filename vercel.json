@@ -1,1 +1,11 @@
-{ "framework": "nextjs" }
+{
+  "framework": "nextjs",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "parada-landing.vercel.app" }],
+      "destination": "https://parada.lorenzmalabanan.com/$1",
+      "permanent": true
+    }
+  ]
+}
