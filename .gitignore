@@ -6,8 +6,20 @@ next-env.d.ts
 .DS_Store
 *.log
 
-# impeccable review captures (local evidence)
-.impeccable/review/
+# secrets and local deploy state
+.env
+.env.*
+!.env.example
+*.pem
+.vercel/
+
+# local AI/design tooling: not needed to build or run the site
+.impeccable/
+DESIGN-IS-*/
+.claude/
+graphify-out/
+CLAUDE.md
+AGENTS.md
 
 # tracing board: contains Esri satellite imagery, not for redistribution
 research/

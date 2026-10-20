@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import './fogFade';
 import Campus from './Campus';
 import Pipeline from './Pipeline';
+import Landmarks from './Landmarks';
 import Drive from './Drive';
 import CameraRig from './CameraRig';
 import { CAM } from './cameraPath';
@@ -80,8 +81,9 @@ export default function Scene() {
         shadow-camera-far={380}
       />
       {/* drei <Html> re-roots when the Canvas connects its events, so mount labelled parts after that */}
-      {ready && <Campus shadows={!mobile} mobile={mobile} />}
+      {ready && <Campus shadows={!mobile} />}
       {ready && <Pipeline />}
+      {ready && <Landmarks />}
       <LoadSignal />
       <Drive reduced={reduced} />
       <CameraRig path={path} reduced={reduced} />

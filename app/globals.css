@@ -163,6 +163,20 @@ kbd {
   background: var(--id-deep);
   opacity: 0;
 }
+/* a cut (state.ts): the stage fades to sky while the camera moves, then back */
+.stage-fade {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: #cfe2ee;
+  opacity: 0;
+  transition: opacity 0.45s ease-out;
+}
+.stage-fade.is-on {
+  opacity: 1;
+  transition-duration: 0.18s;
+  transition-timing-function: ease-in;
+}
 
 /* ---------- the pass: a laminated card over the campus ---------- */
 .board {
@@ -554,22 +568,37 @@ main {
 .intro-copy {
   max-width: 40rem;
 }
-.intro-logo {
-  margin: 0 0 1rem;
+/* the thesis title: the logo stands for "PARADA:", the rest of the cover title in condensed caps under it */
+.thesis {
+  margin: 0 0 1.1rem;
+  font: 800 clamp(1.55rem, 1rem + 1.7vw, 2.6rem) / 0.98 var(--font-display), sans-serif;
+  text-transform: uppercase;
+  text-wrap: balance;
 }
-.intro-logo img {
+.thesis img {
   display: block;
-  width: min(100%, 30rem);
+  width: min(100%, 26rem);
   height: auto;
+  margin-bottom: 0.9rem;
 }
-.intro .headline {
-  font-size: clamp(1.3rem, 1rem + 1vw, 1.75rem);
+.byline {
+  margin: 0 0 1.1rem;
+  font-weight: 600;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
 }
-.intro .who {
-  margin-bottom: 1.25rem;
+.proponents {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.lead-close {
-  font-weight: 700;
+.proponents li {
+  padding: 0.45rem 0 0.35rem;
+  border-top: 2px solid var(--rule);
+  font-weight: 600;
 }
 .load {
   display: flex;
@@ -1222,36 +1251,6 @@ html.js-pop [data-snap].is-in .intro-copy {
   margin: 0;
 }
 
-/* a row of labelled boxes joined by arrows: the route and the architecture chain */
-.chain {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem 1.2rem;
-  margin: 1.25rem 0 0;
-}
-.chain li {
-  position: relative;
-  padding: 0.3rem 0.65rem;
-  border: 1.5px solid var(--ink);
-  border-radius: 4px;
-  background: var(--paper);
-  font-size: var(--step--1);
-  font-weight: 600;
-}
-.chain li + li::before {
-  content: '';
-  position: absolute;
-  left: -0.85rem;
-  top: 50%;
-  width: 0.4rem;
-  height: 0.4rem;
-  border-top: 2px solid var(--stamp);
-  border-right: 2px solid var(--stamp);
-  transform: translateY(-50%) rotate(45deg);
-}
-.route-line {
-  margin: 0 0 1.25rem;
-}
 
 /* plate + policy pickers (play chapter and the drive HUD) */
 .setup {
@@ -1950,7 +1949,7 @@ html.is-driving .site-footer {
   .chapter,
   .step {
     align-items: flex-end;
-    padding-bottom: 2rem;
+    padding-bottom: 4.25rem; /* clear of the slide counter */
   }
   .right {
     justify-content: flex-start;
@@ -1967,13 +1966,10 @@ html.is-driving .site-footer {
   .intro-mascot {
     width: 9rem;
   }
-  .intro .who {
-    display: none; /* the drive into the campus says the same; keep the intro to one screen */
-  }
   .how-head {
     align-items: flex-end;
     justify-content: flex-start;
-    padding-bottom: 2rem;
+    padding-bottom: 4.25rem;
   }
   .header-link {
     display: none;
@@ -2101,5 +2097,447 @@ html.is-driving .site-footer {
   }
   .fields {
     --cols: 2;
+  }
+}
+
+/* ---------- the strip: panels side by side, moved by the scroll through their stops (Strip.tsx) ---------- */
+.strip {
+  display: grid;
+}
+.strip > * {
+  grid-area: 1 / 1;
+}
+.strip-stop {
+  height: calc(100svh - var(--header));
+}
+html:not(.js-strip) .strip-stops {
+  display: none;
+}
+html.js-strip .strip-view {
+  position: sticky;
+  top: var(--header);
+  align-self: start;
+  height: calc(100svh - var(--header));
+  overflow: clip; /* never scrolled sideways by focus: Strip pages to a focused panel instead */
+}
+html.js-strip .strip-track {
+  display: flex;
+  width: calc(var(--n) * 100%);
+  height: 100%;
+  transform: translateX(calc(var(--p, 0) * -100% / var(--n)));
+  will-change: transform;
+}
+html.js-strip .strip-panel {
+  flex: 0 0 calc(100% / var(--n));
+  min-height: 0;
+  align-items: safe center;
+}
+html.js-strip .strip-panel.hero {
+  align-items: safe flex-start;
+}
+@media (max-width: 768px) {
+  html.js-strip .strip-panel.hero {
+    padding-top: 20svh; /* the pass fits a phone screen with the campus still showing above it */
+  }
+  html.js-strip .strip-panel,
+  html.js-strip .strip-panel.hero {
+    align-items: safe flex-end;
+    overflow-y: auto; /* a panel taller than a small phone scrolls inside, then the page pages on */
+    scrollbar-width: none;
+  }
+}
+
+/* a windowed browser on a 768p laptop: type steps down so every slide, strip panels included, fits one screen */
+@media (min-width: 769px) and (max-height: 720px) {
+  html {
+    font-size: 87.5%;
+  }
+}
+@media (min-width: 769px) and (max-height: 620px) {
+  html {
+    font-size: 81.25%;
+  }
+}
+/* the driver app's five steps in two columns where the card is wide */
+@media (min-width: 900px) {
+  .board.wide .route {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.5rem;
+  }
+}
+/* a full-screen TV or projector across a room (1080p and up): everything set in rem grows a quarter */
+@media (min-width: 1600px) and (min-height: 1000px) {
+  html {
+    font-size: 125%;
+  }
+}
+
+/* ---------- slide counter, for the panel's "back to slide 7" ---------- */
+.slide-count {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 3;
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.3rem 0.6rem;
+  border-radius: 7px;
+  background: var(--mint);
+  box-shadow: var(--laminate), 0 1px 0 rgb(20 40 30 / 0.25);
+  color: var(--ink);
+  font-size: var(--step--1);
+  font-weight: 500;
+}
+/* the slide number is a field: click it (or type digits anywhere) and press Enter to jump */
+.slide-count input {
+  width: 2.2ch;
+  padding: 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: right;
+  caret-color: var(--stamp);
+  cursor: text;
+}
+.slide-count input:focus {
+  outline: none;
+  border-bottom-color: var(--stamp);
+}
+.slide-count:focus-within {
+  outline: 3px solid var(--id);
+  outline-offset: 2px;
+}
+.slide-count[data-typing] {
+  box-shadow: var(--laminate), 0 0 0 2px var(--stamp);
+}
+@media (pointer: coarse) {
+  .slide-count {
+    min-height: 44px;
+    align-items: center;
+    padding-inline: 0.8rem;
+  }
+  .slide-count input {
+    font-size: 16px; /* under 16px iOS zooms the page when the field takes focus */
+  }
+}
+html.is-driving .slide-count {
+  display: none;
+}
+
+/* ---------- defense slides ---------- */
+.cite {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--green-ink);
+}
+.cite a {
+  color: inherit;
+}
+/* who/what pairs as ruled rows: name on the left, the point on the right */
+.who.rows {
+  grid-template-columns: 1fr;
+}
+.who.rows > div {
+  display: grid;
+  grid-template-columns: minmax(9rem, 0.42fr) 1fr;
+  gap: 0.25rem 1.25rem;
+  align-items: baseline;
+  padding-bottom: 0.65rem;
+}
+/* a ruled table on the form: small-caps heads over a 2px rule, hairlines between rows */
+.ledger {
+  width: 100%;
+  margin: 1rem 0 1.1rem;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.ledger th,
+.ledger td {
+  padding: 0.6rem 1rem 0.6rem 0;
+  border-bottom: 1px solid var(--mint-3);
+  text-align: left;
+  vertical-align: baseline;
+}
+.ledger thead th {
+  padding-top: 0;
+  border-bottom: 2px solid var(--rule);
+  font: 700 0.72rem / 1.2 var(--font-sans), sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green-ink);
+}
+.ledger tbody th {
+  font: 800 1.15rem / 1.05 var(--font-display), sans-serif;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ledger td {
+  color: var(--ink-soft);
+}
+.ledger td.num {
+  color: var(--stamp-deep);
+  font-weight: 700;
+}
+.compare-head {
+  margin: 1.3rem 0 0.6rem;
+}
+.titles .field > :last-child {
+  white-space: normal;
+  font-size: 0.98rem;
+  line-height: 1.3;
+}
+.struck {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.struck li {
+  padding: 0.3rem 0.65rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: var(--paper);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: line-through 1.5px rgb(192 64 40 / 0.85);
+}
+.general {
+  margin: 0.25rem 0 1rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.objectives {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1.5rem;
+  margin: 0;
+}
+.objectives li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 2px solid var(--rule);
+}
+.objectives p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 2rem;
+}
+.ruled {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--rule);
+}
+.ruled li {
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--mint-3);
+}
+/* what the scope leaves out: plain text under a dashed rule, so a long sentence stays readable */
+.struck-rows {
+  border-top-style: dashed;
+}
+.struck-rows li {
+  color: var(--ink-soft);
+}
+.counted {
+  counter-reset: rec;
+}
+.counted li {
+  display: grid;
+  grid-template-columns: 1.6rem 1fr;
+  counter-increment: rec;
+}
+.counted li::before {
+  content: counter(rec);
+  color: var(--stamp);
+  font: 700 0.95rem / 1.5 var(--font-mono), monospace;
+}
+.phases {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin: 1rem 0;
+}
+/* a phase still to come: dashed, like a pending field */
+.phases li[data-state='pending'] {
+  border-style: dashed;
+  background: transparent;
+  color: var(--ink-soft);
+}
+.phases li {
+  display: flex;
+  gap: 0.45rem;
+  align-items: baseline;
+  padding: 0.45rem 0.6rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: var(--paper);
+  font-size: var(--step--1);
+  font-weight: 600;
+  line-height: 1.25;
+}
+.phases .num {
+  flex: none;
+  min-width: 1.3rem;
+  color: var(--stamp);
+  font-weight: 700;
+}
+/* the statement of the problem: numbered points, each tagged with its objective */
+.problems {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  border-top: 2px solid var(--rule);
+}
+.problems li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--mint-3);
+}
+.problems p {
+  margin: 0;
+}
+.problems small {
+  padding: 0.15rem 0.5rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: var(--paper);
+  font-size: var(--step--1);
+  font-weight: 700;
+  white-space: nowrap;
+}
+/* architecture: nine numbered form cells, stack under each name */
+.nodes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 1.1rem 0 0;
+  counter-reset: node;
+}
+.nodes li {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.5rem 0.65rem 0.55rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: var(--paper);
+  counter-increment: node;
+}
+.nodes b {
+  font-size: 0.95rem;
+}
+.nodes b::before {
+  content: counter(node) ' ';
+  color: var(--stamp);
+  font-family: var(--font-mono), monospace;
+}
+.nodes small {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+/* each tour step's answer to the problem, under its description */
+.why {
+  margin: 0.75rem 0 0;
+  padding-top: 0.65rem;
+  border-top: 2px solid var(--rule);
+  font-weight: 700;
+}
+.results {
+  margin-top: 0.5rem;
+}
+.results .field > dd {
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid var(--rule);
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+.results .field > small {
+  padding: 0;
+  border: 0;
+  white-space: normal;
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--ink-soft);
+}
+/* the campus map's legend over the model (Landmarks.tsx) */
+.mark3d {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.2rem 0.5rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 700 0.78rem / 1.2 var(--font-sans), sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.mark3d b {
+  color: var(--stamp);
+}
+@media (max-width: 900px) {
+  .objectives,
+  .split {
+    grid-template-columns: 1fr;
+  }
+  .problems li {
+    grid-template-columns: 2.5rem 1fr;
+  }
+  .problems small {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .phases,
+  .nodes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .who.rows > div {
+    grid-template-columns: 1fr;
+  }
+  .ledger tbody th {
+    white-space: normal;
+  }
+}
+@media (max-width: 768px) {
+  .fields.results {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* ruled tables become stacked records: name, then its cells */
+  .ledger thead {
+    display: none;
+  }
+  .ledger tr {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--mint-3);
+  }
+  .ledger tbody tr:first-child {
+    border-top: 2px solid var(--rule);
+  }
+  .ledger th,
+  .ledger td {
+    padding: 0;
+    border: 0;
   }
 }

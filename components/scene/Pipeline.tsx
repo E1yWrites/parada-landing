@@ -16,7 +16,7 @@ import { PATHS, GATES } from './layout';
 import { scroll, stopIndex, gates, demoCar } from './state';
 import { gateFrame } from './Gates';
 import { POI } from './cameraPath';
-import { useCars } from './kit';
+import { useProps } from './kit';
 import { plateTexture } from './signs';
 
 const ZONE_A = ZONES[0];
@@ -88,7 +88,7 @@ const show = (el: HTMLElement | null, v: number) => {
 
 // The player's car model with a readable plate on the nose. Shared with drive mode.
 export function PlayerCar({ plate }: { plate: THREE.Texture }) {
-  const { player, material } = useCars();
+  const { player, material } = useProps();
   return (
     <>
       <mesh geometry={player} material={material} />

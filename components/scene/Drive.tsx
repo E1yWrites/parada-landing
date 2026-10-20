@@ -11,7 +11,7 @@ import { sound } from '@/lib/sfx';
 import { game, live, input, plateText, fmtDuration, useGame, admit } from '@/lib/game';
 import {
   ZONE_A, TAKEN, BLOCKS, COURT, ROTONDA, ISLAND, TREES, PALMS, HOUSE_LIST, WALL_SEGMENTS, STREETS, POLE_RUNS,
-  FORECOURT, CANOPY_PILLARS, CANOPY_PLANTERS, CANOPY_BOOTH, WALKWAY_POSTS, PAVILION_POSTS, GATE_LIST,
+  FORECOURT, CANOPY_PILLARS, CANOPY_PLANTERS, CANOPY_BOOTH, WALKWAY_POSTS, CHAPEL, CHAPEL_PIERS, TANKS, GATE_LIST,
   GATE_STOP, PERGOLA_X, ROAD_W, SLOT_W, SLOT_D, WEST_ST, NORTH_ST, STREET_T, N, BOUNDS, nearestLoop, outsideSolids, type Gate, type GateId,
 } from './layout';
 import { gates, resetGates } from './state';
@@ -54,9 +54,10 @@ const solid = (() => {
   const circles: Circle[] = [];
   const segs: Seg[] = WALL_SEGMENTS.map(([ax, az, bx, bz]) => ({ ax, az, bx, bz }));
   // building footprints: every facade edge is a wall
-  // the covered court has no walls: its columns and bleachers are what you can hit
+  // the gymnasium has open sides: its columns, bleachers and end walls are what you can hit
   for (const [x, z] of COURT.columns) circles.push({ x, z, r: 0.5 });
   for (const [x0, x1, z0, z1] of COURT.bleachers) boxes.push({ x0, x1, z0, z1 });
+  for (const z of [COURT.z0, COURT.z1]) segs.push({ ax: COURT.x0, az: z, bx: COURT.x1, bz: z });
   for (const b of BLOCKS) if (b.roof !== 'court') b.pts.forEach(([ax, az], i) => {
     const [bx, bz] = b.pts[(i + 1) % b.pts.length];
     segs.push({ ax, az, bx, bz });
@@ -72,7 +73,10 @@ const solid = (() => {
   for (const [x, z] of PALMS) circles.push({ x, z, r: 0.45 });
   for (const run of POLE_RUNS) for (const [x, z] of run) circles.push({ x, z, r: 0.3 });
   for (const [x, z] of WALKWAY_POSTS) circles.push({ x, z, r: 0.18 });
-  for (const [x, z] of PAVILION_POSTS) circles.push({ x, z, r: 0.25 });
+  for (const [x, z] of CHAPEL_PIERS) circles.push({ x, z, r: 0.35 });
+  boxes.push({ x0: CHAPEL.x - CHAPEL.w / 2, x1: CHAPEL.x + CHAPEL.w / 2, z0: CHAPEL.z + CHAPEL.d / 2 - 0.6, z1: CHAPEL.z + CHAPEL.d / 2 }); // altar wall
+  for (const [x, z, r] of TANKS) circles.push({ x, z, r });
+  boxes.push({ x0: -55.8, x1: -53.3, z0: -38.6, z1: -12.2 }); // the motorcycle row along JPL
   for (const p of CANOPY_PILLARS) circles.push({ x: p.x, z: p.z, r: 1.15 });
   for (const p of CANOPY_PLANTERS) circles.push({ x: p.x, z: p.z, r: 1.0 });
   circles.push({ x: CANOPY_BOOTH.x, z: CANOPY_BOOTH.z, r: 1.9 });

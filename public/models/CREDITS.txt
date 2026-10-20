@@ -1,3 +1,8 @@
-cars.glb: sedan, sedan-sports, hatchback-sports, suv, suv-luxury, taxi, van, delivery
-from Kenney Car Kit 3.1 (https://kenney.nl/assets/car-kit), CC0 1.0.
-Merged, tangents removed, quantized + meshopt-compressed with glTF-Transform.
+props.glb: one meshopt-compressed GLB, one node per prop (merged, deduplicated, quantized with glTF-Transform 4).
+  sedan, hatchback, suv, taxi: "Car", "Car", "SUV", "Taxi" by Quaternius, via Poly Pizza
+    https://poly.pizza/m/Cz6yDaUcM9  https://poly.pizza/m/unqqkULtRU  https://poly.pizza/m/xsMtZhBkxL  https://poly.pizza/m/x43lOScTpN
+    CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/). Body panels repainted in kit.ts.
+  motorcycle: "Motorcycle" by jeremy, via Poly Pizza, https://poly.pizza/m/0lBe-ApqJs4
+    CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/). Turned to face +z.
+  tree: "Tree from the savanna" by hat_my_guy, via Poly Pizza, https://poly.pizza/m/uLxXsCfYb7
+    CC0 1.0. Spread round and flattened into a rain tree in kit.ts.

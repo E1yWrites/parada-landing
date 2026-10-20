@@ -14,7 +14,7 @@ import {
 } from './layout';
 import { CAMPUS_EDGE } from './campusData';
 import { near } from './state';
-import { useCars, PARKED_MODELS } from './kit';
+import { useProps, PARKED_MODELS } from './kit';
 import { weathered } from './materials';
 import Gates from './Gates';
 import Buildings from './Buildings';
@@ -129,9 +129,12 @@ function useBakeShadows() {
   }, [gl, get]);
 }
 
+// Motorcycles parked nose-in along the JPL Building's avenue wall, between the kerb and the building.
+const MOTORCYCLES: T[] = Array.from({ length: 22 }, (_, i) => ({ p: [-54.7, 0, -38 + i * 1.15], r: Math.PI / 2 + ((i * 53) % 7 - 3) * 0.03 }));
+
 function ParkedCars({ shadows }: { shadows: boolean }) {
-  useBakeShadows(); // the cars arrive after the rest of the campus (their model loads)
-  const { geos, material } = useCars();
+  useBakeShadows(); // the cars and trees arrive after the rest of the campus (their model loads)
+  const { geos, material, motorcycle } = useProps();
   const byModel = useMemo(() => {
     const out = Object.fromEntries(PARKED_MODELS.map((m) => [m, [] as T[]])) as Record<(typeof PARKED_MODELS)[number], T[]>;
     ZONE_A.slots.forEach((s, i) => {
@@ -141,7 +144,12 @@ function ParkedCars({ shadows }: { shadows: boolean }) {
     });
     return out;
   }, []);
-  return <>{PARKED_MODELS.map((m) => byModel[m].length > 0 && <Instanced key={m} items={byModel[m]} geo={geos[m]} material={material} shadows={shadows} />)}</>;
+  return (
+    <>
+      {PARKED_MODELS.map((m) => byModel[m].length > 0 && <Instanced key={m} items={byModel[m]} geo={geos[m]} material={material} shadows={shadows} />)}
+      <Instanced items={MOTORCYCLES} geo={motorcycle} material={material} shadows={shadows} />
+    </>
+  );
 }
 
 // Public streets: asphalt corridors, raised sidewalks (left open at the forecourt and the north gate), lane dashes.
@@ -205,7 +213,7 @@ function Poles({ shadows }: { shadows: boolean }) {
   );
 }
 
-export default function Campus({ shadows, mobile }: { shadows: boolean; mobile: boolean }) {
+export default function Campus({ shadows }: { shadows: boolean }) {
   useBakeShadows();
   const geos = useMemo(
     () => ({
@@ -316,10 +324,9 @@ export default function Campus({ shadows, mobile }: { shadows: boolean; mobile: 
       <Instanced items={items.kerbs} geo={geos.kerb} color={KERB} shadows={false} />
       <Instanced items={items.walls} geo={geos.wall} color="#ece6d8" shadows={shadows} />
       <Poles shadows={shadows} />
-      <Trees shadows={shadows} mobile={mobile} />
-
       <Suspense fallback={null}>
         <ParkedCars shadows={shadows} />
+        <Trees shadows={shadows} />
       </Suspense>
       <Buildings shadows={shadows} />
       <Gates shadows={shadows} />

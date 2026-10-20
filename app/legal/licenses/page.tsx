@@ -55,8 +55,10 @@ const sections: Section[] = [
           </tr>
         </thead>
         <tbody>
-          {row('Cars in the 3D campus', a('https://kenney.nl/assets/car-kit', 'Kenney Car Kit'), a('https://creativecommons.org/publicdomain/zero/1.0/', 'CC0 1.0'))}
-          {row('Buildings, trees, houses, streets', 'Modelled in code for this site', '—')}
+          {row('Cars in the 3D campus', <>Car, Car, SUV, Taxi by {a('https://poly.pizza/u/Quaternius', 'Quaternius')}, via Poly Pizza</>, a('https://creativecommons.org/publicdomain/zero/1.0/', 'CC0 1.0'))}
+          {row('Motorcycles in the 3D campus', <>{a('https://poly.pizza/m/0lBe-ApqJs4', 'Motorcycle')} by jeremy, via Poly Pizza</>, a('https://creativecommons.org/licenses/by/3.0/', 'CC BY 3.0'))}
+          {row('Rain trees in the 3D campus', <>{a('https://poly.pizza/m/uLxXsCfYb7', 'Tree from the savanna')} by hat_my_guy, via Poly Pizza (reshaped)</>, a('https://creativecommons.org/publicdomain/zero/1.0/', 'CC0 1.0'))}
+          {row('Buildings, palms, houses, streets', 'Modelled in code for this site', '—')}
           {row('Sofia Sans, Sofia Sans Extra Condensed', 'Lettersoup', a('https://openfontlicense.org', 'SIL OFL 1.1'))}
           {row('JetBrains Mono', 'JetBrains', a('https://openfontlicense.org', 'SIL OFL 1.1'))}
           {row('Space Grotesk, Inter (app screens)', 'Florian Karsten; Rasmus Andersson', a('https://openfontlicense.org', 'SIL OFL 1.1'))}
@@ -81,7 +83,7 @@ const sections: Section[] = [
           {[
             ['Next.js, React, React DOM', 'MIT'],
             ['three.js, React Three Fiber, drei', 'MIT'],
-            ['GSAP, @gsap/react', "GreenSock Standard 'No Charge' License"],
+            ['GSAP', "GreenSock Standard 'No Charge' License"],
             ['@vercel/analytics', 'MIT'],
           ].map(([k, v]) => (
             <tr key={k}>
@@ -96,5 +98,5 @@ const sections: Section[] = [
 ];
 
 export default function Licenses() {
-  return <DocPage title="Licences and credits." lead="What this site is built from, who made it, and the terms it is used under." updated="5 October 2026" sections={sections} />;
+  return <DocPage title="Licences and credits." lead="What this site is built from, who made it, and the terms it is used under." updated="11 October 2026" sections={sections} />;
 }
