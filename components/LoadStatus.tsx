@@ -32,7 +32,7 @@ export default function LoadStatus() {
         {!webgl ? 'Read on: the trip is told in the page below.' : done ? 'Campus ready.' : `Loading the campus model · ${Math.round(load?.progress ?? 0)}%`}
       </span>
       <a className="btn primary" href="#start" aria-disabled={!done || undefined}>
-        Start the trip
+        Begin
       </a>
     </div>
   );

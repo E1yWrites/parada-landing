@@ -25,3 +25,16 @@ export const resetGates = () => Object.values(gates).forEach((g) => Object.assig
 
 // Where the tour car is, so the camera can follow it.
 export const demoCar = { pos: { x: 0, y: 0, z: 0 }, heading: 0, visible: false };
+
+// A cut: the stage fades to sky, the camera goes straight to its stop instead of panning, then the stage fades back.
+// A slide-number jump asks for one (SnapPop), and so does any step backward (CameraRig): replaying the pans in
+// reverse would drive the tour car backwards. The rig holds the frame until the fade covers it, snaps, and lifts the
+// fade once the page is still.
+export const FADE_MS = 200;
+export const cut = { on: false, since: 0 };
+export function startCut() {
+  if (cut.on) return;
+  cut.on = true;
+  cut.since = performance.now();
+  document.getElementById('stage-fade')?.classList.add('is-on');
+}

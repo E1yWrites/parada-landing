@@ -8,7 +8,7 @@ import { PIPELINE } from '@/lib/content';
 import { game } from '@/lib/game';
 import { CAM, type CamStop } from './cameraPath';
 import { outsideSolids } from './layout';
-import { scroll, demoCar, stopIndex } from './state';
+import { scroll, demoCar, stopIndex, cut, startCut, FADE_MS } from './state';
 
 const FOLLOW = new Set<string>(PIPELINE.map((s) => s.id));
 // tour playback, in timeline units (one per step) per second
@@ -76,6 +76,7 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
   const heading = useRef(0);
   const settled = useRef(0);
   const lastDim = useRef('');
+  const moved = useRef(0); // when the scroll target last changed, for lifting a cut's fade once the page is still
   const get = useThree((s) => s.get);
 
   useEffect(() => {
@@ -96,7 +97,7 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
       tops = els.map((el) => el.getBoundingClientRect().top + scrollY);
       hdr = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0; // read here, not on every scroll event
     };
-    const update = () => {
+    const update = (scrolled = false) => {
       const r = scrollY + hdr + 0.5; // half a pixel past the edge, so a snapped section counts as reached
       let t = 0;
       if (tops.length > 1 && r > tops[0]) {
@@ -109,6 +110,9 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
           t = i + (reduced ? Math.round(f) : linear ? f : holdEase(f));
         }
       }
+      // stepping back fades and cuts rather than replaying the pans in reverse
+      if (scrolled && !reduced && t < target.current - 0.02 && !game.get().driving) startCut();
+      if (t !== target.current) moved.current = performance.now();
       target.current = t;
       wake();
     };
@@ -118,25 +122,38 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     };
     refresh();
     smooth.current = target.current; // deep links and reloads start on the right stop
-    addEventListener('scroll', update, { passive: true });
+    const onScroll = () => update(true);
+    addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', refresh);
     const ro = new ResizeObserver(refresh);
     ro.observe(document.body);
     document.fonts?.ready.then(refresh);
     return () => {
-      removeEventListener('scroll', update);
+      removeEventListener('scroll', onScroll);
       removeEventListener('resize', refresh);
       ro.disconnect();
     };
   }, [path, reduced, setFrameloop, get]);
 
   useFrame((state, dt) => {
+    // A cut: hold the frame until the fade covers the stage, then go straight to the stop; lift the fade once the
+    // page has been still for a moment.
+    let snap = reduced;
+    if (cut.on) {
+      const now = performance.now();
+      if (now - cut.since < FADE_MS) return;
+      snap = true;
+      if (now - moved.current > 250 && now - cut.since > FADE_MS + 50) {
+        cut.on = false;
+        document.getElementById('stage-fade')?.classList.remove('is-on');
+      }
+    }
     // Approach the scrolled-to stop. Inside the tour a one-step move plays at a set pace, so what happens between
     // two stops (the car driving up, the loop to the exit) is seen rather than skipped; long jumps glide fast.
     const d = target.current - smooth.current;
     const tourT = smooth.current - (stopIndex('arrive') - 1); // tour timeline position
     const step = Math.min(dt, 0.1);
-    if (reduced || Math.abs(d) < 1e-4) smooth.current = target.current;
+    if (snap || Math.abs(d) < 1e-4) smooth.current = target.current;
     else if (Math.abs(d) <= 1.5 && tourT > -0.05 && tourT < PIPELINE.length + 0.05) {
       const pace = tourT > 7 && tourT < 8 ? LOOP_PACE : tourT < 1 ? ARRIVE_PACE : STEP_PACE;
       smooth.current += Math.sign(d) * Math.min(Math.abs(d), Math.min(pace, Math.abs(d) * 4) * step);
@@ -159,7 +176,7 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     // the car's heading, smoothed so the follow camera swings rather than snaps
     let dh = demoCar.heading - heading.current;
     dh = Math.atan2(Math.sin(dh), Math.cos(dh));
-    heading.current += dh * (reduced ? 1 : 1 - Math.exp(-3 * dt));
+    heading.current += dh * (snap ? 1 : 1 - Math.exp(-3 * dt));
 
     // marketing segments are already hold-eased by the scroll mapping; follow segments ease here
     const e = a.follow || b.follow ? ease(f) : f;
@@ -181,7 +198,7 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     if (clear < 1) vPos.lerpVectors(vLook, vPos, clear);
 
     const following = !!(a.follow || b.follow);
-    const k = reduced ? 1 : 1 - Math.exp(-(following ? 6 : 4) * dt);
+    const k = snap ? 1 : 1 - Math.exp(-(following ? 6 : 4) * dt);
     camera.position.lerp(vPos, k);
     look.current.lerp(vLook, k);
     // the smoothed path between two clear poses can still cut a corner through a roof: check the pose we draw too
@@ -190,7 +207,7 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
     camera.lookAt(look.current);
     // render at reduced resolution while the camera travels (AdaptiveDpr), full resolution once it lands
     const moving = Math.abs(target.current - t) > 1e-4 || camera.position.distanceToSquared(vPos) > 1e-4;
-    if (moving && !reduced) state.performance.regress();
+    if (moving && !snap) state.performance.regress();
 
     // Board-side offset: on wide screens a positive shift slides the subject right (board on the left), a negative
     // one left; tall screens slide it up, above the board that sits at the bottom.
@@ -209,7 +226,7 @@ export default function CameraRig({ path, reduced }: { path: string; reduced: bo
 
     // Stop rendering once the camera has landed on a stop: the scene is static there (the tour is a function of the
     // scroll), so nothing changes until the next scroll or resize wakes it.
-    if (!moving && Math.min(f, 1 - f) < 1e-3 && look.current.distanceToSquared(vLook) < 1e-4 && state.performance.current === 1) {
+    if (!cut.on && !moving && Math.min(f, 1 - f) < 1e-3 && look.current.distanceToSquared(vLook) < 1e-4 && state.performance.current === 1) {
       if (++settled.current > 10) setFrameloop('never');
     } else settled.current = 0;
   });

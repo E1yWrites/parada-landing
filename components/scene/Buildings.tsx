@@ -1,15 +1,16 @@
-// Campus buildings extruded from footprints traced off satellite imagery: painted concrete walls, a plinth,
-// a sun-shade ledge at every floor, window bands, parapets and roof plant, hipped metal roofs where the imagery
-// shows them; plus the covered walkways, the pavilion and the library entrance. The neighbourhood houses are
+// Campus buildings extruded from footprints traced off satellite imagery and named after the official campus map:
+// painted concrete walls, a plinth, a sun-shade ledge at every floor, window bands, parapets and roof plant, hipped
+// metal roofs where the imagery shows them; the gymnasium and the chapel built after LPU-B's facilities photos; plus
+// the covered walkways, the water tanks and the SHL entrance. The neighbourhood houses are
 // plastered boxes under hipped corrugated roofs on their OpenStreetMap footprints.
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { BLOCKS, COURT, ENTRANCE, ISLAND, PAVILION, PAVILION_POSTS, WALKWAYS, WALKWAY_POSTS, WALKWAY_H, FLOOR_H, HOUSE_LIST, inBlock, inPoly, type Block } from './layout';
+import { BLOCKS, COURT, GYM_PITCH, ENTRANCE, ISLAND, CHAPEL, CHAPEL_PIERS, TANKS, WALKWAYS, WALKWAY_POSTS, WALKWAY_H, FLOOR_H, HOUSE_LIST, inBlock, inPoly, type Block } from './layout';
 import { signTexture } from './signs';
 import { weathered } from './materials';
 
-const C = { plinth: '#8f8c86', ledge: '#fbfaf7', parapet: '#e4e0d8', roof: '#d5d4d0', plant: '#bfc3c6', glass: '#2f3a44', white: '#f6f6f3', metal: '#c9ccd0', kerb: '#f2c13a', lawn: '#5e9e5a' };
+const C = { steel: '#5b636c', brick: '#a65a3e', plinth: '#8f8c86', ledge: '#fbfaf7', parapet: '#e4e0d8', roof: '#d5d4d0', plant: '#bfc3c6', glass: '#2f3a44', white: '#f6f6f3', metal: '#c9ccd0', kerb: '#f2c13a', lawn: '#5e9e5a' };
 
 type Part = { g: THREE.BufferGeometry; c: string };
 type XZ = [number, number];
@@ -86,50 +87,150 @@ const edges = (pts: XZ[]) =>
   });
 
 type Win = { x: number; y: number; z: number; rot: number; w: number; h: number };
-// The covered court: concrete floor, two painted courts with hoops, bleachers, columns, a deep-fascia roof.
+// A slab whose width runs along x, tilted about z so it rises `rise` over its width (positive: rising toward +x).
+const tiltSlab = (x0: number, x1: number, y0: number, z0: number, z1: number, rise: number, t: number, c: string): Part => {
+  const w = x1 - x0;
+  const g = new THREE.BoxGeometry(Math.hypot(w, rise), t, z1 - z0).rotateZ(Math.atan2(rise, w)).translate((x0 + x1) / 2, y0 + rise / 2 + t / 2, (z0 + z1) / 2);
+  return { g, c };
+};
+// A wall in the x–y plane from a 2D outline (with optional holes), `t` thick, its back face at z.
+const wallShape = (outline: [number, number][], holes: [number, number][][], z: number, t: number, c: string): Part => {
+  const sh = new THREE.Shape(outline.map(([x, y]) => new THREE.Vector2(x, y)));
+  for (const h of holes) sh.holes.push(new THREE.Path(h.map(([x, y]) => new THREE.Vector2(x, y))));
+  return { g: new THREE.ExtrudeGeometry(sh, { depth: t, bevelEnabled: false, curveSegments: 16 }).translate(0, 0, z), c };
+};
+// A round-headed arch outline: `w` wide, springing at `spring` from the sill at y0.
+const arch = (cx: number, y0: number, w: number, spring: number): [number, number][] => [
+  [cx - w / 2, y0],
+  [cx + w / 2, y0],
+  ...Array.from({ length: 17 }, (_, i): [number, number] => [cx + (Math.cos((i / 16) * Math.PI) * w) / 2, y0 + spring + (Math.sin((i / 16) * Math.PI) * w) / 2]),
+];
+
+// The gymnasium: concrete floor, two courts in a maroon surround with hoops, bleachers, steel columns and trusses,
+// low cream walls between the columns and mesh infill above them (returned apart: it draws see-through), cream end
+// walls with the roof's gable, and a low-pitch metal roof with rows of skylights.
 function courtParts(b: Block) {
   const { x0, x1, z0, z1, columns, courts, bleachers, H } = COURT;
+  const cx = (x0 + x1) / 2;
+  const rise = GYM_PITCH * (x1 - x0) / 2;
   const parts: Part[] = [prism(b.pts, 0, 0.1, '#bdb7ab')];
+  const screens: Part[] = [];
   const line = '#f4f2ea';
-  for (const [cx, cz] of courts) {
+  for (const [ccx, cz] of courts) {
     const [hw, hl] = [7.5, 14];
-    parts.push(box(cx - hw - 1, 0.1, cz - hl - 1, cx + hw + 1, 0.13, cz + hl + 1, '#4f8a64'));
+    parts.push(box(ccx - hw - 2, 0.1, cz - hl - 2, ccx + hw + 2, 0.12, cz + hl + 2, '#7b2b2f'));
+    parts.push(box(ccx - hw, 0.12, cz - hl, ccx + hw, 0.13, cz + hl, '#3f7f5c'));
     for (const e of [-1, 1]) {
-      parts.push(box(cx - hw, 0.13, cz + e * hl - 0.05, cx + hw, 0.15, cz + e * hl + 0.05, line)); // end lines
-      parts.push(box(cx + e * hw - 0.05, 0.13, cz - hl, cx + e * hw + 0.05, 0.15, cz + hl, line)); // side lines
+      parts.push(box(ccx - hw, 0.13, cz + e * hl - 0.05, ccx + hw, 0.15, cz + e * hl + 0.05, line)); // end lines
+      parts.push(box(ccx + e * hw - 0.05, 0.13, cz - hl, ccx + e * hw + 0.05, 0.15, cz + hl, line)); // side lines
       const kz = cz + e * hl;
-      parts.push(box(cx - 2.45, 0.13, Math.min(kz, kz - e * 5.8), cx + 2.45, 0.145, Math.max(kz, kz - e * 5.8), '#a9553a')); // key
+      parts.push(box(ccx - 2.45, 0.13, Math.min(kz, kz - e * 5.8), ccx + 2.45, 0.145, Math.max(kz, kz - e * 5.8), '#7b2b2f')); // key
       // hoop: post behind the end line, backboard, rim
-      parts.push(box(cx - 0.12, 0, kz + e * 1.6 - 0.12, cx + 0.12, 3.3, kz + e * 1.6 + 0.12, '#3b4046'));
-      parts.push(box(cx - 0.9, 2.9, kz + e * 1.2 - 0.03, cx + 0.9, 3.95, kz + e * 1.2 + 0.03, '#f6f6f3'));
-      parts.push(box(cx - 0.25, 3.03, kz + e * 0.75 - 0.25, cx + 0.25, 3.07, kz + e * 0.75 + 0.25, '#e0702a'));
+      parts.push(box(ccx - 0.12, 0, kz + e * 1.6 - 0.12, ccx + 0.12, 3.3, kz + e * 1.6 + 0.12, '#3b4046'));
+      parts.push(box(ccx - 0.9, 2.9, kz + e * 1.2 - 0.03, ccx + 0.9, 3.95, kz + e * 1.2 + 0.03, '#f6f6f3'));
+      parts.push(box(ccx - 0.25, 3.03, kz + e * 0.75 - 0.25, ccx + 0.25, 3.07, kz + e * 0.75 + 0.25, '#e0702a'));
     }
-    parts.push(box(cx - hw, 0.13, cz - 0.05, cx + hw, 0.15, cz + 0.05, line)); // centre line
-    parts.push({ g: new THREE.RingGeometry(1.75, 1.85, 40).rotateX(-Math.PI / 2).translate(cx, 0.15, cz), c: line });
+    parts.push(box(ccx - hw, 0.13, cz - 0.05, ccx + hw, 0.15, cz + 0.05, line)); // centre line
+    parts.push({ g: new THREE.RingGeometry(1.75, 1.85, 40).rotateX(-Math.PI / 2).translate(ccx, 0.15, cz), c: line });
   }
   for (const [bx0, bx1, bz0, bz1] of bleachers) {
-    const toCourt = bx0 > (x0 + x1) / 2 ? -1 : 1; // steps rise away from the courts
+    const toCourt = bx0 > cx ? -1 : 1; // steps rise away from the courts
     for (let k = 0; k < 4; k++) {
       const w = (bx1 - bx0) / 4;
       const sx = toCourt > 0 ? bx1 - (k + 1) * w : bx0 + k * w;
       parts.push(box(sx, 0, bz0, sx + w, 0.5 + k * 0.45, bz1, '#cfcac0'));
     }
   }
-  for (const [cx, cz] of columns) parts.push(box(cx - 0.35, 0, cz - 0.35, cx + 0.35, H, cz + 0.35, C.parapet));
-  parts.push(prism(b.pts, H, H + 0.35, b.roofColor ?? C.roof));
-  for (const e of edges(b.pts)) parts.push(edgeSlab(e.a, e.b, e.n, 0.35, 0.25, H - 1.3, H + 0.75, '#f1f0ec', 0.35));
-  for (let z = z0 + 4; z < z1 - 3; z += 6.2)
-    for (const fx of [0.3, 0.7]) {
-      const x = x0 + (x1 - x0) * fx;
-      parts.push(box(x - 1.3, H + 0.35, z - 1.3, x + 1.3, H + 0.9, z + 1.3, C.glass));
+  // steel columns; along each long side, a low wall and mesh infill in every bay
+  for (const [px, pz] of columns) parts.push(box(px - 0.28, 0, pz - 0.28, px + 0.28, H, pz + 0.28, C.steel));
+  const sideZ = [...new Set(columns.filter(([px]) => px === x0).map(([, pz]) => pz)), z1].sort((a, b) => a - b);
+  for (const x of [x0, x1])
+    for (let i = 1; i < sideZ.length; i++) {
+      const [za, zb] = [sideZ[i - 1] + 0.3, sideZ[i] - 0.3];
+      if (i % 4 !== 2) parts.push(box(x - 0.15, 0, za, x + 0.15, 1.1, zb, b.wall)); // every fourth bay left open as a doorway
+      screens.push(box(x - 0.03, 2.4, za, x + 0.03, H - 0.9, zb, '#ffffff'));
     }
+  // steel trusses over every column pair: bottom chord, the two sloped top chords, posts every 3 m
+  for (const z of sideZ.slice(0, -1)) {
+    parts.push(box(x0, H - 1.25, z - 0.09, x1, H - 1.07, z + 0.09, C.steel));
+    parts.push(tiltSlab(x0, cx, H - 0.2, z - 0.09, z + 0.09, rise, 0.2, C.steel), tiltSlab(cx, x1, H - 0.2 + rise, z - 0.09, z + 0.09, -rise, 0.2, C.steel));
+    for (let x = x0 + 3; x < x1 - 1; x += 3) {
+      const top = H - 0.2 + rise * (1 - Math.abs(x - cx) / ((x1 - x0) / 2));
+      parts.push(box(x - 0.06, H - 1.1, z - 0.06, x + 0.06, top, z + 0.06, C.steel));
+    }
+  }
+  // cream end walls, each carrying the gable
+  for (const [z, t] of [[z0, 0.4], [z1 - 0.4, 0.4]] as const)
+    parts.push(wallShape([[x0, 0], [x1, 0], [x1, H], [cx, H + rise], [x0, H]], [], z, t, b.wall));
+  // the roof: two low slopes with a ridge cap, deep fascias along the eaves, skylight rows on both slopes
+  const o = 0.9; // eave overhang
+  const roof = b.roofColor ?? C.roof;
+  parts.push(tiltSlab(x0 - o, cx, H - GYM_PITCH * o, z0 - o, z1 + o, rise + GYM_PITCH * o, 0.18, roof));
+  parts.push(tiltSlab(cx, x1 + o, H + rise, z0 - o, z1 + o, -(rise + GYM_PITCH * o), 0.18, roof));
+  parts.push(box(cx - 0.35, H + rise + 0.12, z0 - o, cx + 0.35, H + rise + 0.32, z1 + o, '#c9ccd0'));
+  for (const x of [x0 - o, x1 + o]) parts.push(box(x - 0.12, H - 1.0, z0 - o, x + 0.12, H + 0.15, z1 + o, '#f1f0ec'));
+  for (let z = z0 + 3; z < z1 - 4; z += 6.42)
+    for (const f of [0.32, 0.68]) {
+      const x = x0 + (x1 - x0) * f;
+      const y = H + rise * (1 - Math.abs(x - cx) / ((x1 - x0) / 2)) + 0.19;
+      const side = x < cx ? 1 : -1;
+      parts.push(tiltSlab(x - 1.6, x + 1.6, y - side * GYM_PITCH * 1.6, z, z + 3.4, side * GYM_PITCH * 3.2, 0.05, '#dfeef2'));
+    }
+  return { parts, screens };
+}
+
+// The Main Campus Chapel: an open front to the north under a white concrete canopy on piers that lean outward, a
+// brick altar wall to the south with a round arch of stained glass, a white tiled floor, pews and an altar table.
+function chapelParts() {
+  const { x, z, w, d } = CHAPEL;
+  const [x0, x1, z0, z1] = [x - w / 2, x + w / 2, z - d / 2, z + d / 2];
+  const top = 5.6;
+  const lean = 1.1;
+  const parts: Part[] = [box(x0, 0, z0, x1, 0.3, z1, '#ecebe6')];
+  for (let k = 0; k < 2; k++) parts.push(box(x - 3.5 + k * 0.4, 0, z0 - 0.9 + k * 0.45, x + 3.5 - k * 0.4, 0.1 + k * 0.1, z0, '#e2e0d9')); // front steps
+  // altar wall: brick, an arch through it filled with glass
+  const sill = 1.4;
+  const aw = 3.2;
+  parts.push(wallShape([[x0 + 0.4, 0.3], [x1 - 0.4, 0.3], [x1 - 0.4, top], [x0 + 0.4, top]], [arch(x, sill, aw, 2.2)], z1 - 0.6, 0.5, C.brick));
+  // stained glass in three nested arches, faced both ways (inside and out)
+  const glass = (inset: number, c: string, dz: number) => {
+    const g = new THREE.ShapeGeometry(new THREE.Shape(arch(x, sill + inset, aw - inset * 2, 2.2 - inset).map(([a, b]) => new THREE.Vector2(a, b))), 16);
+    parts.push({ g: g.clone().translate(0, 0, z1 - 0.35 + dz), c }, { g: g.scale(1, 1, -1).translate(0, 0, z1 - 0.35 - dz), c });
+  };
+  glass(0, '#2f5f9e', 0);
+  glass(0.45, '#e0b04a', 0.01);
+  glass(0.95, '#c0402c', 0.02);
+  parts.push(box(x - 0.04, sill, z1 - 0.4, x + 0.04, sill + 2.2 + aw / 2, z1 - 0.36, '#2b2b2b'), box(x - aw / 2, sill + 2.2, z1 - 0.4, x + aw / 2, sill + 2.28, z1 - 0.36, '#2b2b2b')); // leading
+  parts.push(box(x - 1.3, 0.3, z1 - 2.6, x + 1.3, 1.25, z1 - 1.7, '#e8e4da')); // altar table
+  for (let r = 0; r < 6; r++)
+    for (const side of [-1, 1]) {
+      const pz = z0 + 2 + r * 1.35;
+      parts.push(box(side < 0 ? x0 + 1.4 : x + 0.9, 0.3, pz, side < 0 ? x - 0.9 : x1 - 1.4, 1.15, pz + 0.45, '#6b4a33'));
+    }
+  // piers leaning out from their feet to the canopy's edge
+  for (const [px, pz] of CHAPEL_PIERS) {
+    const s = px < x ? -1 : 1;
+    const g = new THREE.BoxGeometry(0.45, Math.hypot(top, lean), 0.7).rotateZ(-s * Math.atan2(lean, top)).translate(px + (s * lean) / 2, top / 2, pz);
+    parts.push({ g, c: C.white });
+  }
+  // the canopy: a white slab with a deep edge and a low roof over it
+  parts.push(box(x0 - lean - 0.5, top, z0 - 1.4, x1 + lean + 0.5, top + 0.55, z1 + 0.3, C.white));
+  parts.push(hipRoof(x0 - lean, z0 - 1.1, x1 + lean, z1, top + 0.55, 1.3, 0.2, '#eef0ef'));
   return parts;
 }
+
+// Water tanks from the map: a white drum on a short plinth with a dark lid.
+const tankParts = () =>
+  TANKS.flatMap(([x, z, r]): Part[] => [
+    box(x - r - 0.2, 0, z - r - 0.2, x + r + 0.2, 0.4, z + r + 0.2, '#bdb9b0'),
+    { g: new THREE.CylinderGeometry(r, r, 3.6, 20).translate(x, 2.2, z), c: '#e3e6e6' },
+    { g: new THREE.CylinderGeometry(r * 0.35, r * 0.4, 0.3, 12).translate(x, 4.15, z), c: '#3d4247' },
+  ]);
 
 function blockParts(b: Block, seed: number) {
   const parts: Part[] = [];
   const wins: Win[] = [];
-  if (b.roof === 'court') return { parts: courtParts(b), wins };
+  if (b.roof === 'court') return { ...courtParts(b), wins };
   const H = b.floors * FLOOR_H;
   const xs = b.pts.map((p) => p[0]);
   const zs = b.pts.map((p) => p[1]);
@@ -192,7 +293,7 @@ function blockParts(b: Block, seed: number) {
       parts.push(edgeSlab(ao, bo, out, 0.1, 0, f * FLOOR_H + 0.05, f * FLOOR_H + 1.05, color));
     }
   }
-  return { parts, wins };
+  return { parts, wins, screens: [] as Part[] };
 }
 
 const entranceParts = () => {
@@ -208,16 +309,6 @@ const entranceParts = () => {
     parts.push(box(ix1 - 1.1, 0, fz - 0.06, ix1 - 0.98, 9, fz + 0.06, C.white));
     parts.push(box(ix1 - 0.98, 7.6, fz - 0.03, ix1 + 0.6, 8.6, fz + 0.03, ['#c8102e', '#1d4e9e', '#e2b23c'][i]));
   }
-  return parts;
-};
-
-// Open pavilion inside the loop: white posts under a low white hipped roof (white in the imagery).
-const pavilionParts = () => {
-  const { x, z, w, d } = PAVILION;
-  const parts: Part[] = [box(x - w / 2, 0, z - d / 2, x + w / 2, 0.2, z + d / 2, '#cfcbc3')];
-  for (const [px, pz] of PAVILION_POSTS) parts.push(box(px - 0.2, 0.2, pz - 0.2, px + 0.2, 3.2, pz + 0.2, C.white));
-  parts.push(box(x - w / 2 - 0.4, 3.2, z - d / 2 - 0.4, x + w / 2 + 0.4, 3.5, z + d / 2 + 0.4, C.parapet));
-  parts.push(hipRoof(x - w / 2, z - d / 2, x + w / 2, z + d / 2, 3.5, 1.6, 0.4, '#eceeee'));
   return parts;
 };
 
@@ -285,7 +376,7 @@ function Houses({ shadows }: { shadows: boolean }) {
     }),
     [],
   );
-  const mats = useMemo(() => ({ wall: weathered(new THREE.MeshStandardMaterial({ roughness: 0.9 }), 0.16), roof: weathered(new THREE.MeshStandardMaterial({ roughness: 0.75, metalness: 0.15, flatShading: true }), 0.22) }), []);
+  const mats = useMemo(() => ({ wall: weathered(new THREE.MeshStandardMaterial({ roughness: 0.9 }), 0.16), roof: weathered(new THREE.MeshStandardMaterial({ roughness: 0.75, metalness: 0.15, flatShading: true }), 0.22, 2.5, true) }), []);
   useLayoutEffect(
     () => () => {
       Object.values(geos).forEach((g) => g.dispose());
@@ -337,19 +428,22 @@ function NameBoard({ text, at, rot }: { text: string; at: [number, number, numbe
 export default function Buildings({ shadows }: { shadows: boolean }) {
   const built = useMemo(() => {
     const parts: Part[] = [];
+    const screens: Part[] = [];
     const wins: Win[] = [];
     BLOCKS.forEach((b, i) => {
       const r = blockParts(b, 101 + i * 17);
       parts.push(...r.parts);
+      screens.push(...r.screens);
       wins.push(...r.wins);
     });
-    parts.push(...entranceParts(), ...pavilionParts(), ...walkwayParts());
-    return { geo: tint(parts), wins };
+    parts.push(...entranceParts(), ...chapelParts(), ...tankParts(), ...walkwayParts());
+    return { geo: tint(parts), screens: tint(screens), wins };
   }, []);
-  const mat = useMemo(() => weathered(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.88 }), 0.12), []);
+  const mat = useMemo(() => weathered(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.88 }), 0.12, 2.5, true), []);
   useLayoutEffect(
     () => () => {
       built.geo.dispose();
+      built.screens.dispose();
       mat.dispose();
     },
     [built, mat],
@@ -357,9 +451,13 @@ export default function Buildings({ shadows }: { shadows: boolean }) {
   return (
     <group>
       <mesh geometry={built.geo} material={mat} castShadow={shadows} receiveShadow={shadows} />
+      {/* the gymnasium's mesh infill: dark, see-through */}
+      <mesh geometry={built.screens}>
+        <meshStandardMaterial color="#3e454d" transparent opacity={0.42} depthWrite={false} side={THREE.DoubleSide} roughness={0.8} />
+      </mesh>
       <Windows wins={built.wins} />
       <NameBoard text="JPL BUILDING" at={[-48, 9.3, -62.25]} rot={Math.PI} />
-      <NameBoard text="COLLEGE OF DENTISTRY" at={[42.5, 7.6, -67.45]} rot={Math.PI} />
+      <NameBoard text="LEVISTE BUILDING" at={[42.5, 7.6, -67.45]} rot={Math.PI} />
       <Houses shadows={shadows} />
     </group>
   );

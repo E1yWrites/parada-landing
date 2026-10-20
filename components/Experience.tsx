@@ -26,6 +26,7 @@ export default function Experience() {
     <div className="stage" aria-hidden="true">
       {ok && <Scene />}
       <div className="stage-dim" id="stage-dim" />
+      <div className="stage-fade" id="stage-fade" />
     </div>
   );
 }

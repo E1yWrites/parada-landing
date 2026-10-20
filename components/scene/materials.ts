@@ -1,6 +1,7 @@
 // Surface variation without texture downloads: world-space value noise mottles a material's colour, so concrete,
 // plaster, roofs, lawn and asphalt read as weathered surfaces instead of flat fills. `scale` is the blotch size
-// in metres; `amount` how far the colour swings either way.
+// in metres; `amount` how far the colour swings either way. `corrugate` adds metal-sheet ribs (0.76 m pitch, running
+// down the slope) to sloped faces, fading out where they would shimmer at a distance.
 import * as THREE from 'three';
 
 const NOISE = /* glsl */ `
@@ -15,24 +16,34 @@ float vnoise(vec3 p) {
 float fbm(vec3 p) { return vnoise(p) * 0.55 + vnoise(p * 2.7) * 0.3 + vnoise(p * 7.9) * 0.15; }
 `;
 
-export function weathered<M extends THREE.MeshStandardMaterial>(mat: M, amount = 0.15, scale = 2.5): M {
+const RIBS = /* glsl */ `
+  vec3 rn = normalize(vWorldNormal);
+  if (rn.y > 0.2 && rn.y < 0.9995) {
+    float ph = dot(vWorldPos.xz, normalize(vec2(-rn.z, rn.x))) * 8.27;
+    diffuseColor.rgb *= 1.0 - 0.1 * clamp(1.0 - fwidth(ph) * 0.6, 0.0, 1.0) * (0.5 + 0.5 * sin(ph));
+  }`;
+
+export function weathered<M extends THREE.MeshStandardMaterial>(mat: M, amount = 0.15, scale = 2.5, corrugate = false): M {
   mat.onBeforeCompile = (s) => {
     s.uniforms.uWeather = { value: new THREE.Vector2(amount, 1 / scale) };
     s.vertexShader = s.vertexShader
-      .replace('#include <common>', '#include <common>\nvarying vec3 vWorldPos;')
+      .replace('#include <common>', '#include <common>\nvarying vec3 vWorldPos;\nvarying vec3 vWorldNormal;')
       .replace(
         '#include <worldpos_vertex>',
         `#include <worldpos_vertex>
         vec4 wp = vec4(transformed, 1.0);
+        vec3 wn = objectNormal;
         #ifdef USE_INSTANCING
           wp = instanceMatrix * wp;
+          wn = mat3(instanceMatrix) * wn;
         #endif
-        vWorldPos = (modelMatrix * wp).xyz;`,
+        vWorldPos = (modelMatrix * wp).xyz;
+        vWorldNormal = mat3(modelMatrix) * wn;`,
       );
     s.fragmentShader = s.fragmentShader
-      .replace('#include <common>', `#include <common>\nuniform vec2 uWeather;\n${NOISE}`)
-      .replace('#include <color_fragment>', '#include <color_fragment>\n  diffuseColor.rgb *= 1.0 + uWeather.x * (fbm(vWorldPos * uWeather.y) * 2.0 - 1.0);');
+      .replace('#include <common>', `#include <common>\nuniform vec2 uWeather;\nvarying vec3 vWorldNormal;\n${NOISE}`)
+      .replace('#include <color_fragment>', `#include <color_fragment>\n  diffuseColor.rgb *= 1.0 + uWeather.x * (fbm(vWorldPos * uWeather.y) * 2.0 - 1.0);${corrugate ? RIBS : ''}`);
   };
-  mat.customProgramCacheKey = () => `weathered-${amount}-${scale}`;
+  mat.customProgramCacheKey = () => `weathered-${amount}-${scale}-${corrugate}`;
   return mat;
 }

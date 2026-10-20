@@ -17,7 +17,8 @@ Official site for **PARADA**, a smart parking management system built as a BSIT 
 - Vercel Web Analytics (`@vercel/analytics`, cookieless, same-origin script) is mounted in `app/layout.tsx`; the privacy notice describes it.
 - `public/brand/` holds the PARADA logo, mark and mascot from the app repo.
 - `app/docs/` and `app/legal/` (terms, privacy, licences) summarise the PARADA repository; `components/AppScreens.tsx` draws the driver app and admin console at step 7 after the app's own design.
-- `public/models/` holds the Kenney Car Kit cars (CC0); see `CREDITS.txt`. Buildings, trees, houses and streets are generated in code (`Buildings.tsx`, `Trees.tsx`, `Campus.tsx`).
+- `public/models/props.glb` holds the cars, the motorcycle and the rain tree (Quaternius CC0, jeremy CC BY 3.0, hat_my_guy CC0); see `CREDITS.txt`. Buildings, palms, houses and streets are generated in code (`Buildings.tsx`, `Trees.tsx`, `Campus.tsx`); building names follow the official LPU-B campus map.
+- The home page is the final-defense deck: a title slide, four sideways panels (`components/Strip.tsx`), then the defense. Clickers and arrow keys turn one slide (`components/SnapPop.tsx`); thesis facts live in `lib/content.ts` with their sources.
 
 ## Run
 ```bash

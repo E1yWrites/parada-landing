@@ -70,8 +70,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <a href="https://www.openstreetmap.org/copyright" rel="noopener">
                 OpenStreetMap contributors
               </a>
-              ; building outlines traced from satellite imagery. Cars from the{' '}
-              <a href="https://kenney.nl/assets/car-kit" rel="noopener">Kenney Car Kit</a> (CC0).
+              ; building outlines traced from satellite imagery, names from the LPU-B campus map. Cars by Quaternius
+              (CC0); <a href="https://poly.pizza/m/0lBe-ApqJs4" rel="noopener">Motorcycle</a> by jeremy (CC BY 3.0);{' '}
+              <Link href="/legal/licenses/">all credits</Link>.
             </p>
           </div>
           <nav aria-label="Footer">

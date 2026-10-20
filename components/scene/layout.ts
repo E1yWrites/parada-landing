@@ -23,7 +23,6 @@ export const S = 0;
 export const E = Math.PI / 2;
 export const N = Math.PI;
 export const W = -Math.PI / 2;
-export const fwd = (h: number) => new THREE.Vector3(Math.sin(h), 0, Math.cos(h));
 
 type XZ = [number, number];
 export type Rect = [number, number, number, number]; // x0, x1, z0, z1
@@ -195,24 +194,40 @@ export type Block = {
   sign?: string; // name board over the facade facing Doña Aurelia St
 };
 const rect = (x0: number, z0: number, x1: number, z1: number): XZ[] => [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
+// Named after the official LPU-B Main Campus map (its legend numbers in brackets). The map is schematic; positions
+// come from the satellite tracing, names from the map's layout.
 export const BLOCKS: Block[] = [
-  { name: 'JPL Building, west wing', pts: [[-53.3, -61.5], [-42.6, -61.5], [-42.6, -6.7], [-34.2, -6.7], [-34.2, 23.3], [-55, 23.3], [-55, 12], [-53.3, 12]], floors: 4, wall: '#f3eee2', roof: 'flat', rails: { a: [-53.3, -60], b: [-53.3, 10], out: [-1, 0], color: '#3f8a5c' }, sign: 'JPL BUILDING' },
-  { name: 'Covered court', pts: rect(-32.7, -60.3, -1.8, 16.7), floors: 3, wall: '#f3eee2', roof: 'court', roofColor: '#e9ebec' },
-  { name: 'JPL Building, south annex', pts: rect(-34.2, 16.7, 0, 23.3), floors: 1, wall: '#ece5d6', roof: 'flat' },
-  { name: 'College of Dentistry', pts: [[8.3, -66.7], [74.2, -66.7], [74.2, -43.3], [33, -43.3], [33, -47.5], [8.3, -47.5]], floors: 3, wall: '#f7f5f0', roof: 'flat', sign: 'COLLEGE OF DENTISTRY' },
-  { name: 'North-east building', pts: [[44.5, -36.7], [50, -36.7], [50, -32.2], [60, -32.2], [60, -11.1], [50, -11.1], [50, -23.3], [44.5, -30]], floors: 2, wall: '#f1ede4', roof: 'flat' },
-  { name: 'Red-roof block', pts: rect(61, -42, 75.5, -25.5), floors: 2, wall: '#efe6d4', roof: 'hip', roofColor: '#a9483a' },
-  { name: 'Library', pts: rect(15.8, -22.5, 40, 60), floors: 5, wall: '#e9e1d2', roof: 'hip', roofColor: '#7c8188' },
-  { name: 'Library link', pts: rect(16.7, 64, 30.8, 86.7), floors: 3, wall: '#f1ebdf', roof: 'flat' },
-  { name: 'South building', pts: [[30.8, 58.3], [45, 58.3], [45, 72.5], [55, 72.5], [55, 136.7], [32.5, 136.7], [32.5, 125], [40, 113], [40, 86.7], [30.8, 86.7]], floors: 5, wall: '#f4ecdd', roof: 'flat' },
-  { name: 'Courtyard, west arm', pts: rect(-48.5, 66, -42.5, 105), floors: 2, wall: '#f4efe6', roof: 'flat' },
-  { name: 'Courtyard, south arm', pts: rect(-48.5, 105, 3.3, 113.3), floors: 2, wall: '#f4efe6', roof: 'flat' },
-  { name: 'Courtyard, east arm', pts: [[-5.5, 105], [10, 81], [16.7, 77], [16.7, 87.5], [13.5, 88.5], [3.3, 105]], floors: 2, wall: '#f4efe6', roof: 'flat' },
-  { name: 'Annex by the loop', pts: rect(-57.5, 49, -43, 56), floors: 1, wall: '#f7f5f0', roof: 'flat' },
+  { name: 'JPL Building [2]', pts: [[-53.3, -61.5], [-42.6, -61.5], [-42.6, -6.7], [-34.2, -6.7], [-34.2, 23.3], [-55, 23.3], [-55, 12], [-53.3, 12]], floors: 4, wall: '#f3eee2', roof: 'flat', rails: { a: [-53.3, -60], b: [-53.3, 10], out: [-1, 0], color: '#3f8a5c' }, sign: 'JPL BUILDING' },
+  // the Arsenio "Dodjie" H. Laurel Sports Arena
+  { name: 'Gymnasium [3]', pts: rect(-32.7, -60.3, -1.8, 16.7), floors: 3, wall: '#efe3c8', roof: 'court', roofColor: '#e3e6e8' },
+  { name: 'JPL Building, south annex [2]', pts: rect(-34.2, 16.7, 0, 23.3), floors: 1, wall: '#ece5d6', roof: 'flat' },
+  { name: 'Leviste Building [4]', pts: [[8.3, -66.7], [74.2, -66.7], [74.2, -43.3], [33, -43.3], [33, -47.5], [8.3, -47.5]], floors: 3, wall: '#f7f5f0', roof: 'flat', sign: 'LEVISTE BUILDING' },
+  { name: 'PHC Lab 1–4 [6]', pts: [[44.5, -36.7], [50, -36.7], [50, -32.2], [60, -32.2], [60, -11.1], [50, -11.1], [50, -23.3], [44.5, -30]], floors: 2, wall: '#f1ede4', roof: 'flat' },
+  { name: 'Culture and Arts Office [5]', pts: rect(61, -42, 75.5, -25.5), floors: 2, wall: '#efe6d4', roof: 'hip', roofColor: '#a9483a' },
+  // Sotero H. Laurel Building: the learning resource centre, entrance on the loop's east leg
+  { name: 'SHL Building [8]', pts: rect(15.8, -22.5, 40, 60), floors: 5, wall: '#e9e1d2', roof: 'hip', roofColor: '#7c8188' },
+  { name: 'Administration Building [11]', pts: rect(16.7, 64, 30.8, 86.7), floors: 3, wall: '#f1ebdf', roof: 'flat' },
+  { name: 'Mabini Building [12]', pts: [[30.8, 58.3], [45, 58.3], [45, 72.5], [55, 72.5], [55, 136.7], [32.5, 136.7], [32.5, 125], [40, 113], [40, 86.7], [30.8, 86.7]], floors: 5, wall: '#f4ecdd', roof: 'flat' },
+  { name: 'Malvar Building, west wing [13]', pts: rect(-48.5, 66, -42.5, 105), floors: 2, wall: '#f4efe6', roof: 'flat' },
+  { name: 'Malvar Building, south wing [13]', pts: rect(-48.5, 105, 3.3, 113.3), floors: 2, wall: '#f4efe6', roof: 'flat' },
+  { name: 'Administration Building, south wing [11]', pts: [[-5.5, 105], [10, 81], [16.7, 77], [16.7, 87.5], [13.5, 88.5], [3.3, 105]], floors: 2, wall: '#f1ebdf', roof: 'flat' },
+  // the smaller buildings on the map
+  { name: 'LSSC Student Center [7]', pts: rect(-57.5, 49, -43, 56), floors: 1, wall: '#f7f5f0', roof: 'flat' },
+  { name: 'LSSC Student Center, north gate [7]', pts: rect(9.5, -44, 15.5, -38), floors: 1, wall: '#efe6d4', roof: 'hip', roofColor: '#8e3f36' },
+  { name: 'LSSC Student Center, south [7]', pts: rect(2, 56, 8, 62), floors: 1, wall: '#efe6d4', roof: 'hip', roofColor: '#8e3f36' },
+  { name: 'Power House [10]', pts: rect(-49, 27.5, -45, 32.5), floors: 1, wall: '#dcd8cf', roof: 'flat' },
+  { name: 'GenSet Room [15]', pts: rect(9, 48, 14, 52), floors: 1, wall: '#dcd8cf', roof: 'flat' },
+  { name: 'GenSet Room, west [15]', pts: rect(-68.5, 89, -63.5, 94), floors: 1, wall: '#dcd8cf', roof: 'flat' },
+  { name: 'HVSG Room [16]', pts: rect(-68.5, 77, -63.5, 82), floors: 1, wall: '#dcd8cf', roof: 'flat' },
+  { name: "Staff House & Guards' Barracks [14]", pts: rect(18, 132, 28, 140), floors: 2, wall: '#efe7d8', roof: 'hip', roofColor: '#a4473a' },
+  { name: "Staff House & Guards' Barracks, east [14]", pts: rect(8, 138, 16, 146), floors: 2, wall: '#efe7d8', roof: 'hip', roofColor: '#a4473a' },
 ];
-// The covered court (photo: a gymnasium with no walls): columns round the edge, two basketball courts on the floor,
-// stepped bleachers along both long sides.
+// Water tanks drawn as circles on the map: two by Malvar, three in a row east of the chapel. [x, z, radius]
+export const TANKS: [number, number, number][] = [[6, 119, 1.6], [11, 119, 1.6], [-14, 26.5, 1.2], [-14, 31, 1.2], [-14, 35.5, 1.2]];
+// The gymnasium (LPU-B's facilities photos): open sides on steel columns with mesh infill, a low-pitch skylit metal
+// roof, cream end walls; two basketball courts with a maroon border, stepped bleachers along both long sides.
 const COURT_BLOCK = BLOCKS.find((b) => b.roof === 'court')!;
+export const GYM_PITCH = 0.12; // roof rise per metre from the eaves to the ridge (about 7°)
 export const COURT = (() => {
   const [[x0, z0], , [x1, z1]] = COURT_BLOCK.pts;
   const columns: XZ[] = [];
@@ -253,8 +268,9 @@ export const WALKWAYS: { pts: XZ[]; w: number }[] = [
   { pts: [[-49.5, 56], [-46.5, 66]], w: 4 },
 ];
 export const WALKWAY_H = 3.2;
-// White-roofed pavilion inside the loop, and the rotonda island south of JPL (from the app's site notes).
-export const PAVILION = { x: -31, z: 30.75, w: 15.75, d: 13.5 };
+// The Main Campus Chapel inside the loop [9] (open front to the north, brick altar wall to the south), and the rotonda
+// island south of JPL (from the app's site notes).
+export const CHAPEL = { x: -31, z: 30.75, w: 15.75, d: 13.5 };
 export const ROTONDA = { x: -7.5, z: 33, r: 4.5 };
 // Library entrance on the east leg: canopy, flags, yellow-kerbed lawn island (photo 6).
 export const ENTRANCE = { x: 14.2, z: 35, w: 3.6, d: 7 };
@@ -278,10 +294,10 @@ for (const { pts, w } of WALKWAYS)
         WALKWAY_POSTS.push([x, z]);
       }
   }
-// Pavilion posts: five along each long side.
-export const PAVILION_POSTS: XZ[] = Array.from({ length: 10 }, (_, i) => [
-  PAVILION.x - PAVILION.w / 2 + 0.6 + ((i % 5) * (PAVILION.w - 1.2)) / 4,
-  PAVILION.z + (i < 5 ? -1 : 1) * (PAVILION.d / 2 - 0.6),
+// Chapel piers: four along each long side (east and west), leaning out under the canopy; feet at these points.
+export const CHAPEL_PIERS: XZ[] = Array.from({ length: 8 }, (_, i) => [
+  CHAPEL.x + (i < 4 ? -1 : 1) * (CHAPEL.w / 2 - 0.5),
+  CHAPEL.z - CHAPEL.d / 2 + 1 + ((i % 4) * (CHAPEL.d - 3)) / 3,
 ]);
 
 // ---------- placement helpers ----------
@@ -293,7 +309,8 @@ export const occupied = (x: number, z: number, r: number) =>
   nearestLoop(x, z).d < ROAD_W / 2 + SLOT_D + r ||
   WALKWAYS.some(({ pts, w }) => pts.some((p, i) => i > 0 && segDist(x, z, pts[i - 1], p) < w / 2 + r)) ||
   Math.hypot(x - FORECOURT.x, z - FORECOURT.z) < CANOPY.r + CANOPY.w / 2 + r ||
-  inRect([PAVILION.x - PAVILION.w / 2, PAVILION.x + PAVILION.w / 2, PAVILION.z - PAVILION.d / 2, PAVILION.z + PAVILION.d / 2], x, z, r) ||
+  inRect([CHAPEL.x - CHAPEL.w / 2, CHAPEL.x + CHAPEL.w / 2, CHAPEL.z - CHAPEL.d / 2, CHAPEL.z + CHAPEL.d / 2], x, z, r) ||
+  TANKS.some(([tx, tz, tr]) => Math.hypot(x - tx, z - tz) < tr + r) ||
   Math.hypot(x - ROTONDA.x, z - ROTONDA.z) < ROTONDA.r + r ||
   inRect(ISLAND, x, z, r) ||
   GATE_LIST.some((g) => Math.hypot(x - g.x, z - g.z) < 7 + r);
@@ -329,7 +346,7 @@ for (const b of BLOCKS) {
   const zs = b.pts.map((p) => p[1]);
   const [x0, x1, z0, z1] = [Math.min(...xs), Math.max(...xs), Math.min(...zs), Math.max(...zs)];
   const H = b.floors * FLOOR_H;
-  const top = b.roof === 'hip' ? H + Math.min(x1 - x0, z1 - z0) * 0.22 + 0.7 : H + 1;
+  const top = b.roof === 'hip' ? H + Math.min(x1 - x0, z1 - z0) * 0.22 + 0.7 : b.roof === 'court' ? H + GYM_PITCH * (x1 - x0) / 2 + 1 : H + 1;
   SOLIDS.push({
     cx: (x0 + x1) / 2,
     cz: (z0 + z1) / 2,
@@ -371,6 +388,19 @@ SOLIDS.push({
   const g = GATES.north;
   SOLIDS.push({ cx: g.x, cz: g.z, r: 7, y0: 4.3, y1: 7.6, hit: (x, z, pad) => Math.abs(x - g.x) < PERGOLA_X + 0.4 + pad && Math.abs(z - g.z) < 3.8 + pad });
 }
+SOLIDS.push({
+  cx: CHAPEL.x,
+  cz: CHAPEL.z,
+  r: Math.hypot(CHAPEL.w, CHAPEL.d) / 2 + 1,
+  y0: 0,
+  y1: 8,
+  hit: (x, z, pad) => Math.abs(x - CHAPEL.x) < CHAPEL.w / 2 + 1 + pad && Math.abs(z - CHAPEL.z) < CHAPEL.d / 2 + 1 + pad,
+});
+// the canopy's stone pillars and guard booth, and the water tanks: round enough at a camera's scale
+const round = (x: number, z: number, r: number, y1: number): Solid => ({ cx: x, cz: z, r, y0: 0, y1, hit: (px, pz, pad) => Math.hypot(px - x, pz - z) < r + pad });
+for (const p of CANOPY_PILLARS) SOLIDS.push(round(p.x, p.z, 1.3, 5.6));
+SOLIDS.push(round(CANOPY_BOOTH.x, CANOPY_BOOTH.z, 1.9, 3.2));
+for (const [x, z, r] of TANKS) SOLIDS.push(round(x, z, r, 4.4));
 const blockedAt = (x: number, y: number, z: number, pad: number) =>
   SOLIDS.some((s) => y > s.y0 - pad && y < s.y1 + pad && Math.abs(x - s.cx) < s.r + pad && Math.abs(z - s.cz) < s.r + pad && s.hit(x, z, pad));
 /**
@@ -418,6 +448,11 @@ for (const [x0, x1, z0, z1, sp, sc] of GROVES) {
       TREES.push([jx, jz, s, 0]);
     }
 }
+// Tree crowns are solid to a camera too (the drive chase camera rides at crown height): the band a crown fills, a
+// little inside its edge so grazing a leaf doesn't count.
+for (const [x, z, s] of TREES)
+  SOLIDS.push({ cx: x, cz: z, r: s * 0.42, y0: s * 0.24, y1: s * 0.71, hit: (px, pz, pad) => Math.hypot(px - x, pz - z) < s * 0.42 + pad });
+
 // Palms on the entrance island and along the east leg: [x, z, scale]
 export const PALMS: [number, number, number][] = [
   [10.1, 30.5, 1], [10.1, 39, 1.1], [13.6, 44.5, 0.95], [10.8, -15.5, 1.05], [13.4, 27.6, 0.9],
