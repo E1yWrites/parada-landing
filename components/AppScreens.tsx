@@ -168,15 +168,15 @@ export default function AppScreens() {
         <div className="drv-tabs">
           <span className="is-on">
             <Icon {...I.home} />
-            Home
+            Now
           </span>
           <span>
             <Icon {...I.car} />
-            Park
+            Zones
           </span>
           <span>
             <Icon {...I.clock} />
-            Sessions
+            History
           </span>
           <span>
             <Icon {...I.user} />

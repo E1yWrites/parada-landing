@@ -6,7 +6,7 @@
 import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { ZONES } from '@/lib/content';
+import { ZONES, FEE_RATE, parkingFee } from '@/lib/content';
 import { sound } from '@/lib/sfx';
 import { game, live, input, plateText, fmtDuration, useGame, admit } from '@/lib/game';
 import {
@@ -354,8 +354,8 @@ export default function Drive({ reduced }: { reduced: boolean }) {
             game.setCount(zone, g.counts[zone] - 1);
             game.set({
               session: null,
-              receipt: { plate: p, zone: `${ZONES[zone].code} — ${ZONES[zone].area}`, duration: fmtDuration(secs), rate: 'Configured', fee: 'Calculated', camera: sc.gate.cam },
-              toast: { title: `Session closed · ${name} ${g.counts[zone] - 1}/${ZONES[zone].capacity}`, body: 'Duration recorded and the fee calculated where configured.', tone: 'ok' },
+              receipt: { plate: p, zone: `${ZONES[zone].code} — ${ZONES[zone].area}`, duration: fmtDuration(secs), rate: FEE_RATE, fee: `₱${parkingFee(secs / 60)}`, camera: sc.gate.cam },
+              toast: { title: `Session closed · ${name} ${g.counts[zone] - 1}/${ZONES[zone].capacity}`, body: 'Duration recorded and the fee calculated from the establishment’s rate.', tone: 'ok' },
             });
           } else {
             sound.play('tick');

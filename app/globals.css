@@ -1961,10 +1961,14 @@ html.is-driving .site-footer {
     grid-template-columns: 1fr;
     align-content: center;
     gap: 1rem;
-    padding-block: 1.5rem 2rem;
+    /* bottom clears the slide counter, like every phone card, so BEGIN is never under it */
+    padding-block: 1.25rem 4.25rem;
   }
   .intro-mascot {
-    width: 9rem;
+    width: 6.5rem;
+  }
+  .intro .proponents li {
+    padding-block: 0.3rem 0.25rem;
   }
   .how-head {
     align-items: flex-end;
@@ -2332,6 +2336,40 @@ html.is-driving .slide-count {
   line-height: 1.45;
   color: var(--ink-soft);
 }
+/* an odd last objective (the evaluation) closes the grid across both columns instead of leaving a hole */
+.objectives li:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+.objectives li:last-child:nth-child(odd) p {
+  max-width: 68ch;
+}
+/* the Agile model's phases as a chain of ruled fields: solid rule = done, a stamp-red chevron between links */
+.agile {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.9rem;
+  margin: 0.4rem 0 0.9rem;
+  padding: 0;
+  list-style: none;
+}
+.agile li {
+  position: relative;
+  padding-top: 0.4rem;
+  border-top: 2px solid var(--rule);
+  font: 800 1.15rem / 1 var(--font-display), sans-serif;
+  text-transform: uppercase;
+}
+.agile li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: calc(0.4rem + 0.5em);
+  right: -1.2rem;
+  width: 0.42rem;
+  height: 0.42rem;
+  border: solid var(--stamp);
+  border-width: 2px 2px 0 0;
+  transform: translateY(-50%) rotate(45deg);
+}
 .split {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2539,5 +2577,11 @@ html.is-driving .slide-count {
   .ledger td {
     padding: 0;
     border: 0;
+  }
+  /* a stacked number needs its column name back */
+  .ledger td[data-label]::before {
+    content: attr(data-label) ' · ';
+    font-family: var(--font-sans);
+    color: var(--ink-soft, inherit);
   }
 }

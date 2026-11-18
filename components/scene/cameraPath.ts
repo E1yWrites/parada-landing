@@ -35,7 +35,7 @@ export const CAM: Record<string, CamStop> = {
   sensors: { pos: [-48, 22, 8], look: [-66, 0, -14], shift: 0.2 },
   cameras: { pos: [-104, 24, -96], look: [-70, 3, -62], shift: -0.25 }, // the main-gate canopy
   insight: { pos: [-58, 22, -28], look: [-72, 3, -62], shift: 0.2 }, // the entry camera from inside Zone A
-  interview: { pos: [-30, 70, 150], look: [22, 4, 78], shift: -0.25 }, // the Administration Building
+  timeline: { pos: [150, 120, 160], look: [0, 0, 10], shift: -0.25 }, // the campus from the south-east
   objectives: { pos: [170, 150, -120], look: [0, 0, 0], shift: 0.25 },
   scope: { pos: [-30, 190, -150], look: [-30, 0, -15], shift: -0.25 }, // Zone A, the one zone modelled
   method: { pos: [40, 70, -130], look: [-20, 4, -30], shift: 0.25 },
@@ -54,8 +54,9 @@ export const CAM: Record<string, CamStop> = {
   exit: { pos: [7.5, 6.5, -47], look: [3.5, 2, -64], shift: -0.16, follow: { off: [0, 6, -12.5], ahead: 6 } },
   fee: { pos: [-26, 13, -84], look: [-1, 6, -65], shift: 0.16, portrait: { pos: [-6, 13, -90], look: [-4, 7, -62] } },
   results: { pos: [60, 60, -130], look: [5, 4, -60], shift: -0.25 }, // the north gate, where the session closed
-  limits: { pos: [-96, 9, -78], look: [-72, 3, -63], shift: 0.25 }, // the entry camera's view of the canopy
-  conclusion: { pos: [-40, 230, 260], look: [0, 0, 10], shift: -0.25 },
+  uat: { pos: [-30, 70, 150], look: [22, 4, 78], shift: 0.25 }, // the Administration Building
+  limits: { pos: [-96, 9, -78], look: [-72, 3, -63], shift: -0.25 }, // the entry camera's view of the canopy
+  conclusion: { pos: [-40, 230, 260], look: [0, 0, 10], shift: 0.25 },
   play: { pos: [-150, 110, -150], look: [-18, 0, 0], shift: 0.2 },
   contact: { pos: [0, 200, 250], look: [0, 0, 20], dim: 0.55 },
   tech: { pos: [0, 170, 230], look: [0, 0, 20], dim: 0.72 },

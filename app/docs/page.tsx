@@ -145,12 +145,12 @@ npm run db:test:setup -w @parada/database   # creates parada_test + parada_test_
 npm run test`}</pre>
         <p>
           API and database suites run against real PostgreSQL and refuse to start unless pointed at a test database.
-          Measured in Phase 14: types 9, database 49, API 267, admin 79, mobile 324 tests passing; vision 73 passing
-          with 2 opt-in live tests skipped.
+          Final run, 18 November 2026: mobile 532, API 330, admin 191, vision 221, database 53, types 9 — 1,336 tests
+          passing, with 2 opt-in live vision tests skipped (both pass against a running backend).
         </p>
         <p className="soft">
-          These are unit and integration results. No on-device or deployment testing is claimed. The OCR evaluation
-          is a characterisation on a synthetic dataset (1,250 generated images), not a production accuracy claim.
+          The OCR evaluation (87.1% exact reads) is a characterisation on a synthetic dataset of 1,250 generated images,
+          not a production accuracy claim. Live tests used two IP cameras and one real vehicle in a controlled setting.
         </p>
       </>
     ),
@@ -231,8 +231,9 @@ npm run test`}</pre>
           <li>Hybrid (recommended for the capstone): online API, admin and database, with vision on the facility network posting over HTTPS. Cameras and raw frames never leave the site.</li>
         </ul>
         <p className="soft">
-          Status: Phase 15 (Deployment) is pending. Every profile is deployable and its build, migration and start-up
-          path is verified on Linux, but no production deployment has been made.
+          Status: deployed to a controlled test environment only. An offline launcher also runs the whole system on one
+          Windows computer; for the evaluation it ran on a laptop with two IP cameras on a PoE switch. No production
+          deployment has been made.
         </p>
       </>
     ),
@@ -243,10 +244,10 @@ npm run test`}</pre>
     title: 'Roadmap',
     body: (
       <p>
-        Phases 0–14 are complete: requirements and architecture, infrastructure, database, backend, authentication,
+        All phases are complete: requirements and architecture, infrastructure, database, backend, authentication,
         vision integration, guest admission, reservations and assignment, the admin and mobile apps, real OCR,
-        camera provisioning, realtime, full integration, and testing with the accuracy evaluation. Phase 15
-        (Deployment) and Phase 16 (Documentation and final review) are next.
+        camera provisioning, realtime, full integration, testing with the accuracy evaluation, live IP-camera tests,
+        deployment to a test environment, and final documentation. A user acceptance test followed on 17 November 2026.
       </p>
     ),
     sources: ['docs/architecture/roadmap.md'],
