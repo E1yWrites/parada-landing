@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {
-  ZONES, band, PIPELINE, MOBILE_STEPS, ADMIN_VERBS, ARCHITECTURE, EMAIL, GITHUB_URL, repoFile,
-  THESIS, PROBLEM, PRIOR, CAMERA_WORK, INTERVIEW, OBJECTIVES, SCOPE, ROADMAP, CONTEXT, RESULTS,
+  ZONES, band, PIPELINE, MOBILE_STEPS, ADMIN_VERBS, ARCHITECTURE, EMAIL, GITHUB_URL,
+  THESIS, PROBLEM, PRIOR, CAMERA_WORK, TIMELINE, OBJECTIVES, SCOPE, AGILE, ROADMAP, CONTEXT, RESULTS, UAT,
   CONCLUSIONS, RECOMMENDATIONS,
 } from '@/lib/content';
 import LoadStatus from '@/components/LoadStatus';
@@ -38,6 +38,7 @@ export default function Home() {
               <li key={n}>{n}</li>
             ))}
           </ul>
+          <p className="byline">Adviser: {THESIS.adviser}</p>
           <LoadStatus />
         </div>
       </section>
@@ -160,13 +161,13 @@ export default function Home() {
               </li>
             ))}
           </ol>
-          <p className="cite">From the Introduction · each problem tagged with the specific objective that answers it</p>
+          <p className="cite">From 1.0 Introduction, 2.0 Research Gap and 3.0 Requirement Analysis · each problem tagged with the objective that answers it</p>
         </div>
       </section>
 
       <section id="prior" className="chapter right" data-cam="prior" data-snap aria-labelledby="prior-title">
         <div className="board wide">
-          <h2 id="prior-title">It has been tried here before, with a sensor in every space.</h2>
+          <h2 id="prior-title">It has been tried on Philippine campuses before.</h2>
           <table className="ledger">
             <thead>
               <tr>
@@ -185,7 +186,7 @@ export default function Home() {
               ))}
             </tbody>
           </table>
-          <p className="soft">They cut down manual monitoring, and every one of them needs physical components throughout the facility.</p>
+          <p className="soft">They cut down manual monitoring, but rely on hardware in every space or serve only the driver&rsquo;s side.</p>
         </div>
       </section>
 
@@ -194,9 +195,9 @@ export default function Home() {
           <h2 id="sensors-title">Every space you add is one more sensor to install and maintain.</h2>
           <p>
             Sensor systems grow with the lot: more sensors, wiring, controllers and maintenance as spaces are added, a
-            real cost for small to medium-sized facilities.
+            real cost for small to medium-sized facilities. PARADA&rsquo;s devices grow with the number of gates instead.
           </p>
-          <p className="cite">Muthupriya et al., 2024 · Reddy et al., 2025 · Kadhim et al., 2021</p>
+          <p className="cite">Muthupriya et al., 2024 · Reddy et al., 2025 · Lavanya et al., 2025</p>
           <p className="label compare-head">Zone A in this model · {ZONE_A.capacity} spaces</p>
           <dl className="fields" style={{ '--cols': 2 } as React.CSSProperties}>
             <div className="field" data-state="void">
@@ -246,35 +247,20 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="interview" className="chapter right" data-cam="interview" data-snap aria-labelledby="interview-title">
+      <section id="timeline" className="chapter right" data-cam="timeline" data-snap aria-labelledby="timeline-title">
         <div className="board wide">
-          <h2 id="interview-title">We asked the campus, then cut the scope.</h2>
-          <dl className="fields" style={{ '--cols': 2 } as React.CSSProperties}>
-            <div className="field">
-              <dt>Interview requested</dt>
-              <dd>{INTERVIEW.date}</dd>
-            </div>
-            <div className="field">
-              <dt>With</dt>
-              <dd>{INTERVIEW.with}, AVP for Student Services</dd>
-            </div>
-          </dl>
-          <dl className="fields titles" style={{ '--cols': 1 } as React.CSSProperties}>
-            <div className="field" data-state="void">
-              <dt>Working title</dt>
-              <dd>{INTERVIEW.oldTitle}</dd>
-            </div>
-            <div className="field">
-              <dt>Title now</dt>
-              <dd>{THESIS.title}</dd>
-            </div>
-          </dl>
-          <p className="label">Left out after the refinement</p>
-          <ul className="struck">
-            {INTERVIEW.excluded.map((x) => (
-              <li key={x}>{x}</li>
-            ))}
-          </ul>
+          <h2 id="timeline-title">From the proposal to the user test.</h2>
+          <table className="ledger">
+            <tbody>
+              {TIMELINE.map(([when, what]) => (
+                <tr key={when}>
+                  <th scope="row" className="num">{when}</th>
+                  <td>{what}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="cite">Gantt Chart (Figure 2): the researchers&rsquo; notes and the dated record of the project repository</p>
         </div>
       </section>
 
@@ -320,10 +306,15 @@ export default function Home() {
 
       <section id="method" className="chapter" data-cam="method" data-snap aria-labelledby="method-title">
         <div className="board wide">
-          <h2 id="method-title">Agile, built in seventeen phases.</h2>
+          <h2 id="method-title">Agile: six phases, seventeen increments.</h2>
+          <ol className="agile" aria-label="Agile model phases">
+            {AGILE.map((p) => (
+              <li key={p}>{p}</li>
+            ))}
+          </ol>
           <p className="soft">
-            Each phase runs objective, implement, test, fix, typecheck, lint, build, document, then stops. Phases 0–14 are
-            done; deployment and the final review come next.
+            The review of each iteration feeds the requirements of the next. Each increment ran objective, implement,
+            test, fix, type-check, lint, build, document; all seventeen are done.
           </p>
           <ol className="phases">
             {ROADMAP.map(([n, title, done]) => (
@@ -333,13 +324,14 @@ export default function Home() {
               </li>
             ))}
           </ol>
-          <p className="cite">Source: the PARADA repository, docs/architecture/roadmap.md</p>
+          <p className="cite">3.0 Methods: Agile Model (Figure 1) and Development</p>
         </div>
       </section>
 
       <section id="context" className="chapter right" data-cam="context" data-snap aria-labelledby="context-title">
         <div className="board wide">
           <h2 id="context-title">One backend, three outside parties.</h2>
+          <p className="cite">Level 0 Data Flow Diagram (Figure 3)</p>
           <p className="soft">Every change goes through the API; live updates reach both clients over Server-Sent Events.</p>
           <table className="ledger">
             <thead>
@@ -422,15 +414,49 @@ export default function Home() {
             ))}
           </dl>
           <p className="soft">
-            Synthetic dataset: {RESULTS.dataset}. Measured {RESULTS.date}.
+            Synthetic dataset: {RESULTS.dataset}. Live tests: {RESULTS.hardware}.
           </p>
-          <p className="cite">
-            Source: <a href={repoFile('docs/vision/phase14-evaluation.md')} rel="noopener">docs/vision/phase14-evaluation.md</a>
-          </p>
+          <p className="cite">4.0 Testing Results · Appendix A · {RESULTS.date}</p>
         </div>
       </section>
 
-      <section id="limits" className="chapter" data-cam="limits" data-snap aria-labelledby="limits-title">
+      <section id="uat" className="chapter" data-cam="uat" data-snap aria-labelledby="uat-title">
+        <div className="board wide">
+          <h2 id="uat-title">What three users told us.</h2>
+          <table className="ledger">
+            <thead>
+              <tr>
+                <th scope="col">Respondent</th>
+                <th scope="col">Tried</th>
+                <th scope="col">Tasks unaided</th>
+                <th scope="col">Mean rating</th>
+                <th scope="col">SUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {UAT.respondents.map((r) => (
+                <tr key={r.id}>
+                  <th scope="row">{r.id} · {r.role}</th>
+                  <td>{r.tried}</td>
+                  <td className="num" data-label="Tasks unaided">{r.tasks}</td>
+                  <td data-label="Mean rating"><span className="num">{r.mean}</span> {r.meaning}</td>
+                  <td className="num" data-label="SUS">{r.sus}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="soft">{UAT.finding}</p>
+          <p className="label">Fixed after the test</p>
+          <ul className="ruled">
+            {UAT.fixed.map((f) => (
+              <li key={f}>{f}</li>
+            ))}
+          </ul>
+          <p className="cite">User Acceptance Test, {UAT.date} · three respondents, descriptive only · {UAT.caveat}</p>
+        </div>
+      </section>
+
+      <section id="limits" className="chapter right" data-cam="limits" data-snap aria-labelledby="limits-title">
         <div className="board wide">
           <h2 id="limits-title">Where it breaks, and what isn&rsquo;t proven yet.</h2>
           <p className="soft">{RESULTS.strong}</p>
@@ -438,7 +464,7 @@ export default function Home() {
             <thead>
               <tr>
                 <th scope="col">Condition</th>
-                <th scope="col">Exact reads</th>
+                <th scope="col">Result</th>
                 <th scope="col">Why</th>
               </tr>
             </thead>
@@ -460,7 +486,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="conclusion" className="chapter right" data-cam="conclusion" data-snap aria-labelledby="conclusion-title">
+      <section id="conclusion" className="chapter" data-cam="conclusion" data-snap aria-labelledby="conclusion-title">
         <div className="board wide">
           <h2 id="conclusion-title">Conclusions and recommendations.</h2>
           <div className="split">
@@ -514,8 +540,8 @@ export default function Home() {
             ))}
           </ul>
           <p className="soft">
-            PARADA is a capstone prototype. The OCR / computer vision model, real-time integration and accuracy
-            evaluation are still in progress — <Link href="/technical/#status">see the current status</Link>.
+            PARADA is a demonstration prototype, tested with two IP cameras and a real vehicle in a controlled setting
+            and not yet installed at a parking facility — <Link href="/technical/#status">see the current status</Link>.
           </p>
           <div className="actions">
             <a className="btn primary" href={GITHUB_URL} rel="noopener">GitHub</a>

@@ -142,7 +142,7 @@ export default function Technical() {
             </ul>
           </div>
           <div>
-            <h3>Continuing / evaluation</h3>
+            <h3>Recommended next</h3>
             <ul className="check" style={{ '--c': 'var(--busy)' } as React.CSSProperties}>
               {STATUS.continuing.map((i) => (
                 <li key={i}>{i}</li>

@@ -27,9 +27,9 @@ The zone is the authoritative unit, not the individual slot. Cameras at zone gat
 
 ## Capabilities and Constraints
 
-- Facts live in `lib/content.ts`. Product figures come from the live site: zones A 18/30, B 42/50, C 15/40 (120 capacity); the 9-step pipeline; the demo plate ABC 1234; the demo receipt (02:14, rate configured, fee calculated). Defense facts come from the capstone paper (PARADA.pdf, May 2026: cover title, proponents, Introduction, Objectives verbatim, Literature Review citations, Methods, Level 0 DFD, Appendix A interview) and the app repo's Phase 14 evaluation (`docs/vision/phase14-evaluation.md`, 2026-09-14: 77.4% exact plate reads, 93.8% character accuracy, 0/100 false positives, 391 ms median plate read → admin update, 801 automated tests; synthetic dataset, stated on the slide). The paper is slightly behind the built system, so where they differ the system (github.com/E1yWrites/parada: README, docs/architecture/roadmap.md) is the source of truth: scope (gate-based counting, 50–100 spaces, zone-level authority, two roles), development (the 0–16 phase roadmap, 0–14 done) and data flow come from the repo; the title is the paper's cover title. The paper's Statement of the Problem lives inside its Introduction; the deck sets it out as its own slide without adding to it, and does not invent UAT results.
+- Facts live in `lib/content.ts`. Product figures come from the live site: zones A 18/30, B 42/50, C 15/40 (120 capacity); the 9-step pipeline; the demo plate ABC 1234; the demo receipt (02:14, rate configured, fee calculated). Defense facts come from the final capstone paper (PARADA-Final-Capstone-Paper-FINAL-v21.pdf, November 2026: cover, adviser, Introduction, the five Objectives verbatim, Literature Review citations, 3.0 Methods (Agile phases, development increments, Gantt chart), Level 0 DFD, 4.0 Testing Results and User Acceptance Test, 5.0 Conclusions and Recommendations, Appendix A). Headline figures: 87.1% exact plate reads (1,002/1,150 synthetic, up from 77.4%), 99.5% character accuracy, 0/100 false positives, live IP-camera tests 10/10 at night and 9/10 by day with steady cameras, 0.39 s median gate event → admin screen, 1,336 automated tests; UAT with three respondents (means 4.22, 3.68, 3.47; SUS 65.0, 40.0, 67.5, all below 68). The paper is newer than the app repo's roadmap, so the paper wins where they differ. Every figure keeps the caveat the paper puts beside it (synthetic dataset, controlled setting, three respondents, fixes verified by tests not users). The paper has no separate Statement of the Problem; the deck builds it from the Introduction, Research Gap and Requirement Analysis without adding to them. The PDF itself is not committed: it carries the team's phone numbers and CVs.
 - Zone-level only. Do not claim slot locking, EV filters, extensions, pricing figures, users or deployments.
-- Project status is honest: a capstone in development.
+- Project status is honest: a demonstration prototype, tested in a controlled setting, not installed at a facility.
 - Stack: Next.js (static export), React Three Fiber, drei, GSAP ScrollTrigger, Web Audio synthesized sound (opt-in).
 - Performance: 60fps target, DPR ≤ 2, a simpler mobile scene without shadows, reduced motion means no scroll-scrubbed camera, no layout shift, Lighthouse ≥ 80 on desktop.
 
@@ -45,8 +45,8 @@ The zone is the authoritative unit, not the individual slot. Cameras at zone gat
 - Copy and figures: `lib/content.ts`, `public/llms.txt`.
 - Campus reference photos (8, HEIC converted to JPG).
 - Brand assets from the app repo (E1yWrites/parada): the PARADA logo, P mark, guard-dog mascot and the app's tagline "Guiding every vehicle to its zone." (admin sign-in screen).
-- The capstone paper (PARADA.pdf, May 2026) and the Phase 14 evaluation in the app repo.
-- Absent: real app screenshots of the driver app or dashboard (the paper's Figma figures are prototypes, not used), UAT results, testimonials, pricing. Do not fabricate them.
+- The final capstone paper (v21, November 2026), including UAT results and the prototype's default fee (₱20 first two hours, ₱10 per started hour after).
+- Absent: real app screenshots on the site (the paper's Figures 9–49 are real screenshots but are not yet exported), testimonials. Do not fabricate them.
 
 ## Product Principles
 

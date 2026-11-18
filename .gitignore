@@ -23,3 +23,6 @@ AGENTS.md
 
 # tracing board: contains Esri satellite imagery, not for redistribution
 research/
+
+# capstone paper: contains the team's phone numbers and CVs, keep out of the public repo
+*.pdf
