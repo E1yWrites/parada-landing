@@ -41,8 +41,8 @@ const sections: Section[] = [
     title: 'The PARADA system',
     body: (
       <p>
-        PARADA is not yet deployed: no establishment runs it today, so it holds no one&rsquo;s data. When an
-        establishment does run it, that establishment decides why and how parking data is processed and is responsible
+        PARADA is a demonstration prototype, not installed in a parking facility and not deployed on a public server: no establishment runs it, so it holds no
+        one&rsquo;s data. If an establishment ever ran it, that establishment decides why and how parking data is processed and is responsible
         for it, and must give drivers its own privacy notice. The rest of this page describes what the system is built
         to process, from its documentation, so that notice can be accurate.
       </p>
