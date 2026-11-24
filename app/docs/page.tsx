@@ -145,7 +145,7 @@ npm run db:test:setup -w @parada/database   # creates parada_test + parada_test_
 npm run test`}</pre>
         <p>
           API and database suites run against real PostgreSQL and refuse to start unless pointed at a test database.
-          Final run, 18 November 2026: mobile 532, API 330, admin 191, vision 221, database 53, types 9 — 1,336 tests
+          Latest full run, 16 November 2026: mobile 490, API 310, admin 157, vision 220, database 53, types 9 — 1,239 tests
           passing, with 2 opt-in live vision tests skipped (both pass against a running backend).
         </p>
         <p className="soft">
@@ -231,9 +231,8 @@ npm run test`}</pre>
           <li>Hybrid (recommended for the capstone): online API, admin and database, with vision on the facility network posting over HTTPS. Cameras and raw frames never leave the site.</li>
         </ul>
         <p className="soft">
-          Status: deployed to a controlled test environment only. An offline launcher also runs the whole system on one
-          Windows computer; for the evaluation it ran on a laptop with two IP cameras on a PoE switch. No production
-          deployment has been made.
+          Status: PARADA is a demonstration prototype, not installed in a parking facility and not deployed on a public server. It runs on one computer, on a local network or
+          through the offline launcher; for the evaluation it ran on a laptop with two IP cameras on a PoE switch.
         </p>
       </>
     ),

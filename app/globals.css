@@ -2287,6 +2287,93 @@ html.is-driving .slide-count {
   color: var(--stamp-deep);
   font-weight: 700;
 }
+/* long row names (processes, test rounds, verdicts) wrap instead of pushing the table wide */
+.ledger.wrap tbody th {
+  min-width: 10rem;
+  max-width: 19rem;
+  white-space: normal;
+}
+/* tables of figures (Tables 1–4, 7) and the verdicts: tighter rows so a full paper table fits one slide */
+.ledger.compact th,
+.ledger.compact td,
+.ledger.verdicts th,
+.ledger.verdicts td {
+  padding-block: 0.36rem;
+}
+.cite + .split {
+  margin-top: 0.9rem;
+}
+.recs li {
+  padding-block: 0.4rem;
+}
+/* a total row: the sum line of a form, heavy rule above */
+.ledger tfoot th,
+.ledger tfoot td {
+  border-top: 2px solid var(--rule);
+  border-bottom: 0;
+}
+.ledger tfoot th {
+  font: 800 1.15rem / 1.05 var(--font-display), sans-serif;
+  text-transform: uppercase;
+}
+.ledger tfoot td.num {
+  color: var(--stamp);
+}
+/* a paper number (process 1.0, objective 3) in stamp red before a row name */
+.stamp-num {
+  margin-inline-end: 0.35rem;
+  color: var(--stamp);
+  font: 700 0.95rem / 1 var(--font-mono), monospace;
+}
+.verdicts tbody th small {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--green-ink);
+  font: 700 0.72rem / 1.2 var(--font-sans), sans-serif;
+  letter-spacing: 0.1em;
+}
+.rule-top {
+  margin-top: 0.4rem;
+  padding-top: 0.6rem;
+  border-top: 2px solid var(--rule);
+}
+.rule-gap {
+  margin-top: 1rem;
+}
+.split.thirds {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.actor {
+  margin: 0 0 0.3rem;
+  font: 800 1.35rem / 1 var(--font-display), sans-serif;
+  text-transform: uppercase;
+}
+.ruled.tight li {
+  padding: 0.32rem 0;
+  font-size: 0.92rem;
+}
+.quotes q {
+  font-style: italic;
+}
+.quotes .num {
+  margin-inline-start: 0.4rem;
+  color: var(--stamp);
+  font-size: 0.8rem;
+}
+.recs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 2rem;
+}
+.recs li p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.42;
+  color: var(--ink-soft);
+}
+.recs li b {
+  color: var(--ink);
+}
 .compare-head {
   margin: 1.3rem 0 0.6rem;
 }
@@ -2535,7 +2622,9 @@ html.is-driving .slide-count {
 }
 @media (max-width: 900px) {
   .objectives,
-  .split {
+  .split,
+  .split.thirds,
+  .recs {
     grid-template-columns: 1fr;
   }
   .problems li {

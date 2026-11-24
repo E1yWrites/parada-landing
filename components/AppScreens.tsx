@@ -2,7 +2,7 @@
 // dark register, apps/admin globals.css, docs/mockups): the driver app's "Home: parked" screen and the admin
 // console dashboard, both showing the state right after the tour car's entry. Figures come from lib/content.ts.
 import { Space_Grotesk, Inter } from 'next/font/google';
-import { ZONES, DEMO_PLATE, RECEIPT, ACTIVE_SESSIONS, ACTIVITY, CAMERAS, FLAGS, totals } from '@/lib/content';
+import { ZONES, DEMO_PLATE, RECEIPT, ACTIVITY, CAMERAS, FLAGS, totals } from '@/lib/content';
 
 const grotesk = Space_Grotesk({ subsets: ['latin'], weight: ['500', '700'], variable: '--app-display', preload: false });
 const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--app-sans', preload: false });
@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600'], variabl
 // After the tour's entry: Zone A gained one car and one session.
 const zones = ZONES.map((z, i) => ({ ...z, occupied: z.occupied + (i === 0 ? 1 : 0) }));
 const all = totals(zones);
-const online = CAMERAS.filter((c) => c.status === 'ONLINE').length;
+const enabled = CAMERAS.filter((c) => c.status === 'ENABLED').length;
 
 function Icon({ d, circle }: { d: string; circle?: [number, number, number] }) {
   return (
@@ -30,6 +30,7 @@ const I = {
   cam: { d: 'M4 7h3l2-3h6l2 3h3v12H4z', circle: [12, 13, 3.5] as [number, number, number] },
   nav: { d: 'M3 11l18-8-8 18-2-8z' },
   bell: { d: 'M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0' },
+  flag: { d: 'M5 21V4h11l-2 4 2 4H5' },
 };
 
 export default function AppScreens() {
@@ -65,6 +66,10 @@ export default function AppScreens() {
               <Icon {...I.clock} />
               Sessions
             </span>
+            <span className="adm-link">
+              <Icon {...I.flag} />
+              Violations
+            </span>
           </nav>
           <div className="adm-main">
             <div className="adm-top">
@@ -75,35 +80,35 @@ export default function AppScreens() {
             <p className="adm-sub">Real-time parking management overview</p>
             <div className="adm-metrics">
               <div className="adm-card adm-hero">
-                <span>Total Occupancy</span>
+                <span>Occupied</span>
                 <strong>
                   {all.occupied}
                   <em>/</em>
                   {all.capacity}
                 </strong>
-                <small>{zones.length} zones reporting</small>
+                <small>of total capacity, {zones.length} zones</small>
                 <i style={{ '--pct': `${(all.occupied / all.capacity) * 100}%` } as React.CSSProperties} />
               </div>
               <div className="adm-card">
-                <span>Active Sessions</span>
-                <strong>{ACTIVE_SESSIONS + 1}</strong>
-                <small>open right now</small>
+                <span>Parked now</span>
+                <strong>{all.occupied}</strong>
+                <small>vehicles in the facility</small>
               </div>
               <div className="adm-card">
-                <span>Available Spaces</span>
+                <span>Free spaces</span>
                 <strong>{all.available}</strong>
-                <small>open spaces right now</small>
+                <small>capacity minus occupied</small>
               </div>
               <div className="adm-card">
-                <span>Camera Status</span>
+                <span>Gate cameras</span>
                 <strong>
-                  {online}/{CAMERAS.length}
+                  {enabled}/{CAMERAS.length}
                 </strong>
-                <small>gate cameras online</small>
+                <small>enabled</small>
               </div>
             </div>
             <div className="adm-alerts">
-              <span className="adm-card-title">Live Alerts</span>
+              <span className="adm-card-title">Recent alerts</span>
               <p className="ok">
                 Session opened · {DEMO_PLATE} · {a.name}
               </p>
@@ -137,8 +142,8 @@ export default function AppScreens() {
           <span className="drv-bat" />
         </div>
         <div className="drv-head">
-          <b>Home</b>
-          <span>Live zone availability from the gate cameras</span>
+          <b>Now</b>
+          <span>Your current parking at a glance</span>
         </div>
         <div className="drv-card">
           <div className="drv-row">
@@ -152,7 +157,7 @@ export default function AppScreens() {
           <span className="drv-timer">00:{RECEIPT.duration}</span>
           <span className="drv-btn">
             <Icon {...I.nav} />
-            Navigate to parking
+            Get directions
           </span>
         </div>
         <div className="drv-zones">

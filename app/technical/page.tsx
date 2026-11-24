@@ -175,8 +175,8 @@ export default function Technical() {
         </p>
         <p className="soft">
           The system is developed as a capstone prototype and evaluated based on functionality, integration,
-          correctness, and system behavior. Formal accuracy evaluation and production deployment are treated separately
-          from the functional implementation.
+          correctness, and system behavior. It was evaluated with a synthetic OCR dataset, live IP-camera tests and a user
+          acceptance test, and is not installed in a parking facility or deployed on a public server.
         </p>
         <ul className="chips">
           {['Capstone project', 'Smart parking', 'Computer vision', 'OCR', 'Mobile applications', 'Web applications'].map((t) => (

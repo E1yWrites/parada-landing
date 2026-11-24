@@ -20,8 +20,8 @@ export default function Legal() {
       <header>
         <h1>Legal.</h1>
         <p className="lead">
-          PARADA is a BSIT capstone project at Lyceum of the Philippines University — Batangas, in development and not
-          yet deployed. These pages describe this website and the system as its repository documents it.
+          PARADA is a BSIT capstone project at Lyceum of the Philippines University — Batangas, a demonstration
+          prototype that is not installed in a parking facility or deployed on a public server. These pages describe this website and the system as its repository documents it.
         </p>
       </header>
       <section aria-label="Legal pages">
