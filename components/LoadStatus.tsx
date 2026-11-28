@@ -1,6 +1,5 @@
 'use client';
-// The intro's loading line: a spinner and percentage while the 3D campus downloads, then a ready mark and the way
-// in. Scene.tsx reports progress on `parada:load`; without WebGL the page simply carries on in HTML.
+// The demo's loading line: a spinner and percentage while the 3D campus downloads, then a ready mark. Scene.tsx reports progress on `parada:load`; without WebGL the page simply carries on in HTML.
 import { useEffect, useState } from 'react';
 
 type Load = { progress: number; done: boolean };
@@ -31,9 +30,6 @@ export default function LoadStatus() {
       <span className="load-text">
         {!webgl ? 'Read on: the trip is told in the page below.' : done ? 'Campus ready.' : `Loading the campus model · ${Math.round(load?.progress ?? 0)}%`}
       </span>
-      <a className="btn primary" href="#start" aria-disabled={!done || undefined}>
-        Begin
-      </a>
     </div>
   );
 }

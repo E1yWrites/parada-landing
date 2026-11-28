@@ -1,4 +1,4 @@
-// The two PARADA clients at step 7, drawn after the app's own design (E1yWrites/parada: apps/mobile src/theme
+// The two PARADA clients (the demo's step 7, and one at a time on the landing page), drawn after the app's own design (E1yWrites/parada: apps/mobile src/theme
 // dark register, apps/admin globals.css, docs/mockups): the driver app's "Home: parked" screen and the admin
 // console dashboard, both showing the state right after the tour car's entry. Figures come from lib/content.ts.
 import { Space_Grotesk, Inter } from 'next/font/google';
@@ -33,11 +33,12 @@ const I = {
   flag: { d: 'M5 21V4h11l-2 4 2 4H5' },
 };
 
-export default function AppScreens() {
+export default function AppScreens({ part }: { part?: 'admin' | 'driver' }) {
   const a = zones[0];
   return (
-    <div className={`app-ui ${grotesk.variable} ${inter.variable}`} aria-hidden="true">
+    <div className={`app-ui${part ? ` one ${part}` : ''} ${grotesk.variable} ${inter.variable}`} aria-hidden="true">
       {/* admin console, in a browser frame */}
+      {part !== 'driver' && (
       <div className="adm">
         <div className="adm-bar">
           <i />
@@ -133,8 +134,10 @@ export default function AppScreens() {
           </div>
         </div>
       </div>
+      )}
 
       {/* driver app, Home with a session open */}
+      {part !== 'admin' && (
       <div className="drv">
         <div className="drv-status">
           <span>9:41</span>
@@ -189,6 +192,7 @@ export default function AppScreens() {
           </span>
         </div>
       </div>
+      )}
     </div>
   );
 }

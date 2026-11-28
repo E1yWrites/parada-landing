@@ -16,7 +16,7 @@ const display = Sofia_Sans_Extra_Condensed({ subsets: ['latin'], weight: ['800',
 const sans = Sofia_Sans({ subsets: ['latin'], weight: ['400', '600', '700'], variable: '--font-sans' });
 const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500', '700'], variable: '--font-mono' });
 
-const TITLE = 'PARADA — Smart Parking Management System';
+const TITLE = 'PARADA — Smart parking for campuses';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -56,14 +56,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Link>
           <Nav />
           <SoundToggle />
-          <a className="header-link" href={GITHUB_URL} rel="noopener">GitHub</a>
         </header>
         <DriveHUD />
         <main id="content">{children}</main>
         <footer className="site-footer">
           <div>
             <p className="brand">PARADA</p>
-            <p>Smart parking system · a BSIT capstone project</p>
+            <p>Smart parking for campuses · built at LPU-Batangas</p>
             <p>Lyceum of the Philippines University — Batangas</p>
             <p className="credit">
               Campus map data ©{' '}
@@ -76,9 +75,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </p>
           </div>
           <nav aria-label="Footer">
-            <Link href="/">Experience</Link>
+            <Link href="/">Home</Link>
+            <Link href="/demo/">Demo</Link>
             <Link href="/technical/">Technical</Link>
-            <Link href="/docs/">Docs</Link>
             <Link href="/legal/terms/">Terms</Link>
             <Link href="/legal/privacy/">Privacy</Link>
             <Link href="/legal/licenses/">Licences</Link>
