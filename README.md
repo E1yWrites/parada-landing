@@ -47,9 +47,9 @@ Official site for **PARADA**, a smart parking management system built as a BSIT 
 - `components/scene/campusData.ts` is generated from OpenStreetMap by `node scripts/campus-data.mjs` (campus edge and the houses around it). Map data © OpenStreetMap contributors (ODbL).
 - Vercel Web Analytics (`@vercel/analytics`, cookieless, same-origin script) is mounted in `app/layout.tsx`; the privacy notice describes it.
 - `public/brand/` holds the PARADA logo, mark and mascot from the app repo.
-- `app/docs/` and `app/legal/` (terms, privacy, licences) summarise the PARADA repository; `components/AppScreens.tsx` draws the driver app and admin console at step 7 after the app's own design.
+- `app/legal/` (terms, privacy, licences) summarises the PARADA repository; `components/AppScreens.tsx` draws the driver app and admin console at step 7 after the app's own design.
 - `public/models/props.glb` holds the cars, the motorcycle and the rain tree (Quaternius CC0, jeremy CC BY 3.0, hat_my_guy CC0); see `CREDITS.txt`. Buildings, palms, houses and streets are generated in code (`Buildings.tsx`, `Trees.tsx`, `Campus.tsx`); building names follow the official LPU-B campus map.
-- The home page is the final-defense deck: a title slide, four sideways panels (`components/Strip.tsx`), then the defense. Clickers and arrow keys turn one slide (`components/SnapPop.tsx`); thesis facts live in `lib/content.ts` with their sources.
+- The home page (`app/page.tsx`) is a plain-HTML landing page for the people who would bring PARADA to their campus; it never loads the 3D campus. `/demo/` (`app/demo/page.tsx`) holds the 3D campus, the nine-stop guided trip and drive mode; wheel and arrow keys turn one stop (`components/SnapPop.tsx`). Facts live in `lib/content.ts` with their sources.
 
 ## Run
 ```bash

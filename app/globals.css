@@ -44,6 +44,7 @@
 html {
   background: #cfe2ee;
   scroll-behavior: smooth;
+  scroll-padding-top: var(--header);
 }
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -344,10 +345,12 @@ h3.sub {
   cursor: pointer;
   transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), background 0.16s ease, box-shadow 0.16s ease;
 }
-.btn:hover {
-  color: var(--ink);
-  background: #fff;
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    color: var(--ink);
+    background: #fff;
+    transform: translateY(-1px);
+  }
 }
 .btn:active {
   transform: translateY(1px) scale(0.985);
@@ -359,11 +362,13 @@ h3.sub {
   color: #fff;
   box-shadow: inset 0 0 0 2px var(--stamp), inset 0 0 0 3.5px rgb(255 255 255 / 0.85);
 }
-.btn.primary:hover {
-  background: var(--stamp-deep);
-  border-color: var(--stamp-deep);
-  box-shadow: inset 0 0 0 2px var(--stamp-deep), inset 0 0 0 3.5px rgb(255 255 255 / 0.85);
-  color: #fff;
+@media (hover: hover) and (pointer: fine) {
+  .btn.primary:hover {
+    background: var(--stamp-deep);
+    border-color: var(--stamp-deep);
+    box-shadow: inset 0 0 0 2px var(--stamp-deep), inset 0 0 0 3.5px rgb(255 255 255 / 0.85);
+    color: #fff;
+  }
 }
 .btn.small {
   min-height: 44px;
@@ -428,7 +433,6 @@ html[data-webgl='on'] .no-webgl {
   margin-inline: auto;
 }
 .tabs a,
-.header-link,
 .sound {
   display: inline-flex;
   align-items: center;
@@ -445,7 +449,6 @@ html[data-webgl='on'] .no-webgl {
   cursor: pointer;
 }
 .tabs a:hover,
-.header-link:hover,
 .sound:hover {
   color: #fff;
   background: rgb(255 255 255 / 0.12);
@@ -521,7 +524,7 @@ main {
   padding-block: 2.75rem;
 }
 
-/* ---------- intro: what PARADA is, over a plain pass-mint field while the campus loads ---------- */
+/* ---------- the 404's mascot and copy over a plain pass-mint field; the demo's loading line ---------- */
 .intro {
   position: relative;
   z-index: 2;
@@ -567,38 +570,6 @@ main {
 }
 .intro-copy {
   max-width: 40rem;
-}
-/* the thesis title: the logo stands for "PARADA:", the rest of the cover title in condensed caps under it */
-.thesis {
-  margin: 0 0 1.1rem;
-  font: 800 clamp(1.55rem, 1rem + 1.7vw, 2.6rem) / 0.98 var(--font-display), sans-serif;
-  text-transform: uppercase;
-  text-wrap: balance;
-}
-.thesis img {
-  display: block;
-  width: min(100%, 26rem);
-  height: auto;
-  margin-bottom: 0.9rem;
-}
-.byline {
-  margin: 0 0 1.1rem;
-  font-weight: 600;
-  font-size: var(--step--1);
-  color: var(--ink-soft);
-}
-.proponents {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: 0 1.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.proponents li {
-  padding: 0.45rem 0 0.35rem;
-  border-top: 2px solid var(--rule);
-  font-weight: 600;
 }
 .load {
   display: flex;
@@ -1055,20 +1026,17 @@ html.snap [data-snap] {
 html.snap .site-footer {
   scroll-snap-align: end;
 }
-html.js-pop [data-snap] :is(.board, .intro-copy, .intro-mascot, .app-ui) {
+html.js-pop [data-snap] :is(.board, .app-ui) {
   opacity: 0;
   transform: translateY(1.4rem) scale(0.98);
   transition: opacity 0.4s ease, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
-html.js-pop [data-snap].is-in :is(.board, .intro-copy, .intro-mascot, .app-ui) {
+html.js-pop [data-snap].is-in :is(.board, .app-ui) {
   opacity: 1;
   transform: none;
 }
-html.js-pop [data-snap].is-in .intro-copy {
-  transition-delay: 0.08s;
-}
 @media (prefers-reduced-motion: reduce) {
-  html.js-pop [data-snap] :is(.board, .intro-copy, .intro-mascot, .app-ui) {
+  html.js-pop [data-snap] :is(.board, .app-ui) {
     transform: none;
   }
 }
@@ -1949,7 +1917,7 @@ html.is-driving .site-footer {
   .chapter,
   .step {
     align-items: flex-end;
-    padding-bottom: 4.25rem; /* clear of the slide counter */
+    padding-bottom: 1.25rem;
   }
   .right {
     justify-content: flex-start;
@@ -1961,22 +1929,15 @@ html.is-driving .site-footer {
     grid-template-columns: 1fr;
     align-content: center;
     gap: 1rem;
-    /* bottom clears the slide counter, like every phone card, so BEGIN is never under it */
-    padding-block: 1.25rem 4.25rem;
+    padding-block: 1.25rem;
   }
   .intro-mascot {
     width: 6.5rem;
   }
-  .intro .proponents li {
-    padding-block: 0.3rem 0.25rem;
-  }
   .how-head {
     align-items: flex-end;
     justify-content: flex-start;
-    padding-bottom: 4.25rem;
-  }
-  .header-link {
-    display: none;
+    padding-bottom: 1.25rem;
   }
   .tabs {
     margin-inline: auto 0;
@@ -2096,581 +2057,1165 @@ html.is-driving .site-footer {
     padding: 0 0.85rem;
     font-size: 1.05rem;
   }
-  .hero .board > p:not(.headline):not(.fine) {
-    display: none; /* the About chapter carries the same explanation */
-  }
   .fields {
     --cols: 2;
   }
 }
 
-/* ---------- the strip: panels side by side, moved by the scroll through their stops (Strip.tsx) ---------- */
-.strip {
-  display: grid;
+/* ---------- the landing page (/): plain HTML, no 3D. The pass and the paperwork on paper and mint grounds ---------- */
+.h2 {
+  font-size: var(--step-2);
 }
-.strip > * {
-  grid-area: 1 / 1;
+.land {
+  background: var(--paper);
 }
-.strip-stop {
-  height: calc(100svh - var(--header));
+.land-wrap {
+  width: min(100%, 76rem);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
-html:not(.js-strip) .strip-stops {
-  display: none;
+.land-band {
+  padding-block: clamp(4rem, 9vw, 7.5rem);
+  border-top: 2px solid var(--rule);
 }
-html.js-strip .strip-view {
-  position: sticky;
-  top: var(--header);
-  align-self: start;
-  height: calc(100svh - var(--header));
-  overflow: clip; /* never scrolled sideways by focus: Strip pages to a focused panel instead */
+.land-band.mint {
+  /* at full width the guilloche needs a wash, or it reads as moiré */
+  background: linear-gradient(rgb(223 238 227 / 0.66), rgb(223 238 227 / 0.66)), var(--guilloche-bg) center / 260px auto, var(--mint);
 }
-html.js-strip .strip-track {
+.land h2 {
+  max-width: 17ch;
+  margin-bottom: 0.55em;
+  font-size: clamp(2.4rem, 1.3rem + 3.6vw, 4.75rem);
+  font-weight: 900;
+  line-height: 0.9;
+}
+.land h3 {
+  font-size: clamp(1.45rem, 1.2rem + 0.6vw, 1.8rem);
+}
+.measure {
+  max-width: 62ch;
+}
+
+/* hero: the pass over a still of the 3D campus */
+.land-hero {
+  position: relative;
+  isolation: isolate;
   display: flex;
-  width: calc(var(--n) * 100%);
+  align-items: center;
+  min-height: min(calc(100svh - var(--header)), 60rem);
+  padding: clamp(2rem, 5vh, 3.5rem) max(var(--gutter), calc((100vw - 76rem) / 2 + var(--gutter)));
+  overflow: hidden;
+  background: #cfe2ee;
+}
+/* the still sits in a frame that covers the hero like object-fit: cover, so pins stay on their spot at any size */
+.land-shot {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  container-type: size;
+  --ar: 1.7778; /* hero-wide.webp, 1920 × 1080 */
+  --fx: 0.62;
+  --fy: 0.5;
+}
+.shot-frame {
+  position: absolute;
+  width: max(100cqw, calc(100cqh * var(--ar)));
+  height: max(100cqh, calc(100cqw / var(--ar)));
+  left: calc((100cqw - max(100cqw, calc(100cqh * var(--ar)))) * var(--fx));
+  top: calc((100cqh - max(100cqh, calc(100cqw / var(--ar)))) * var(--fy));
+}
+.shot-frame img {
+  display: block;
+  width: 100%;
   height: 100%;
-  transform: translateX(calc(var(--p, 0) * -100% / var(--n)));
-  will-change: transform;
 }
-html.js-strip .strip-panel {
-  flex: 0 0 calc(100% / var(--n));
-  min-height: 0;
-  align-items: safe center;
+.pin {
+  position: absolute;
+  left: calc(var(--x) * 100%);
+  top: calc(var(--y) * 100%);
 }
-html.js-strip .strip-panel.hero {
-  align-items: safe flex-start;
+.pin.entry {
+  --x: 0.748;
+  --y: 0.855;
 }
-@media (max-width: 768px) {
-  html.js-strip .strip-panel.hero {
-    padding-top: 20svh; /* the pass fits a phone screen with the campus still showing above it */
-  }
-  html.js-strip .strip-panel,
-  html.js-strip .strip-panel.hero {
-    align-items: safe flex-end;
-    overflow-y: auto; /* a panel taller than a small phone scrolls inside, then the page pages on */
-    scrollbar-width: none;
-  }
+.pin.zone {
+  --x: 0.736;
+  --y: 0.5;
 }
-
-/* a windowed browser on a 768p laptop: type steps down so every slide, strip panels included, fits one screen */
-@media (min-width: 769px) and (max-height: 720px) {
-  html {
-    font-size: 87.5%;
-  }
+.pin.bays {
+  --x: 0.775;
+  --y: 0.665;
 }
-@media (min-width: 769px) and (max-height: 620px) {
-  html {
-    font-size: 81.25%;
-  }
-}
-/* the driver app's five steps in two columns where the card is wide */
-@media (min-width: 900px) {
-  .board.wide .route {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 1.5rem;
-  }
-}
-/* a full-screen TV or projector across a room (1080p and up): everything set in rem grows a quarter */
-@media (min-width: 1600px) and (min-height: 1000px) {
-  html {
-    font-size: 125%;
-  }
-}
-
-/* ---------- slide counter, for the panel's "back to slide 7" ---------- */
-.slide-count {
-  position: fixed;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
-  z-index: 3;
-  display: flex;
-  align-items: baseline;
-  gap: 0.35rem;
-  margin: 0;
-  padding: 0.3rem 0.6rem;
-  border-radius: 7px;
-  background: var(--mint);
-  box-shadow: var(--laminate), 0 1px 0 rgb(20 40 30 / 0.25);
-  color: var(--ink);
-  font-size: var(--step--1);
-  font-weight: 500;
-}
-/* the slide number is a field: click it (or type digits anywhere) and press Enter to jump */
-.slide-count input {
-  width: 2.2ch;
+.pin button {
+  position: absolute;
+  left: -22px;
+  top: -22px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 0;
-  border-bottom: 2px solid transparent;
+  border-radius: 50%;
   background: none;
-  color: inherit;
-  font: inherit;
+  cursor: pointer;
+}
+/* the pin: a stamp-red dot in a white ring, with a ring that ripples out three times when the page opens */
+.pin button::before,
+.pin button::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+}
+.pin button::before {
+  background: var(--stamp);
+  box-shadow: 0 0 0 3px #fff, 0 2px 6px rgb(20 30 25 / 0.45);
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.16s ease;
+}
+.pin button::after {
+  border: 2px solid #fff;
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pin button::after {
+    animation: ripple 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s 3;
+  }
+  .pin.zone button::after {
+    animation-delay: 1.1s;
+  }
+  .pin.bays button::after {
+    animation-delay: 1.4s;
+  }
+}
+@keyframes ripple {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+.pin[data-open] button::before {
+  transform: scale(1.2);
+  background: var(--stamp-deep);
+}
+.pin button:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: -4px;
+  border-radius: 50%;
+}
+/* the callout: a paper tag on a leader line above its pin */
+.pin-tag {
+  position: absolute;
+  bottom: 28px;
+  left: 0;
+  width: min(15rem, 70vw);
+  padding: 0.6rem 0.75rem 0.65rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.2), 0 18px 30px -16px rgb(10 20 40 / 0.55);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 6px);
+  transition: opacity 0.18s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s 0.25s;
+  pointer-events: none;
+}
+.pin-tag b {
+  display: block;
+  margin-bottom: 0.15rem;
+  font: 800 1.15rem / 1 var(--font-display), sans-serif;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.pin[data-open] .pin-tag,
+.pin button:focus-visible + .pin-tag {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition: opacity 0.18s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pin[data-open] {
+  z-index: 2;
+}
+@media (hover: hover) and (pointer: fine) {
+  .pin button:hover::before {
+    transform: scale(1.2);
+    background: var(--stamp-deep);
+  }
+  .pin:hover {
+    z-index: 2;
+  }
+  .pin:hover .pin-tag {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    transition: opacity 0.18s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+/* press: the dot gives a little under the finger */
+.pin button:active::before {
+  transform: scale(0.9);
+}
+.land-hero .board {
+  width: min(100%, 33rem);
+}
+.land-hero h1 {
+  margin-bottom: 0.4em;
+  font-size: clamp(2.5rem, 1.6rem + 2.4vw, 3.7rem);
+  font-weight: 900;
+  line-height: 0.9;
+}
+.land-hero .wordmark {
+  width: min(100%, 17rem);
+  margin: 0.4rem 0 1rem;
+}
+.land-hero .actions {
+  margin-bottom: 0.5rem;
+}
+
+/* the problem: what a lot looks like today, beside the office's view of the same morning */
+.split-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(2.5rem, 6vw, 6rem);
+}
+.pains {
+  margin: 0 0 2rem;
+  border-bottom: 2px solid var(--rule);
+}
+.pains li {
+  padding: 0.85rem 0;
+  border-top: 2px solid var(--rule);
+  font: 700 clamp(1.15rem, 1rem + 0.5vw, 1.4rem) / 1.3 var(--font-sans), sans-serif;
+}
+.pains li + li {
+  border-top-width: 1px;
+  border-top-color: var(--mint-3);
+}
+.morning {
+  justify-self: end;
+  margin: 0;
+}
+.morning figcaption {
+  display: grid;
+  gap: 0.15rem;
+}
+.morning figcaption b {
+  font: 800 1.6rem / 1 var(--font-display), sans-serif;
+  text-transform: uppercase;
+}
+.morning figcaption span {
+  font: 700 0.72rem / 1.2 var(--font-sans), sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green-ink);
+}
+.morning .zones {
+  margin-bottom: 0;
+}
+.morning .zones b {
+  font-size: 1.2rem;
+}
+.morning .zones .meter i {
+  width: 100%;
+  transform-origin: left;
+  transform: scaleX(var(--pct));
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 90ms), background-color 0.3s ease;
+}
+.morning .zones .num {
+  min-width: 3.6em;
   text-align: right;
-  caret-color: var(--stamp);
-  cursor: text;
 }
-.slide-count input:focus {
-  outline: none;
-  border-bottom-color: var(--stamp);
+/* today: nobody is counting. Lamps go hollow, meters empty and hatched, counts become a question mark */
+.zones [data-band='unknown'] {
+  --c: transparent;
 }
-.slide-count:focus-within {
+.zones [data-band='unknown']::before {
+  box-shadow: inset 0 0 0 1.5px var(--ink-soft);
+}
+.zones [data-band='unknown'] .meter {
+  background: repeating-linear-gradient(-45deg, transparent 0 4px, rgb(61 74 68 / 0.3) 4px 5.5px);
+}
+.zones [data-band='unknown'] .meter i {
+  transform: scaleX(0);
+  transition-delay: 0s;
+}
+.zones [data-band='unknown'] .num,
+.zones [data-band='unknown'] small {
+  color: var(--ink-soft);
+}
+/* a two-way switch on the form: the chosen side is stamped red */
+.switch {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 1rem 0 0;
+  padding: 3px;
+  border: 2px solid var(--ink);
+  border-radius: 7px;
+  background: var(--paper);
+}
+.switch::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  border-radius: 4px;
+  background: var(--stamp);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.morning[data-view='parada'] .switch::before {
+  transform: translateX(100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .switch::before {
+    transition: none;
+  }
+}
+.switch label {
+  position: relative;
+  z-index: 1;
+}
+.switch label {
+  cursor: pointer;
+}
+/* the label takes the click; the radio underneath keeps the keyboard and the screen reader */
+.switch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  pointer-events: none;
+}
+.switch span {
+  display: grid;
+  place-items: center;
+  min-height: 40px;
+  padding: 0 0.9rem;
+  border-radius: 4px;
+  font: 800 1.05rem / 1 var(--font-display), sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .switch label:hover input:not(:checked) + span {
+    background: var(--mint-2);
+  }
+}
+.switch label:active span {
+  transform: scale(0.97);
+}
+.switch input:checked + span {
+  color: #fff;
+}
+.switch input:focus-visible + span {
   outline: 3px solid var(--id);
   outline-offset: 2px;
 }
-.slide-count[data-typing] {
-  box-shadow: var(--laminate), 0 0 0 2px var(--stamp);
+
+/* how it works: one sheet in three columns, one per stop (GateSim.tsx). Each stop's note sits above its spot on the
+   plan (entry gate, the zone, exit gate) with a dashed leader down to it; what the stop produced sits below. The plan
+   is drawn in the page's own ink on the mint, not boxed as a widget. */
+.gates {
+  --gate: 26.4%; /* the entry gate's x inside the first column: 1.6 of the plan's 18.2 column units, over a third */
+  margin-top: 2.25rem;
 }
-@media (pointer: coarse) {
-  .slide-count {
-    min-height: 44px;
-    align-items: center;
-    padding-inline: 0.8rem;
-  }
-  .slide-count input {
-    font-size: 16px; /* under 16px iOS zooms the page when the field takes focus */
+.stamps,
+.outs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.stamps li,
+.out {
+  position: relative;
+  min-width: 0;
+}
+.stamps li {
+  padding: 0 1.5rem 1.4rem 0;
+}
+.stamps li:nth-child(2),
+.out.zone {
+  padding-inline: 0.75rem;
+  text-align: center;
+}
+.stamps li:nth-child(3),
+.out.exit {
+  padding: 0 0 1.4rem 1.5rem;
+  text-align: right;
+}
+/* leaders: dashed green while the stop is pending, solid stamp red once it has happened */
+.stamps li::after,
+.out::before {
+  content: '';
+  position: absolute;
+  left: var(--gate);
+  border-left: 2px dashed rgb(31 90 67 / 0.55);
+  transition: border-color 0.3s ease;
+}
+.stamps li::after {
+  bottom: -1.25rem;
+  height: 2.35rem;
+}
+.out::before {
+  top: -1.25rem;
+  height: 1.25rem;
+}
+.stamps li:nth-child(2)::after,
+.out.zone::before {
+  left: 50%;
+}
+.stamps li:nth-child(3)::after,
+.out.exit::before {
+  left: calc(100% - var(--gate));
+}
+.stamps li[data-done]::after {
+  border-left-style: solid;
+  border-color: var(--stamp);
+}
+/* pending: a dashed green box, still readable; done: stamped red, and it stays stamped */
+.stamp-box {
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  margin-bottom: 1rem;
+  border: 2.5px dashed var(--guilloche);
+  border-radius: 5px;
+  color: var(--green-ink);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+.stamps li:nth-child(2) .stamp-box {
+  margin-inline: auto;
+}
+.stamps li:nth-child(3) .stamp-box {
+  margin-left: auto;
+}
+.stamps li[data-done] .stamp-box {
+  border: 2.5px solid var(--stamp);
+  box-shadow: inset 0 0 0 2px var(--mint), inset 0 0 0 3.5px var(--stamp);
+  background: rgb(192 64 40 / 0.07);
+  color: var(--stamp);
+  transform: rotate(-8deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stamps li[data-done] .stamp-box {
+    animation: stamp 0.42s cubic-bezier(0.2, 0.9, 0.25, 1);
   }
 }
-html.is-driving .slide-count {
-  display: none;
+@keyframes stamp {
+  0% {
+    transform: rotate(-12deg) scale(1.35);
+    opacity: 0.4;
+  }
+  60% {
+    transform: rotate(-7deg) scale(0.94);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-8deg);
+  }
+}
+.stamps h3 {
+  margin-bottom: 0.35em;
+}
+.stamps p {
+  margin: 0;
 }
 
-/* ---------- defense slides ---------- */
-.cite {
-  margin: 0.4rem 0 0;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--green-ink);
+.gates .lot {
+  margin-top: 1.25rem;
 }
-.cite a {
-  color: inherit;
+/* what each stop produced */
+.outs {
+  margin-top: 1.25rem;
 }
-/* who/what pairs as ruled rows: name on the left, the point on the right */
-.who.rows {
-  grid-template-columns: 1fr;
-}
-.who.rows > div {
+.out {
   display: grid;
-  grid-template-columns: minmax(9rem, 0.42fr) 1fr;
-  gap: 0.25rem 1.25rem;
-  align-items: baseline;
-  padding-bottom: 0.65rem;
+  align-content: start;
+  justify-items: start;
+  gap: 0.9rem;
+  padding: 0.35rem 1.5rem 0 0;
 }
-/* a ruled table on the form: small-caps heads over a 2px rule, hairlines between rows */
-.ledger {
+.out.zone {
+  justify-items: center;
+}
+.out.exit {
+  justify-items: end;
+  padding-top: 0.35rem;
+}
+.sim-read,
+.sim-count {
+  display: grid;
+  gap: 0.2rem;
+}
+.sim-count {
+  --c: var(--free);
+  width: min(100%, 13rem);
+  justify-items: center;
+}
+.sim-count[data-band='busy'] {
+  --c: var(--busy);
+}
+.sim-count[data-band='full'] {
+  --c: var(--full);
+}
+.sim-count .big {
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1;
+}
+.sim-count .meter {
   width: 100%;
-  margin: 1rem 0 1.1rem;
-  border-collapse: collapse;
-  font-size: 0.95rem;
+  height: 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(100% / 10 - 1px), rgb(26 26 26 / 0.25) calc(100% / 10 - 1px) calc(100% / 10));
+  overflow: hidden;
 }
-.ledger th,
-.ledger td {
-  padding: 0.6rem 1rem 0.6rem 0;
-  border-bottom: 1px solid var(--mint-3);
-  text-align: left;
-  vertical-align: baseline;
+.sim-count .meter i {
+  display: block;
+  height: 100%;
+  background: var(--c);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
 }
-.ledger thead th {
-  padding-top: 0;
-  border-bottom: 2px solid var(--rule);
-  font: 700 0.72rem / 1.2 var(--font-sans), sans-serif;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--green-ink);
-}
-.ledger tbody th {
-  font: 800 1.15rem / 1.05 var(--font-display), sans-serif;
-  text-transform: uppercase;
+/* what the camera read, on a white plate; the plate's frame carries the verdict */
+.plate-read {
+  display: inline-block;
+  min-width: 8.5rem;
+  padding: 0.2rem 0.6rem;
+  border: 2px solid var(--ink);
+  border-radius: 5px;
+  background: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
   white-space: nowrap;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.ledger td {
+.sim-read small {
+  font-size: 0.78rem;
   color: var(--ink-soft);
 }
-.ledger td.num {
+.sim-read[data-state='reading'] .plate-read {
+  border-color: var(--id);
+  box-shadow: 0 0 0 3px rgb(29 78 158 / 0.18);
+}
+.sim-read[data-state='ok'] .plate-read {
+  border-color: var(--free);
+}
+.sim-read[data-state='deny'] .plate-read {
+  border-color: var(--stamp);
+  color: var(--stamp-deep);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+.sim-read[data-state='deny'] small {
   color: var(--stamp-deep);
   font-weight: 700;
 }
-/* long row names (processes, test rounds, verdicts) wrap instead of pushing the table wide */
-.ledger.wrap tbody th {
-  min-width: 10rem;
-  max-width: 19rem;
-  white-space: normal;
-}
-/* tables of figures (Tables 1–4, 7) and the verdicts: tighter rows so a full paper table fits one slide */
-.ledger.compact th,
-.ledger.compact td,
-.ledger.verdicts th,
-.ledger.verdicts td {
-  padding-block: 0.36rem;
-}
-.cite + .split {
-  margin-top: 0.9rem;
-}
-.recs li {
-  padding-block: 0.4rem;
-}
-/* a total row: the sum line of a form, heavy rule above */
-.ledger tfoot th,
-.ledger tfoot td {
-  border-top: 2px solid var(--rule);
-  border-bottom: 0;
-}
-.ledger tfoot th {
-  font: 800 1.15rem / 1.05 var(--font-display), sans-serif;
-  text-transform: uppercase;
-}
-.ledger tfoot td.num {
-  color: var(--stamp);
-}
-/* a paper number (process 1.0, objective 3) in stamp red before a row name */
-.stamp-num {
-  margin-inline-end: 0.35rem;
-  color: var(--stamp);
-  font: 700 0.95rem / 1 var(--font-mono), monospace;
-}
-.verdicts tbody th small {
-  display: block;
-  margin-top: 0.3rem;
-  color: var(--green-ink);
-  font: 700 0.72rem / 1.2 var(--font-sans), sans-serif;
-  letter-spacing: 0.1em;
-}
-.rule-top {
-  margin-top: 0.4rem;
-  padding-top: 0.6rem;
-  border-top: 2px solid var(--rule);
-}
-.rule-gap {
-  margin-top: 1rem;
-}
-.split.thirds {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-.actor {
-  margin: 0 0 0.3rem;
-  font: 800 1.35rem / 1 var(--font-display), sans-serif;
-  text-transform: uppercase;
-}
-.ruled.tight li {
-  padding: 0.32rem 0;
-  font-size: 0.92rem;
-}
-.quotes q {
-  font-style: italic;
-}
-.quotes .num {
-  margin-inline-start: 0.4rem;
-  color: var(--stamp);
-  font-size: 0.8rem;
-}
-.recs {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 2rem;
-}
-.recs li p {
-  margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.42;
-  color: var(--ink-soft);
-}
-.recs li b {
-  color: var(--ink);
-}
-.compare-head {
-  margin: 1.3rem 0 0.6rem;
-}
-.titles .field > :last-child {
-  white-space: normal;
-  font-size: 0.98rem;
-  line-height: 1.3;
-}
-.struck {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin: 0.5rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-.struck li {
-  padding: 0.3rem 0.65rem;
-  border: 1.5px solid var(--ink);
-  border-radius: 4px;
-  background: var(--paper);
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-decoration: line-through 1.5px rgb(192 64 40 / 0.85);
-}
-.general {
-  margin: 0.25rem 0 1rem;
-  font-weight: 600;
-  line-height: 1.45;
-}
-.objectives {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem 1.5rem;
-  margin: 0;
-}
-.objectives li {
-  display: grid;
-  grid-template-columns: 2.5rem 1fr;
-  gap: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 2px solid var(--rule);
-}
-.objectives p {
-  margin: 0;
-  font-size: 0.92rem;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-/* an odd last objective (the evaluation) closes the grid across both columns instead of leaving a hole */
-.objectives li:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
-}
-.objectives li:last-child:nth-child(odd) p {
-  max-width: 68ch;
-}
-/* the Agile model's phases as a chain of ruled fields: solid rule = done, a stamp-red chevron between links */
-.agile {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 1.9rem;
-  margin: 0.4rem 0 0.9rem;
-  padding: 0;
-  list-style: none;
-}
-.agile li {
+
+/* Zone A in plan, in the page's ink: two rows of fifteen bays either side of the aisle, entry gate left, exit right */
+.lot {
+  container-type: inline-size;
   position: relative;
-  padding-top: 0.4rem;
-  border-top: 2px solid var(--rule);
-  font: 800 1.15rem / 1 var(--font-display), sans-serif;
+  display: grid;
+  grid-template-columns: 1.6fr repeat(15, minmax(0, 1fr)) 1.6fr;
+  grid-template-rows: auto 6.5cqw auto;
+  border: 2px solid var(--rule);
+  border-radius: 4px;
+  background: rgb(251 250 245 / 0.62);
+  overflow: hidden;
+  touch-action: manipulation;
+}
+.bay {
+  position: relative;
+  aspect-ratio: 1 / 1.55;
+  border-left: 1.5px solid rgb(31 90 67 / 0.45);
+}
+.bay:nth-child(15),
+.bay:nth-child(30) {
+  border-right: 1.5px solid rgb(31 90 67 / 0.45);
+}
+.lane {
+  position: relative;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 0.4cqw;
+  border-block: 1.5px solid rgb(31 90 67 / 0.5);
+  background:
+    linear-gradient(90deg, rgb(31 90 67 / 0.45) 50%, transparent 0) 0 50% / 1.4rem 2px repeat-x,
+    rgb(47 122 91 / 0.12);
+}
+/* the plan's labels: small mint chips, like the zone tag over the 3D campus */
+.gate-tag,
+.lane-tag {
+  position: relative;
+  padding: 0.3em 0.45em 0.25em;
+  border: 1.5px solid var(--green-ink);
+  border-radius: 3px;
+  background: var(--mint);
+  color: var(--green-ink);
+  font: 700 clamp(0.5rem, 1.3cqw, 0.7rem) / 1 var(--font-sans), sans-serif;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.agile li:not(:last-child)::after {
-  content: '';
+.lane-tag {
   position: absolute;
-  top: calc(0.4rem + 0.5em);
-  right: -1.2rem;
-  width: 0.42rem;
-  height: 0.42rem;
-  border: solid var(--stamp);
-  border-width: 2px 2px 0 0;
-  transform: translateY(-50%) rotate(45deg);
+  left: 50%;
+  translate: -50% 0;
+  border-color: var(--ink);
+  color: var(--ink);
+  font: 800 clamp(0.7rem, 1.9cqw, 1.05rem) / 1 var(--font-display), sans-serif;
 }
-.split {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 2rem;
-}
-.ruled {
-  margin: 0.5rem 0 0;
-  padding: 0;
-  list-style: none;
-  border-top: 2px solid var(--rule);
-}
-.ruled li {
-  padding: 0.55rem 0;
-  border-bottom: 1px solid var(--mint-3);
-}
-/* what the scope leaves out: plain text under a dashed rule, so a long sentence stays readable */
-.struck-rows {
-  border-top-style: dashed;
-}
-.struck-rows li {
-  color: var(--ink-soft);
-}
-.counted {
-  counter-reset: rec;
-}
-.counted li {
-  display: grid;
-  grid-template-columns: 1.6rem 1fr;
-  counter-increment: rec;
-}
-.counted li::before {
-  content: counter(rec);
-  color: var(--stamp);
-  font: 700 0.95rem / 1.5 var(--font-mono), monospace;
-}
-.phases {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.4rem;
-  margin: 1rem 0;
-}
-/* a phase still to come: dashed, like a pending field */
-.phases li[data-state='pending'] {
-  border-style: dashed;
-  background: transparent;
-  color: var(--ink-soft);
-}
-.phases li {
-  display: flex;
-  gap: 0.45rem;
-  align-items: baseline;
-  padding: 0.45rem 0.6rem;
-  border: 1.5px solid var(--ink);
-  border-radius: 4px;
-  background: var(--paper);
-  font-size: var(--step--1);
-  font-weight: 600;
-  line-height: 1.25;
-}
-.phases .num {
-  flex: none;
-  min-width: 1.3rem;
-  color: var(--stamp);
-  font-weight: 700;
-}
-/* the statement of the problem: numbered points, each tagged with its objective */
-.problems {
-  display: grid;
-  gap: 0;
-  margin: 0;
-  border-top: 2px solid var(--rule);
-}
-.problems li {
-  display: grid;
-  grid-template-columns: 2.5rem 1fr auto;
-  gap: 0.75rem;
-  align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--mint-3);
-}
-.problems p {
-  margin: 0;
-}
-.problems small {
-  padding: 0.15rem 0.5rem;
-  border: 1.5px solid var(--ink);
-  border-radius: 4px;
-  background: var(--paper);
-  font-size: var(--step--1);
-  font-weight: 700;
-  white-space: nowrap;
-}
-/* architecture: nine numbered form cells, stack under each name */
-.nodes {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.5rem;
-  margin: 1.1rem 0 0;
-  counter-reset: node;
-}
-.nodes li {
-  display: grid;
-  gap: 0.15rem;
-  padding: 0.5rem 0.65rem 0.55rem;
-  border: 1.5px solid var(--ink);
-  border-radius: 4px;
-  background: var(--paper);
-  counter-increment: node;
-}
-.nodes b {
-  font-size: 0.95rem;
-}
-.nodes b::before {
-  content: counter(node) ' ';
-  color: var(--stamp);
-  font-family: var(--font-mono), monospace;
-}
-.nodes small {
-  font-size: 0.8rem;
-  color: var(--ink-soft);
-}
-/* each tour step's answer to the problem, under its description */
-.why {
-  margin: 0.75rem 0 0;
-  padding-top: 0.65rem;
-  border-top: 2px solid var(--rule);
-  font-weight: 700;
-}
-.results {
-  margin-top: 0.5rem;
-}
-.results .field > dd {
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid var(--rule);
-  font-size: 1.6rem;
-  font-weight: 500;
-}
-.results .field > small {
+/* parked cars: everyone else's drawn in outline, the visitor's filled Registered blue (a button: tap to drive it out) */
+.parked {
+  position: absolute;
+  inset: 11% 19%;
   padding: 0;
   border: 0;
-  white-space: normal;
-  font-size: 0.78rem;
-  font-weight: 400;
-  line-height: 1.35;
-  color: var(--ink-soft);
+  border-radius: 3px / 5px;
+  background: var(--mint);
+  box-shadow: inset 0 0 0 1.5px rgb(31 90 67 / 0.75);
 }
-/* the campus map's legend over the model (Landmarks.tsx) */
-.mark3d {
+.parked::before,
+.car::before {
+  content: '';
+  position: absolute;
+  inset: 22%;
+  border-radius: 2px;
+  background: rgb(31 90 67 / 0.16);
+}
+.parked.mine,
+.car {
+  background: var(--id);
+  box-shadow: none;
+}
+.parked.mine::before,
+.car::before {
+  background: rgb(255 255 255 / 0.28);
+}
+.parked.mine {
+  cursor: pointer;
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.16s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .parked.mine:hover:not(:disabled) {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 2px var(--gold);
+  }
+}
+.parked.mine:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+.parked.mine:disabled {
+  cursor: default;
+}
+.parked.mine span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  writing-mode: vertical-rl;
+  font: 700 clamp(0.42rem, 1.1cqw, 0.62rem) / 1 var(--font-mono), monospace;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+@container (max-width: 520px) {
+  /* too small to read: on a phone the cameras and booms mark the gates */
+  .parked.mine span,
+  .gate-tag {
+    display: none;
+  }
+}
+.car {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  border-radius: 5px / 3px;
+  box-shadow: 0 2px 4px rgb(10 20 40 / 0.3);
+}
+.car.is-off {
+  visibility: hidden;
+}
+/* the gate: a camera on its post, its cone lit while it reads, and the boom across the aisle */
+.cam {
+  position: relative;
+  z-index: 3;
+  grid-row: 1;
+  align-self: end;
+  width: clamp(0.5rem, 1.6cqw, 0.85rem);
+  height: clamp(0.5rem, 1.6cqw, 0.85rem);
+  margin-bottom: 3px;
+  border-radius: 2px;
+  background: var(--ink);
+}
+.cam.entry {
+  grid-column: 1;
+  justify-self: end;
+  margin-right: 3px;
+}
+.cam.exit {
+  grid-column: 17;
+  justify-self: start;
+  margin-left: 3px;
+}
+.cam::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  width: 7cqw;
+  height: 6.5cqw;
+  background: linear-gradient(rgb(29 78 158 / 0.4), rgb(29 78 158 / 0));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.cam.entry::after {
+  right: 0;
+  clip-path: polygon(100% 0, 0 100%, 100% 100%);
+}
+.cam.exit::after {
+  left: 0;
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+}
+.cam.is-on::after {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cam.is-on::after {
+    animation: read 0.5s ease-in-out infinite alternate;
+  }
+}
+@keyframes read {
+  from {
+    opacity: 0.45;
+  }
+}
+.boom {
+  z-index: 3;
+  grid-row: 2;
+  justify-self: start;
+  width: 4px;
+  height: 100%;
+  border-radius: 2px;
+  background: repeating-linear-gradient(var(--stamp) 0 6px, #fff 6px 12px);
+  box-shadow: 0 0 0 1px rgb(26 26 26 / 0.35);
+  transform-origin: 50% 2px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.boom.entry {
+  grid-column: 2;
+}
+.boom.exit {
+  grid-column: 17;
+}
+.boom.up {
+  transform: rotate(-82deg);
+}
+.boom.exit.up {
+  transform: rotate(82deg);
+}
+
+/* entry column: the visitor is the car at the gate */
+.drive-form {
   display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.6rem;
+}
+.plate-field {
+  display: grid;
+  gap: 0.25rem;
+}
+.plate-field input {
+  width: 9.5rem;
+  height: 48px;
+  padding: 0 0.6rem;
+  border: 2px solid var(--ink);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.plate-field input:focus-visible {
+  outline: 3px solid var(--id);
+  outline-offset: 2px;
+}
+.plate-field input[aria-invalid] {
+  border-color: var(--stamp);
+}
+.drive-form .hint {
+  flex-basis: 100%;
+  max-width: 22rem;
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* zone column: the two screens flash when the count changes */
+.screens {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.screen {
+  display: inline-flex;
   align-items: baseline;
-  gap: 0.35rem;
-  padding: 0.2rem 0.5rem;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem;
   border: 1.5px solid var(--ink);
   border-radius: 4px;
   background: var(--paper);
-  color: var(--ink);
-  font: 700 0.78rem / 1.2 var(--font-sans), sans-serif;
-  white-space: nowrap;
-  pointer-events: none;
+  font: 500 0.85rem / 1.2 var(--font-mono), monospace;
 }
-.mark3d b {
-  color: var(--stamp);
+.screen b {
+  font: 700 0.68rem / 1 var(--font-sans), sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green-ink);
 }
-@media (max-width: 900px) {
-  .objectives,
-  .split,
-  .split.thirds,
-  .recs {
+.screen[data-alert] {
+  background: var(--visitor);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .screen.flash {
+    animation: flash 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+@keyframes flash {
+  from {
+    background: var(--mint-3);
+    box-shadow: 0 0 0 4px rgb(47 122 91 / 0.25);
+  }
+}
+.sim-msg {
+  max-width: 24rem;
+  min-height: 4.4em;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.sim-msg[data-tone='ok'] {
+  color: var(--green-ink);
+}
+.sim-msg[data-tone='bad'] {
+  color: var(--stamp-deep);
+}
+.sim-more {
+  display: flex;
+  gap: 1.25rem;
+}
+/* secondary actions as form links: ID-blue condensed caps, underlined */
+.link-btn {
+  min-height: 44px;
+  padding: 0 0.2rem;
+  border: 0;
+  background: none;
+  color: var(--id);
+  font: 800 1.05rem / 1 var(--font-display), sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+  cursor: pointer;
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), color 0.16s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .link-btn:hover:not(:disabled) {
+    color: var(--stamp);
+  }
+}
+.link-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.link-btn:disabled {
+  color: var(--ink-soft);
+  opacity: 0.5;
+  text-decoration: none;
+  cursor: not-allowed;
+}
+
+/* exit column: the receipt prints down out of the exit gate */
+.receipt-empty {
+  max-width: 15rem;
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border: 2px dashed rgb(31 90 67 / 0.45);
+  border-radius: 4px;
+  color: var(--green-ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.land .out .receipt {
+  width: min(100%, 21rem);
+  text-align: left;
+}
+.land .out .receipt:focus {
+  outline: none;
+}
+.land .out .receipt:focus-visible {
+  outline: 3px solid var(--id);
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .land .out .receipt {
+    animation: print 0.95s steps(14, end) both;
+  }
+}
+@keyframes print {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: rotate(0deg);
+  }
+  to {
+    clip-path: inset(0 -20% -40% -20%);
+    transform: rotate(1.5deg);
+  }
+}
+
+/* the two clients, one at a time, zig-zagging with what each side gets */
+.sides {
+  display: grid;
+  gap: clamp(3rem, 7vw, 5.5rem);
+  margin-top: 1rem;
+}
+.side {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4.5rem);
+}
+.side:nth-child(2) > .app-ui {
+  order: 2;
+}
+.side h3 {
+  margin-bottom: 0.2em;
+}
+.side .who {
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+}
+.app-ui.one {
+  width: auto;
+  height: auto;
+  font-size: clamp(9px, 0.4rem + 0.42vw, 12px);
+}
+.app-ui.one > * {
+  position: relative;
+  inset: auto;
+}
+.app-ui.one .adm {
+  display: block;
+}
+
+/* proof: the paper's figures as ruled fields, each with its caveat */
+.proof {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem clamp(1.5rem, 3vw, 3rem);
+  margin: 2.5rem 0;
+}
+.proof .field > dd {
+  margin: 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid var(--rule);
+  font-size: clamp(2.2rem, 1.6rem + 1.8vw, 3.2rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+.proof .field > small {
+  padding: 0.2rem 0 0;
+  border: 0;
+  white-space: normal;
+  font-size: var(--step--1);
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.proof .field {
+  align-content: start;
+}
+
+/* the ask: a pass on paper */
+.contact .board {
+  margin-inline: auto;
+}
+.contact h2 {
+  max-width: 22ch;
+  font-size: clamp(2.1rem, 1.3rem + 2.6vw, 3.6rem);
+}
+.contact .email {
+  margin: 0;
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1000px) {
+  .split-2 {
     grid-template-columns: 1fr;
   }
-  .problems li {
-    grid-template-columns: 2.5rem 1fr;
-  }
-  .problems small {
-    grid-column: 2;
+  .morning {
     justify-self: start;
   }
-  .phases,
-  .nodes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .who.rows > div {
+  .side,
+  .side:nth-child(2) {
     grid-template-columns: 1fr;
   }
-  .ledger tbody th {
-    white-space: normal;
+  .side:nth-child(2) > .app-ui {
+    order: 0;
   }
 }
 @media (max-width: 768px) {
-  .fields.results {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .land-hero {
+    display: block;
+    min-height: 0;
+    padding: 0 0 2.5rem;
+    background: var(--paper);
   }
-  /* ruled tables become stacked records: name, then its cells */
-  .ledger thead {
+  .land-shot {
+    position: relative;
+    z-index: 0;
+    height: 44svh;
+    min-height: 16rem;
+    --ar: 1.1842; /* hero-tall.webp, 900 × 760 */
+    --fx: 0.5;
+    --fy: 0;
+  }
+  .pin.entry {
+    --x: 0.555;
+    --y: 0.52;
+  }
+  .pin.zone {
+    --x: 0.77;
+    --y: 0.235;
+  }
+  .pin.bays {
+    --x: 0.87;
+    --y: 0.42;
+  }
+  /* tags near the right or top edge open inward */
+  .pin.bays .pin-tag,
+  .pin.zone .pin-tag {
+    left: auto;
+    right: -14px;
+    transform: translate(0, 6px);
+  }
+  .pin.bays:hover .pin-tag,
+  .pin.bays[data-open] .pin-tag,
+  .pin.zone:hover .pin-tag,
+  .pin.zone[data-open] .pin-tag,
+  .pin.zone button:focus-visible + .pin-tag,
+  .pin.bays button:focus-visible + .pin-tag {
+    transform: none;
+  }
+  .pin.zone .pin-tag {
+    top: 28px;
+    bottom: auto;
+  }
+  .lot {
+    grid-template-columns: 1.1fr repeat(15, minmax(0, 1fr)) 1.1fr;
+    grid-template-rows: auto 10cqw auto;
+  }
+  .land-hero .board {
+    margin: -3.5rem var(--gutter) 0;
+    width: auto;
+  }
+  .proof {
+    grid-template-columns: 1fr;
+  }
+  /* one column on a phone: the three notes, the plan, then what each stop produced, all left-aligned, no leaders */
+  .stamps,
+  .outs {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .stamps li,
+  .stamps li:nth-child(n),
+  .out,
+  .out.zone,
+  .out.exit {
+    padding: 0;
+    text-align: left;
+    justify-items: start;
+  }
+  .stamps li {
+    display: grid;
+    grid-template-columns: 3.4rem 1fr;
+    column-gap: 1rem;
+  }
+  .stamps li .stamp-box,
+  .stamps li:nth-child(n) .stamp-box {
+    grid-row: span 2;
+    margin: 0;
+  }
+  .stamps li::after,
+  .out::before {
     display: none;
   }
-  .ledger tr {
-    display: grid;
-    gap: 0.15rem;
-    padding: 0.55rem 0;
-    border-bottom: 1px solid var(--mint-3);
+  .gates .lot {
+    margin-top: 1.75rem;
   }
-  .ledger tbody tr:first-child {
-    border-top: 2px solid var(--rule);
+  .outs {
+    margin-top: 1.5rem;
   }
-  .ledger th,
-  .ledger td {
-    padding: 0;
-    border: 0;
+  .screens {
+    justify-content: flex-start;
   }
-  /* a stacked number needs its column name back */
-  .ledger td[data-label]::before {
-    content: attr(data-label) ' · ';
-    font-family: var(--font-sans);
-    color: var(--ink-soft, inherit);
+  .sim-count {
+    justify-items: start;
   }
+  .app-ui.one {
+    order: 0;
+    font-size: 8.5px;
+    height: auto;
+    width: auto;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .app-ui.one .adm {
+    width: 40em;
+    max-width: 100%;
+  }
+}
+
+/* the ask's address, with a copy button for visitors without a mail app */
+.email-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+}
+.copy-note {
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--green-ink);
+}
+.copy-note[data-tone='bad'] {
+  color: var(--stamp-deep);
 }

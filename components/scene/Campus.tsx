@@ -255,12 +255,12 @@ export default function Campus({ shadows }: { shadows: boolean }) {
     return { lines, stops, arrows, walls: WALL_SEGMENTS.map((s) => seg(s)), kerbs: kerbItems(), dashes: dashes() };
   }, []);
 
-  // Bay pads tint with occupancy heat around the About / Problem / Play chapters.
+  // Bay pads tint with occupancy heat around the demo's Play stop.
   const pad = useMemo(() => new THREE.MeshStandardMaterial({ color: PAD, roughness: 1 }), []);
   useLayoutEffect(() => () => pad.dispose(), [pad]);
   useFrame(() => {
     const g = game.get();
-    const heat = g.driving ? 0 : Math.max(near('about', 0.9), near('play', 0.8) * 0.6);
+    const heat = g.driving ? 0 : near('play', 0.8) * 0.6;
     const b = BAND[band({ ...ZONE_A, occupied: g.counts[0] })];
     pad.color.copy(PAD).lerp(b, heat * 0.65);
     pad.emissive.copy(b).multiplyScalar(heat * 0.15);

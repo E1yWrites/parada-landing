@@ -1,7 +1,8 @@
 # PARADA
 
-> PARADA is a mobile and web-based smart parking management system using computer vision, license-plate recognition, and zone-based occupancy monitoring. Built as an academic capstone project at Lyceum of the Philippines University — Batangas.
+> PARADA is a smart parking system for campuses and other sites with several parking areas. Ordinary cameras at each area's gates read plates and keep a live count, so drivers see where there is room before they arrive and staff see every area at a glance. Built and tested at Lyceum of the Philippines University — Batangas as a capstone project; a tested prototype, not yet installed at a parking site, and the team is ready to pilot it.
 
-- [Experience](https://parada.lorenzmalabanan.com/): The capstone's final-defense deck over a 3D model of LPU-Batangas, in the paper's chapter order: introduction, five objectives, literature review and research gap, methods and data privacy, data flow, use case, architecture and database design, the arrival-to-receipt trip, test results (accuracy, live IP cameras, responsiveness, user acceptance), limitations, conclusions and recommendations.
+- [Home](https://parada.lorenzmalabanan.com/): What PARADA does, how it counts at the gates, what drivers and the office get, test results with their caveats, and how to contact the team about a pilot.
+- [Demo](https://parada.lorenzmalabanan.com/demo/): A 3D model of the LPU-Batangas campus: one car's trip from the entrance camera to the exit receipt in nine stops, and a drive mode where the visitor drives it.
 - [Technical overview](https://parada.lorenzmalabanan.com/technical/): Architecture, features, configuration, stack, security, and build status.
 - [GitHub](https://github.com/E1yWrites/parada): Source code.

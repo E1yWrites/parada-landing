@@ -20,8 +20,8 @@ export default function NotFound() {
           <Link className="btn" href="/technical/">
             Technical
           </Link>
-          <Link className="btn" href="/docs/">
-            Docs
+          <Link className="btn" href="/demo/">
+            Demo
           </Link>
           <Link className="btn" href="/legal/">
             Legal

@@ -41,8 +41,8 @@ const sections: Section[] = [
           demo and are not meant to refer to any real vehicle.
         </p>
         <p>
-          The PARADA system is a demonstration prototype and is not deployed at any parking facility (see{' '}
-          <Link href="/docs/#deploy">Documentation</Link>). An establishment that runs it would set its own rules —
+          The PARADA system is a demonstration prototype and is not deployed at any parking facility (see the{' '}
+          <a href={GITHUB_URL} rel="noopener">repository on GitHub</a>). An establishment that runs it would set its own rules —
           guest admission, fees and violation policies are establishment configuration — and its own terms for drivers.
         </p>
       </>
